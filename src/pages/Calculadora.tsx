@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Switch } from "@/components/ui/switch";
-import { formatarMoeda } from '@/utils/formatters';
+import { formatarMoeda, calcularMesesEntreDatas, calcularDiasEntreDatas } from '@/utils/formatters';
 
 type RescisionValues = {
   saldoSalario: number;
@@ -86,6 +86,23 @@ const Calculadora = () => {
     }
   });
 
+  // Efeito para calcular automaticamente dias e meses trabalhados quando as datas são alteradas
+  useEffect(() => {
+    if (dadosContrato.dataAdmissao && dadosContrato.dataDemissao) {
+      const meses = calcularMesesEntreDatas(dadosContrato.dataAdmissao, dadosContrato.dataDemissao);
+      const dias = calcularDiasEntreDatas(
+        `${dadosContrato.dataDemissao.slice(0, 7)}-01`, 
+        dadosContrato.dataDemissao
+      );
+      
+      setDadosContrato(prev => ({
+        ...prev,
+        mesesTrabalhados: String(meses),
+        diasTrabalhados: String(dias)
+      }));
+    }
+  }, [dadosContrato.dataAdmissao, dadosContrato.dataDemissao]);
+
   // Função para atualizar os dados do contrato
   const handleDadosContratoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -112,12 +129,19 @@ const Calculadora = () => {
 
     // Cálculo das verbas rescisórias
     const saldoSalario = (salarioBase / 30) * diasTrabalhados;
-    const avisoPrevia = salarioBase;
+    const avisoPrevia = dadosContrato.tipoRescisao === 'sem_justa_causa' || dadosContrato.tipoRescisao === 'rescisao_indireta' 
+      ? salarioBase
+      : 0;
     const decimoTerceiro = (salarioBase / 12) * mesesTrabalhados;
     const ferias = (salarioBase / 12) * mesesTrabalhados;
     const tercoConstitucional = ferias / 3;
-    const fgts = (saldoSalario + avisoPrevia + decimoTerceiro) * 0.08;
-    const multaFgts = fgts * 0.4;
+    
+    // Cálculo do FGTS e multa
+    const baseCalculoFgts = saldoSalario + avisoPrevia + decimoTerceiro;
+    const fgts = baseCalculoFgts * 0.08;
+    const multaFgts = dadosContrato.tipoRescisao === 'sem_justa_causa' || dadosContrato.tipoRescisao === 'rescisao_indireta' 
+      ? fgts * 0.4
+      : 0;
     
     const totalVerbaRescisoria = saldoSalario + avisoPrevia + decimoTerceiro + ferias + tercoConstitucional + fgts + multaFgts;
 
