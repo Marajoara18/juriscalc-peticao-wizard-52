@@ -1,10 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, Plus } from 'lucide-react';
+import { FileText, Plus, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const peticoesModelo = [
   { 
@@ -69,7 +71,7 @@ const peticoesRecentes = [
   }
 ];
 
-const ModeloCard = ({ modelo }: { modelo: typeof peticoesModelo[0] }) => {
+const ModeloCard = ({ modelo, onUseModelo }: { modelo: typeof peticoesModelo[0], onUseModelo: (id: number) => void }) => {
   return (
     <Card className="cursor-pointer hover:border-juriscalc-navy transition-all">
       <CardHeader className="pb-3">
@@ -84,13 +86,19 @@ const ModeloCard = ({ modelo }: { modelo: typeof peticoesModelo[0] }) => {
         </div>
       </CardHeader>
       <CardContent>
-        <Button size="sm" className="w-full bg-juriscalc-navy hover:bg-opacity-90">Usar Modelo</Button>
+        <Button 
+          size="sm" 
+          className="w-full bg-juriscalc-navy hover:bg-opacity-90" 
+          onClick={() => onUseModelo(modelo.id)}
+        >
+          Usar Modelo
+        </Button>
       </CardContent>
     </Card>
   );
 };
 
-const PeticaoRecenteCard = ({ peticao }: { peticao: typeof peticoesRecentes[0] }) => {
+const PeticaoRecenteCard = ({ peticao, onEditPeticao }: { peticao: typeof peticoesRecentes[0], onEditPeticao: (id: number) => void }) => {
   return (
     <Card className="cursor-pointer hover:border-juriscalc-navy transition-all">
       <CardHeader className="pb-3">
@@ -113,20 +121,153 @@ const PeticaoRecenteCard = ({ peticao }: { peticao: typeof peticoesRecentes[0] }
           <div className="text-sm text-gray-500">
             Criada em {peticao.data}
           </div>
-          <Button size="sm" variant="outline">Editar</Button>
+          <Button 
+            size="sm" 
+            variant="outline"
+            onClick={() => onEditPeticao(peticao.id)}
+          >
+            Editar
+          </Button>
         </div>
       </CardContent>
     </Card>
   );
 };
 
+const EditorPeticao = ({ 
+  modelo, 
+  peticao, 
+  onVoltar 
+}: { 
+  modelo?: typeof peticoesModelo[0], 
+  peticao?: typeof peticoesRecentes[0],
+  onVoltar: () => void 
+}) => {
+  return (
+    <div>
+      <div className="mb-6 flex items-center">
+        <Button variant="ghost" onClick={onVoltar} className="mr-4">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Voltar
+        </Button>
+        <h2 className="text-2xl font-serif font-semibold">
+          {modelo ? `Novo documento: ${modelo.titulo}` : `Editando: ${peticao?.titulo}`}
+        </h2>
+      </div>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl">Dados do Processo</CardTitle>
+          <CardDescription>Preencha as informações necessárias para a petição</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="titulo" className="block text-sm font-medium mb-1">Título da Petição</label>
+              <input
+                id="titulo"
+                type="text"
+                className="w-full p-2 border rounded-md"
+                defaultValue={peticao?.titulo || modelo?.titulo || ''}
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="reclamante" className="block text-sm font-medium mb-1">Nome do Reclamante</label>
+              <input
+                id="reclamante"
+                type="text"
+                className="w-full p-2 border rounded-md"
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="reclamado" className="block text-sm font-medium mb-1">Nome do Reclamado (Empresa)</label>
+              <input
+                id="reclamado"
+                type="text"
+                className="w-full p-2 border rounded-md"
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="descricao" className="block text-sm font-medium mb-1">Descrição dos Fatos</label>
+              <textarea
+                id="descricao"
+                className="w-full p-2 border rounded-md min-h-[150px]"
+                defaultValue={peticao?.descricao || ''}
+              ></textarea>
+            </div>
+            
+            <div className="pt-4 flex justify-end space-x-4">
+              <Button variant="outline">Salvar Rascunho</Button>
+              <Button className="bg-juriscalc-navy" onClick={() => {
+                toast.success('Petição salva com sucesso!');
+                onVoltar();
+              }}>Finalizar Petição</Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 const Peticoes = () => {
+  const navigate = useNavigate();
+  const [selectedModeloId, setSelectedModeloId] = useState<number | null>(null);
+  const [selectedPeticaoId, setSelectedPeticaoId] = useState<number | null>(null);
+  const [view, setView] = useState<'list' | 'editor' | 'new'>('list');
+  
+  const selectedModelo = peticoesModelo.find(m => m.id === selectedModeloId);
+  const selectedPeticao = peticoesRecentes.find(p => p.id === selectedPeticaoId);
+  
+  const handleNovaPeticao = () => {
+    setView('new');
+    setSelectedModeloId(null);
+    setSelectedPeticaoId(null);
+  };
+  
+  const handleUseModelo = (id: number) => {
+    setSelectedModeloId(id);
+    setView('editor');
+    toast.info('Modelo selecionado! Preencha os dados necessários.');
+  };
+  
+  const handleEditPeticao = (id: number) => {
+    setSelectedPeticaoId(id);
+    setView('editor');
+  };
+  
+  const handleVoltar = () => {
+    setView('list');
+    setSelectedModeloId(null);
+    setSelectedPeticaoId(null);
+  };
+
+  if (view === 'editor' || view === 'new') {
+    return (
+      <Layout>
+        <div className="container mx-auto py-10 px-4">
+          <EditorPeticao 
+            modelo={selectedModelo} 
+            peticao={selectedPeticao}
+            onVoltar={handleVoltar}
+          />
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <div className="container mx-auto py-10 px-4">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-serif font-bold text-juriscalc-navy">Petições</h1>
-          <Button className="bg-juriscalc-gold text-juriscalc-navy hover:bg-opacity-90">
+          <Button 
+            className="bg-juriscalc-gold text-juriscalc-navy hover:bg-opacity-90"
+            onClick={handleNovaPeticao}
+          >
             <Plus className="mr-2 h-4 w-4" />
             Nova Petição
           </Button>
@@ -141,7 +282,11 @@ const Peticoes = () => {
           <TabsContent value="recentes">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {peticoesRecentes.map((peticao) => (
-                <PeticaoRecenteCard key={peticao.id} peticao={peticao} />
+                <PeticaoRecenteCard 
+                  key={peticao.id} 
+                  peticao={peticao} 
+                  onEditPeticao={handleEditPeticao}
+                />
               ))}
             </div>
             {peticoesRecentes.length === 0 && (
@@ -159,7 +304,11 @@ const Peticoes = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {peticoesModelo.map((modelo) => (
-                  <ModeloCard key={modelo.id} modelo={modelo} />
+                  <ModeloCard 
+                    key={modelo.id} 
+                    modelo={modelo} 
+                    onUseModelo={handleUseModelo}
+                  />
                 ))}
               </div>
             </div>
