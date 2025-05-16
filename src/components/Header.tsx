@@ -1,10 +1,16 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Calculator, FileText } from "lucide-react";
 import { Button } from '@/components/ui/button';
 
 const Header = () => {
+  const navigate = useNavigate();
+  
+  const handleNewPeticao = () => {
+    navigate('/peticoes');
+  };
+  
   return (
     <header className="bg-juriscalc-navy text-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -20,7 +26,10 @@ const Header = () => {
           <Link to="/peticoes" className="hover:text-juriscalc-gold transition-colors">Petições</Link>
         </nav>
         <div className="flex items-center gap-2">
-          <Button className="bg-juriscalc-gold text-juriscalc-navy hover:bg-opacity-90">
+          <Button 
+            className="bg-juriscalc-gold text-juriscalc-navy hover:bg-opacity-90"
+            onClick={handleNewPeticao}
+          >
             <FileText className="mr-2 h-4 w-4" />
             Nova Petição
           </Button>

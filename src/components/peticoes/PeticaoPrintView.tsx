@@ -23,6 +23,7 @@ const PeticaoPrintView: React.FC<PeticaoPrintViewProps> = ({ formData }) => {
         
         <div className="whitespace-pre-wrap mb-6">{formData.descricao}</div>
         
+        {/* Inserir tabela de cálculos diretamente no documento quando for imprimir */}
         {formData.calculosTabela && (
           <div className="print:break-inside-avoid print:page-break-inside-avoid">
             <TabelaCalculos 
