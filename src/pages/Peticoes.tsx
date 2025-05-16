@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { FileText, Plus, LogOut } from 'lucide-react';
+import { FileText, Plus, User } from 'lucide-react';
 import Layout from '@/components/Layout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,7 @@ import EditorPeticao from '@/components/peticoes/EditorPeticao';
 import PremiumAlert from '@/components/peticoes/PremiumAlert';
 import HelpSection from '@/components/peticoes/HelpSection';
 import EmptyPeticoes from '@/components/peticoes/EmptyPeticoes';
+import UserManagement from '@/components/auth/UserManagement';
 
 // Import data and utilities
 import { peticoesModelo } from '@/data/peticoes-modelo';
@@ -24,21 +25,39 @@ const Peticoes = () => {
   const navigate = useNavigate();
   const [selectedModeloId, setSelectedModeloId] = useState<number | null>(null);
   const [selectedPeticaoId, setSelectedPeticaoId] = useState<number | null>(null);
-  const [view, setView] = useState<'list' | 'editor' | 'new'>('list');
+  const [view, setView] = useState<'list' | 'editor' | 'new' | 'user'>('list');
   const [peticoesRecentes, setPeticoesRecentes] = useState<any[]>([]);
   const [isPremium, setIsPremium] = useState(false);
   
   // Carrega dados do localStorage
   useEffect(() => {
+    // Verificar se existe usuário logado
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      navigate('/');
+      return;
+    }
+    
     initializeLocalStorage();
     const storedPeticoes = localStorage.getItem('peticoesRecentes');
     if (storedPeticoes) {
-      setPeticoesRecentes(JSON.parse(storedPeticoes));
+      try {
+        const allPeticoes = JSON.parse(storedPeticoes);
+        
+        // Filtrar petições do usuário atual
+        const userPeticoes = allPeticoes.filter((p: any) => 
+          !p.userId || p.userId === userId
+        );
+        
+        setPeticoesRecentes(userPeticoes);
+      } catch (error) {
+        console.error('Erro ao carregar petições:', error);
+      }
     }
     
     const userPremium = localStorage.getItem('userPremium') === 'true';
     setIsPremium(userPremium);
-  }, []);
+  }, [navigate]);
   
   const selectedModelo = peticoesModelo.find(m => m.id === selectedModeloId);
   const selectedPeticao = peticoesRecentes.find(p => p.id === selectedPeticaoId);
@@ -85,15 +104,25 @@ const Peticoes = () => {
   };
 
   const handleSavePeticao = (data: any) => {
-    let updatedPeticoes = [...peticoesRecentes];
+    // Adicionar ID do usuário atual à petição
+    const userId = localStorage.getItem('userId');
+    const updatedData = {
+      ...data,
+      userId
+    };
+  
+    // Carregar todas as petições armazenadas (não apenas do usuário atual)
+    const allPeticoes = JSON.parse(localStorage.getItem('peticoesRecentes') || '[]');
+    let updatedPeticoes = [...allPeticoes];
+    
     const existingIndex = updatedPeticoes.findIndex(p => p.id === data.id);
     
     if (existingIndex >= 0) {
       // Atualiza petição existente
-      updatedPeticoes[existingIndex] = data;
+      updatedPeticoes[existingIndex] = updatedData;
     } else {
       // Adiciona nova petição
-      updatedPeticoes.unshift(data);
+      updatedPeticoes.unshift(updatedData);
       
       // Incrementa contador para usuários não premium
       if (!isPremium) {
@@ -102,20 +131,40 @@ const Peticoes = () => {
       }
     }
     
-    setPeticoesRecentes(updatedPeticoes);
+    // Atualizar no localStorage todas as petições
     localStorage.setItem('peticoesRecentes', JSON.stringify(updatedPeticoes));
+    
+    // Filtrar apenas as petições do usuário atual para o state
+    const userPeticoes = updatedPeticoes.filter(p => !p.userId || p.userId === userId);
+    setPeticoesRecentes(userPeticoes);
     
     toast.success(`Petição ${data.status === 'finalizada' ? 'finalizada' : 'salva como rascunho'} com sucesso!`);
     handleVoltar();
   };
 
-  const handleLogout = () => {
-    // Implementação simples de logout
-    localStorage.removeItem('userPremium');
-    localStorage.setItem('peticoesCount', '0');
-    toast.success('Logout realizado com sucesso!');
-    navigate('/');
+  const handleUserClick = () => {
+    setView('user');
   };
+  
+  // Verificar se usuário é admin
+  const isAdmin = localStorage.getItem('userIsAdmin') === 'true';
+
+  if (view === 'user') {
+    return (
+      <Layout>
+        <div className="container mx-auto py-10 px-4">
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-2xl font-serif font-semibold">Minha Conta</h2>
+            <Button variant="outline" onClick={handleVoltar} className="border-juriscalc-navy text-juriscalc-navy">
+              Voltar
+            </Button>
+          </div>
+          
+          <UserManagement />
+        </div>
+      </Layout>
+    );
+  }
 
   if (view === 'editor' || view === 'new') {
     return (
@@ -148,10 +197,10 @@ const Peticoes = () => {
             <Button 
               variant="outline" 
               className="border-juriscalc-navy text-juriscalc-navy"
-              onClick={handleLogout}
+              onClick={handleUserClick}
             >
-              <LogOut className="mr-2 h-4 w-4" />
-              Sair
+              <User className="mr-2 h-4 w-4" />
+              Minha Conta
             </Button>
           </div>
         </div>

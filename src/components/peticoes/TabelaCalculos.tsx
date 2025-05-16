@@ -4,7 +4,7 @@ import { formatarMoeda } from '@/utils/formatters';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { FileText, Plus } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 
 interface TabelaCalculosProps {
   calculos: any;
@@ -77,12 +77,36 @@ const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPe
   // Data da criação dos cálculos
   const dataCalculo = new Date(calculos.timestamp).toLocaleDateString('pt-BR');
 
+  // Verifica se há um nome para os cálculos
+  const nomeCalculo = calculos.nome ? `${calculos.nome} - ` : '';
+
+  // Obter o logo da empresa do usuário atual
+  const logoUrl = localStorage.getItem('userLogoUrl');
+
   return (
     <Card className="mb-6">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xl">Cálculos Trabalhistas</CardTitle>
-          <div className="text-sm text-gray-500">Gerado em: {dataCalculo}</div>
+          <div className="flex items-center">
+            {logoUrl && (
+              <img 
+                src={logoUrl} 
+                alt="Logo" 
+                className="h-10 mr-3" 
+              />
+            )}
+            <div>
+              <CardTitle className="text-xl">Cálculos Trabalhistas</CardTitle>
+              <CardDescription>{nomeCalculo}Gerado em: {dataCalculo}</CardDescription>
+            </div>
+          </div>
+          <Button 
+            onClick={onInserirNoPeticao} 
+            className="bg-juriscalc-gold text-juriscalc-navy hover:bg-opacity-90"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Inserir na Petição
+          </Button>
         </div>
       </CardHeader>
       <CardContent>
@@ -90,11 +114,11 @@ const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPe
           {itensVerbaRescisoria.length > 0 && (
             <div>
               <h3 className="text-lg font-medium mb-2">Verbas Rescisórias</h3>
-              <Table>
+              <Table className="print:w-full print:border-collapse keep-together">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Descrição</TableHead>
-                    <TableHead className="text-right">Valor</TableHead>
+                    <TableHead className="w-2/3">Descrição</TableHead>
+                    <TableHead className="text-right w-1/3">Valor</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -116,11 +140,11 @@ const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPe
           {itensAdicionais.length > 0 && (
             <div>
               <h3 className="text-lg font-medium mb-2">Adicionais e Multas</h3>
-              <Table>
+              <Table className="print:w-full print:border-collapse keep-together">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Descrição</TableHead>
-                    <TableHead className="text-right">Valor</TableHead>
+                    <TableHead className="w-2/3">Descrição</TableHead>
+                    <TableHead className="text-right w-1/3">Valor</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -146,16 +170,6 @@ const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPe
                 {formatarMoeda(calculos.totalGeral)}
               </p>
             </div>
-          </div>
-
-          <div className="flex justify-end mt-4">
-            <Button 
-              onClick={onInserirNoPeticao} 
-              className="bg-juriscalc-gold text-juriscalc-navy hover:bg-opacity-90"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Inserir na Petição
-            </Button>
           </div>
         </div>
       </CardContent>

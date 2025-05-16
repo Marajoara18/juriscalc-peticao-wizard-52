@@ -1,0 +1,231 @@
+
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Save, Trash, Edit, FileText } from "lucide-react";
+import { toast } from "sonner";
+import { formatarMoeda } from '@/utils/formatters';
+
+interface CalculoSalvo {
+  id: string;
+  nome: string;
+  timestamp: string;
+  verbasRescisorias: any;
+  adicionais: any;
+  totalGeral: number;
+  userId?: string;
+}
+
+interface CalculosSalvosProps {
+  resultados: any;
+  totalGeral: number;
+  onLoadCalculo: (calculo: CalculoSalvo) => void;
+}
+
+const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral, onLoadCalculo }) => {
+  const [calculosSalvos, setCalculosSalvos] = useState<CalculoSalvo[]>([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [nomeCalculo, setNomeCalculo] = useState('');
+  const [editandoId, setEditandoId] = useState<string | null>(null);
+
+  // Carregar cálculos salvos
+  useEffect(() => {
+    const salvos = localStorage.getItem('calculosSalvos');
+    if (salvos) {
+      try {
+        setCalculosSalvos(JSON.parse(salvos));
+      } catch (error) {
+        console.error('Erro ao carregar cálculos salvos:', error);
+      }
+    }
+  }, []);
+
+  const salvarCalculos = () => {
+    if (resultados.verbasRescisorias.total === 0 && Object.values(resultados.adicionais).every(valor => valor === 0)) {
+      toast.error('Não há cálculos para salvar. Faça um cálculo primeiro.');
+      return;
+    }
+    
+    setNomeCalculo('');
+    setEditandoId(null);
+    setDialogOpen(true);
+  };
+
+  const handleSalvar = () => {
+    if (!nomeCalculo.trim()) {
+      toast.error('Digite um nome para o cálculo');
+      return;
+    }
+
+    const novoCalculo: CalculoSalvo = {
+      id: editandoId || Date.now().toString(),
+      nome: nomeCalculo,
+      timestamp: new Date().toISOString(),
+      verbasRescisorias: resultados.verbasRescisorias,
+      adicionais: resultados.adicionais,
+      totalGeral: totalGeral,
+      userId: localStorage.getItem('userId') || undefined
+    };
+
+    let novosCalculos: CalculoSalvo[];
+    
+    if (editandoId) {
+      novosCalculos = calculosSalvos.map(calc => 
+        calc.id === editandoId ? novoCalculo : calc
+      );
+      toast.success('Cálculo atualizado com sucesso!');
+    } else {
+      novosCalculos = [novoCalculo, ...calculosSalvos];
+      toast.success('Cálculo salvo com sucesso!');
+    }
+    
+    setCalculosSalvos(novosCalculos);
+    localStorage.setItem('calculosSalvos', JSON.stringify(novosCalculos));
+    setDialogOpen(false);
+  };
+
+  const handleEditar = (calculo: CalculoSalvo) => {
+    setNomeCalculo(calculo.nome);
+    setEditandoId(calculo.id);
+    setDialogOpen(true);
+  };
+
+  const handleApagar = (id: string) => {
+    const novosCalculos = calculosSalvos.filter(calc => calc.id !== id);
+    setCalculosSalvos(novosCalculos);
+    localStorage.setItem('calculosSalvos', JSON.stringify(novosCalculos));
+    toast.success('Cálculo removido com sucesso!');
+  };
+
+  const handleUsarCalculo = (calculo: CalculoSalvo) => {
+    onLoadCalculo(calculo);
+    toast.success(`Cálculo "${calculo.nome}" carregado com sucesso!`);
+  };
+
+  const handleUsarNaPeticao = (calculo: CalculoSalvo) => {
+    localStorage.setItem('calculosParaPeticao', JSON.stringify({
+      verbasRescisorias: calculo.verbasRescisorias,
+      adicionais: calculo.adicionais,
+      totalGeral: calculo.totalGeral,
+      timestamp: new Date().toISOString(),
+      nome: calculo.nome
+    }));
+    
+    toast.success('Cálculo preparado para ser inserido na petição!');
+  };
+
+  // Filtrar cálculos do usuário atual
+  const userId = localStorage.getItem('userId');
+  const calculosFiltrados = userId 
+    ? calculosSalvos.filter(calc => !calc.userId || calc.userId === userId)
+    : calculosSalvos;
+
+  return (
+    <>
+      <Card className="mb-6">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center justify-between">
+            <span>Cálculos Salvos</span>
+            <Button 
+              onClick={salvarCalculos}
+              variant="outline" 
+              size="sm"
+              className="border-juriscalc-navy text-juriscalc-navy"
+            >
+              <Save className="h-4 w-4 mr-1" />
+              Salvar Atual
+            </Button>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {calculosFiltrados.length === 0 ? (
+            <div className="text-center py-6 text-gray-500">
+              Você não tem cálculos salvos ainda.
+            </div>
+          ) : (
+            <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
+              {calculosFiltrados.map((calculo) => (
+                <div 
+                  key={calculo.id} 
+                  className="border rounded-md p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2"
+                >
+                  <div>
+                    <h4 className="font-medium">{calculo.nome}</h4>
+                    <p className="text-sm text-gray-500">
+                      {new Date(calculo.timestamp).toLocaleDateString('pt-BR')} - 
+                      {formatarMoeda(calculo.totalGeral)}
+                    </p>
+                  </div>
+                  <div className="flex space-x-2 w-full sm:w-auto justify-end">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleUsarCalculo(calculo)}
+                    >
+                      Usar
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleUsarNaPeticao(calculo)}
+                    >
+                      <FileText className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleEditar(calculo)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleApagar(calculo.id)}
+                      className="text-red-500 hover:bg-red-50"
+                    >
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{editandoId ? 'Editar Cálculo' : 'Salvar Cálculo'}</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <label className="block text-sm font-medium mb-2" htmlFor="nome-calculo">
+              Nome do Cálculo
+            </label>
+            <Input 
+              id="nome-calculo"
+              value={nomeCalculo}
+              onChange={(e) => setNomeCalculo(e.target.value)}
+              placeholder="Ex: Cálculo Empresa XYZ"
+              className="w-full"
+              autoFocus
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSalvar}>
+              {editandoId ? 'Atualizar' : 'Salvar'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+};
+
+export default CalculosSalvos;

@@ -1,11 +1,29 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Printer } from 'lucide-react';
+import { Printer, Save, HelpCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
-const HelpSection = () => {
+interface HelpSectionProps {
+  onSaveCalculos?: () => void;
+  calculosDisponiveis?: boolean;
+}
+
+const HelpSection = ({ onSaveCalculos, calculosDisponiveis }: HelpSectionProps) => {
+  const navigate = useNavigate();
+  
   const handleImprimir = () => {
     window.print();
+  };
+
+  const handleSaveCalculos = () => {
+    if (onSaveCalculos) {
+      onSaveCalculos();
+    } else {
+      toast.info('Você precisa estar na calculadora para salvar cálculos');
+      navigate('/calculadora');
+    }
   };
   
   return (
@@ -17,14 +35,26 @@ const HelpSection = () => {
             Em caso de dúvidas, entre em contato: <a href="mailto:johnnyrnsantos@gmail.com" className="text-juriscalc-navy underline">johnnyrnsantos@gmail.com</a>
           </p>
         </div>
-        <Button 
-          variant="outline" 
-          className="border-juriscalc-navy text-juriscalc-navy"
-          onClick={handleImprimir}
-        >
-          <Printer className="mr-2 h-4 w-4" />
-          Imprimir Petição
-        </Button>
+        <div className="flex space-x-3">
+          {calculosDisponiveis && (
+            <Button 
+              variant="outline" 
+              className="border-juriscalc-navy text-juriscalc-navy"
+              onClick={handleSaveCalculos}
+            >
+              <Save className="mr-2 h-4 w-4" />
+              Salvar Cálculos
+            </Button>
+          )}
+          <Button 
+            variant="outline" 
+            className="border-juriscalc-navy text-juriscalc-navy"
+            onClick={handleImprimir}
+          >
+            <Printer className="mr-2 h-4 w-4" />
+            Imprimir Petição
+          </Button>
+        </div>
       </div>
     </div>
   );
