@@ -333,7 +333,7 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
     if (!formData.calculosTabela) return null;
     
     return (
-      <div className="mt-6 border-t-2 border-dashed border-gray-300 pt-6">
+      <div className="mt-6 border-t-2 border-dashed border-gray-300 pt-6 print:break-inside-avoid print:page-break-inside-avoid">
         <TabelaCalculos 
           calculos={formData.calculosTabela}
           onInserirNoPeticao={() => {}}
@@ -345,7 +345,7 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
 
   return (
     <div>
-      <div className="mb-6 flex items-center">
+      <div className="mb-6 flex items-center print:hidden">
         <Button variant="ghost" onClick={onVoltar} className="mr-4">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Voltar
@@ -357,15 +357,17 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
 
       {/* Exibir cálculos importados se existirem */}
       {calculosImportados && (
-        <TabelaCalculos 
-          calculos={calculosImportados} 
-          onInserirNoPeticao={handleInserirCalculos}
-        />
+        <div className="print:hidden">
+          <TabelaCalculos 
+            calculos={calculosImportados} 
+            onInserirNoPeticao={handleInserirCalculos}
+          />
+        </div>
       )}
       
       {/* Exibir resumo dos cálculos salvos com a petição se existirem */}
       {!calculosImportados && formData.calculosTabela && !calculosPreview && (
-        <Card className="mb-6">
+        <Card className="mb-6 print:hidden">
           <CardHeader>
             <CardTitle className="text-lg flex items-center">
               <FileText className="mr-2 h-5 w-5" />
@@ -384,14 +386,14 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
         </Card>
       )}
       
-      <Card>
-        <CardHeader>
+      <Card className="print:shadow-none print:border-none">
+        <CardHeader className="print:hidden">
           <CardTitle className="text-xl">Dados do Processo</CardTitle>
           <CardDescription>Preencha as informações necessárias para a petição</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div>
+            <div className="print:hidden">
               <label htmlFor="titulo" className="block text-sm font-medium mb-1">Título da Petição</label>
               <Input
                 id="titulo"
@@ -403,7 +405,7 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
               />
             </div>
             
-            <div>
+            <div className="print:hidden">
               <label htmlFor="reclamante" className="block text-sm font-medium mb-1">Nome do Reclamante</label>
               <Input
                 id="reclamante"
@@ -415,7 +417,7 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
               />
             </div>
             
-            <div>
+            <div className="print:hidden">
               <label htmlFor="reclamado" className="block text-sm font-medium mb-1">Nome do Reclamado (Empresa)</label>
               <Input
                 id="reclamado"
@@ -427,7 +429,7 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
               />
             </div>
             
-            <div>
+            <div className="print:hidden">
               <label htmlFor="descricao" className="block text-sm font-medium mb-1">Descrição dos Fatos</label>
               <Textarea
                 id="descricao"
@@ -438,18 +440,33 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
               />
             </div>
 
+            {/* Versão para impressão */}
+            <div className="hidden print:block print:break-inside-avoid">
+              <h1 className="text-2xl font-bold text-center mb-6">{formData.titulo}</h1>
+              
+              <div className="mb-6">
+                <p className="font-bold">RECLAMANTE:</p> 
+                <p className="mb-3">{formData.reclamante || "[Nome do Reclamante]"}</p>
+                
+                <p className="font-bold">RECLAMADO:</p>
+                <p>{formData.reclamado || "[Nome do Reclamado/Empresa]"}</p>
+              </div>
+              
+              <div className="whitespace-pre-wrap mb-6">{formData.descricao}</div>
+            </div>
+
             {/* Mostrar os cálculos embutidos na petição */}
             {formData.calculosTabela && (
-              <div className="border-2 border-gray-200 rounded-md p-4">
-                <h3 className="text-lg font-medium mb-3 text-juriscalc-navy">Preview da Petição com Cálculos</h3>
-                <div className="p-4 bg-white border rounded-md max-h-[400px] overflow-y-auto">
-                  <div className="whitespace-pre-wrap mb-6">{formData.descricao}</div>
+              <div className="border-2 border-gray-200 rounded-md p-4 print:p-0 print:border-0">
+                <h3 className="text-lg font-medium mb-3 text-juriscalc-navy print:hidden">Preview da Petição com Cálculos</h3>
+                <div className="p-4 bg-white border rounded-md max-h-[400px] overflow-y-auto print:p-0 print:border-0 print:max-h-none print:overflow-visible">
+                  <div className="whitespace-pre-wrap mb-6 print:hidden">{formData.descricao}</div>
                   {renderCalculosPreview()}
                 </div>
               </div>
             )}
 
-            <div className="pt-4 border-t border-gray-200">
+            <div className="pt-4 border-t border-gray-200 print:hidden">
               <h3 className="font-medium text-lg mb-3">Cálculos Adicionais</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="flex items-center space-x-2">
@@ -574,7 +591,7 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
               </div>
             </div>
             
-            <div className="pt-4 flex justify-end space-x-4">
+            <div className="pt-4 flex justify-end space-x-4 print:hidden">
               <Button 
                 variant="outline"
                 onClick={handleSaveRascunho}

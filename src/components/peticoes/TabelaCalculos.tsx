@@ -9,7 +9,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter }
 interface TabelaCalculosProps {
   calculos: any;
   onInserirNoPeticao: () => void;
-  embutido?: boolean; // Novo prop para indicar se está embutido na petição
+  embutido?: boolean; // Prop para indicar se está embutido na petição
 }
 
 const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPeticao, embutido = false }) => {
@@ -126,41 +126,41 @@ const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPe
   // Versão para quando estiver embutido na petição
   if (embutido) {
     return (
-      <div className="my-6 print:page-break-inside-avoid">
-        <div className="text-center mb-6">
-          <h3 className="text-2xl font-bold border-b-2 border-juriscalc-navy pb-2">DEMONSTRATIVO DE CÁLCULOS TRABALHISTAS</h3>
+      <div className="my-6 print:break-inside-avoid print:page-break-inside-avoid">
+        <div className="text-center mb-4">
+          <h3 className="text-xl font-bold border-b-2 border-juriscalc-navy pb-2">DEMONSTRATIVO DE CÁLCULOS TRABALHISTAS</h3>
           {logoUrl && (
             <img 
               src={logoUrl} 
               alt="Logo" 
-              className="h-16 mx-auto my-4" 
+              className="h-12 mx-auto my-2" 
             />
           )}
-          {nomeCalculo && <p className="font-medium">{nomeCalculo}</p>}
-          <p className="text-sm text-gray-600">Gerado em: {dataCalculo}</p>
+          {nomeCalculo && <p className="font-medium text-sm">{nomeCalculo}</p>}
+          <p className="text-xs text-gray-600 mb-2">Gerado em: {dataCalculo}</p>
         </div>
         
-        <div className="space-y-6">
+        <div className="space-y-4 print:text-sm">
           {itensVerbaRescisoria.length > 0 && (
             <div>
-              <h4 className="text-lg font-medium mb-2 text-juriscalc-navy">1. VERBAS RESCISÓRIAS</h4>
-              <table className="w-full border-collapse">
+              <h4 className="text-sm font-medium mb-1 text-juriscalc-navy">1. VERBAS RESCISÓRIAS</h4>
+              <table className="w-full border-collapse print:text-xs">
                 <thead>
-                  <tr className="bg-gray-100">
-                    <th className="border border-gray-300 p-2 text-left w-2/3">Descrição</th>
-                    <th className="border border-gray-300 p-2 text-right w-1/3">Valor</th>
+                  <tr className="bg-gray-50">
+                    <th className="border border-gray-300 p-1 text-left w-2/3 text-sm">Descrição</th>
+                    <th className="border border-gray-300 p-1 text-right w-1/3 text-sm">Valor</th>
                   </tr>
                 </thead>
                 <tbody>
                   {itensVerbaRescisoria.map((item, index) => (
-                    <tr key={`verbas-${index}`} className="border-b">
-                      <td className="border border-gray-300 p-2">{item.descricao}</td>
-                      <td className="border border-gray-300 p-2 text-right">{formatarMoeda(item.valor)}</td>
+                    <tr key={`verbas-${index}`}>
+                      <td className="border border-gray-300 p-1 text-sm">{item.descricao}</td>
+                      <td className="border border-gray-300 p-1 text-right text-sm">{formatarMoeda(item.valor)}</td>
                     </tr>
                   ))}
                   <tr className="font-bold bg-gray-50">
-                    <td className="border border-gray-300 p-2">Total Verbas Rescisórias</td>
-                    <td className="border border-gray-300 p-2 text-right">{formatarMoeda(calculos.verbasRescisorias.total)}</td>
+                    <td className="border border-gray-300 p-1 text-sm">Total Verbas Rescisórias</td>
+                    <td className="border border-gray-300 p-1 text-right text-sm">{formatarMoeda(verbasRescisorias.total)}</td>
                   </tr>
                 </tbody>
               </table>
@@ -169,41 +169,41 @@ const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPe
 
           {itensAdicionais.length > 0 && (
             <div>
-              <h4 className="text-lg font-medium mb-2 text-juriscalc-navy">2. ADICIONAIS E MULTAS</h4>
-              <table className="w-full border-collapse">
+              <h4 className="text-sm font-medium mb-1 text-juriscalc-navy">2. ADICIONAIS E MULTAS</h4>
+              <table className="w-full border-collapse print:text-xs">
                 <thead>
-                  <tr className="bg-gray-100">
-                    <th className="border border-gray-300 p-2 text-left w-2/3">Descrição</th>
-                    <th className="border border-gray-300 p-2 text-right w-1/3">Valor</th>
+                  <tr className="bg-gray-50">
+                    <th className="border border-gray-300 p-1 text-left w-2/3 text-sm">Descrição</th>
+                    <th className="border border-gray-300 p-1 text-right w-1/3 text-sm">Valor</th>
                   </tr>
                 </thead>
                 <tbody>
                   {itensAdicionais.map((item, index) => (
-                    <tr key={`adicionais-${index}`} className="border-b">
-                      <td className="border border-gray-300 p-2">{item.descricao}</td>
-                      <td className="border border-gray-300 p-2 text-right">{formatarMoeda(item.valor)}</td>
+                    <tr key={`adicionais-${index}`}>
+                      <td className="border border-gray-300 p-1 text-sm">{item.descricao}</td>
+                      <td className="border border-gray-300 p-1 text-right text-sm">{formatarMoeda(item.valor)}</td>
                     </tr>
                   ))}
                   <tr className="font-bold bg-gray-50">
-                    <td className="border border-gray-300 p-2">Total Adicionais</td>
-                    <td className="border border-gray-300 p-2 text-right">{formatarMoeda(totalAdicionais)}</td>
+                    <td className="border border-gray-300 p-1 text-sm">Total Adicionais</td>
+                    <td className="border border-gray-300 p-1 text-right text-sm">{formatarMoeda(totalAdicionais)}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
           )}
 
-          <div className="bg-juriscalc-navy p-4 rounded-md text-white">
+          <div className="bg-juriscalc-navy p-2 rounded-md text-white mt-2">
             <div className="text-center">
-              <p className="text-sm font-medium mb-2">VALOR TOTAL DA RECLAMAÇÃO</p>
-              <p className="text-2xl font-bold">
-                {formatarMoeda(calculos.totalGeral)}
+              <p className="text-xs font-medium">VALOR TOTAL DA RECLAMAÇÃO</p>
+              <p className="text-base font-bold">
+                {formatarMoeda(totalGeral)}
               </p>
             </div>
           </div>
           
-          <div className="text-center text-sm text-gray-500 pt-4 border-t mt-6">
-            <p>Cálculos realizados por: <span className="font-medium">{nomeEscritorio}</span></p>
+          <div className="text-center text-xs text-gray-500 border-t mt-2 pt-1">
+            <p>Cálculos: <span className="font-medium">{nomeEscritorio}</span></p>
           </div>
         </div>
       </div>
