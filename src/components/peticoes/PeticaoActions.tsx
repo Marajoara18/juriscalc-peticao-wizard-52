@@ -1,16 +1,24 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Save } from 'lucide-react';
+import { Save, Printer } from 'lucide-react';
 
 interface PeticaoActionsProps {
   onSaveRascunho: () => void;
   onSaveFinalized: () => void;
+  onPrint: () => void;
 }
 
-const PeticaoActions: React.FC<PeticaoActionsProps> = ({ onSaveRascunho, onSaveFinalized }) => {
+const PeticaoActions: React.FC<PeticaoActionsProps> = ({ onSaveRascunho, onSaveFinalized, onPrint }) => {
   return (
     <div className="pt-4 flex justify-end space-x-4 print:hidden">
+      <Button 
+        variant="outline"
+        onClick={onPrint}
+      >
+        <Printer className="mr-2 h-4 w-4" />
+        Imprimir Petição
+      </Button>
       <Button 
         variant="outline"
         onClick={onSaveRascunho}

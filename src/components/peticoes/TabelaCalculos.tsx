@@ -13,6 +13,12 @@ interface TabelaCalculosProps {
 }
 
 const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPeticao, embutido = false }) => {
+  // Obter o logo da empresa do usuário atual
+  const logoUrl = localStorage.getItem('userLogoUrl');
+  
+  // Obter o nome do escritório do usuário atual ou dos cálculos
+  const nomeEscritorio = calculos?.nomeEscritorio || localStorage.getItem('userName') || 'JurisCalc Trabalhista';
+
   if (!calculos || (!calculos.verbasRescisorias && !calculos.adicionais)) {
     return (
       <Card className="mb-6 border-dashed border-2 border-gray-300">
@@ -128,7 +134,6 @@ const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPe
     return (
       <div className="my-6 print:break-inside-avoid print:page-break-inside-avoid">
         <div className="text-center mb-4">
-          <h3 className="text-xl font-bold border-b-2 border-juriscalc-navy pb-2">DEMONSTRATIVO DE CÁLCULOS TRABALHISTAS</h3>
           {logoUrl && (
             <img 
               src={logoUrl} 
@@ -136,6 +141,7 @@ const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPe
               className="h-12 mx-auto my-2" 
             />
           )}
+          <h3 className="text-xl font-bold border-b-2 border-juriscalc-navy pb-2">DEMONSTRATIVO DE CÁLCULOS TRABALHISTAS</h3>
           {nomeCalculo && <p className="font-medium text-sm">{nomeCalculo}</p>}
           <p className="text-xs text-gray-600 mb-2">Gerado em: {dataCalculo}</p>
         </div>

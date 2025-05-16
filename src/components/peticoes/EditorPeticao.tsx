@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from "sonner";
@@ -191,6 +190,19 @@ const EditorPeticao: React.FC<PeticaoProps> = ({
     });
   };
 
+  const handlePrint = () => {
+    // Verifica se há conteúdo para imprimir
+    if (!formData.titulo) {
+      toast.error('Adicione pelo menos um título antes de imprimir a petição.');
+      return;
+    }
+    
+    // Aciona a funcionalidade de impressão do navegador
+    window.print();
+    
+    toast.success('Petição enviada para impressão!');
+  };
+
   return (
     <div>
       <PeticaoHeader 
@@ -226,6 +238,7 @@ const EditorPeticao: React.FC<PeticaoProps> = ({
             <PeticaoActions 
               onSaveRascunho={handleSaveRascunho}
               onSaveFinalized={handleSaveFinalized}
+              onPrint={handlePrint}
             />
           </div>
         </CardContent>

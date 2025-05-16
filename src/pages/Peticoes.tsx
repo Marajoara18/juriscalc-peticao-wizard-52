@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -16,6 +15,7 @@ import PremiumAlert from '@/components/peticoes/PremiumAlert';
 import HelpSection from '@/components/peticoes/HelpSection';
 import EmptyPeticoes from '@/components/peticoes/EmptyPeticoes';
 import UserManagement from '@/components/auth/UserManagement';
+import MasterPasswordReset from '@/components/auth/MasterPasswordReset';
 
 // Import data and utilities
 import { peticoesModelo } from '@/data/peticoes-modelo';
@@ -161,6 +161,9 @@ const Peticoes = () => {
           </div>
           
           <UserManagement />
+          
+          {/* Componente de redefinição de senha do master */}
+          <MasterPasswordReset />
         </div>
       </Layout>
     );

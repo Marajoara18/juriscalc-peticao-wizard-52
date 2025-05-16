@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Calculadora from "./pages/Calculadora";
 import Peticoes from "./pages/Peticoes";
 import NotFound from "./pages/NotFound";
+import MasterPasswordReset from "./components/auth/MasterPasswordReset";
 
 const queryClient = new QueryClient();
 
