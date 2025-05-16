@@ -1,12 +1,14 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { FileText, Printer } from 'lucide-react';
+import { toast } from "sonner";
 import { formatarMoeda } from '@/utils/formatters';
-import { Resultados } from '@/types/calculadora';
-import { Adicionais } from '@/types/calculadora';
+import { Resultados, Adicionais } from '@/types/calculadora';
 
 interface ResultadosCalculosProps {
   resultados: Resultados;
@@ -14,6 +16,8 @@ interface ResultadosCalculosProps {
 }
 
 const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({ resultados, adicionais }) => {
+  const navigate = useNavigate();
+  
   // Calcular o total geral
   const totalAdicionais = 
     resultados.adicionais.adicionalInsalubridade +
@@ -32,6 +36,155 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({ resultados, adi
     resultados.adicionais.customCalculo;
 
   const totalGeral = resultados.verbasRescisorias.total + totalAdicionais;
+
+  // Função para imprimir cálculos
+  const handleImprimirCalculos = () => {
+    // Preparando a página de impressão
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      toast.error('Não foi possível abrir a janela de impressão. Verifique se o bloqueador de pop-ups está desativado.');
+      return;
+    }
+    
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Cálculos Trabalhistas</title>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              padding: 40px;
+              line-height: 1.6;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 30px;
+            }
+            .header h1 {
+              color: #1e3a8a;
+              margin-bottom: 5px;
+            }
+            .section {
+              margin-bottom: 30px;
+            }
+            .section h2 {
+              color: #1e3a8a;
+              border-bottom: 1px solid #ddd;
+              padding-bottom: 10px;
+              margin-bottom: 15px;
+            }
+            .item {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 8px;
+              border-bottom: 1px dotted #ddd;
+              padding-bottom: 8px;
+            }
+            .total {
+              font-weight: bold;
+              margin-top: 15px;
+              font-size: 1.1em;
+            }
+            .grand-total {
+              margin-top: 30px;
+              padding: 15px;
+              background-color: #1e3a8a;
+              color: white;
+              font-size: 1.2em;
+              font-weight: bold;
+              text-align: center;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Cálculos Trabalhistas</h1>
+            <p>Data: ${new Date().toLocaleDateString('pt-BR')}</p>
+          </div>
+          
+          <div class="section">
+            <h2>Verbas Rescisórias</h2>
+            ${renderVerbaItem('Saldo de Salário', resultados.verbasRescisorias.saldoSalario)}
+            ${renderVerbaItem('Aviso Prévio', resultados.verbasRescisorias.avisoPrevia)}
+            ${renderVerbaItem('13º Salário Proporcional', resultados.verbasRescisorias.decimoTerceiro)}
+            ${renderVerbaItem('Férias Proporcionais', resultados.verbasRescisorias.ferias)}
+            ${renderVerbaItem('1/3 Constitucional', resultados.verbasRescisorias.tercoConstitucional)}
+            ${renderVerbaItem('FGTS sobre verbas', resultados.verbasRescisorias.fgts)}
+            ${renderVerbaItem('Multa FGTS (40%)', resultados.verbasRescisorias.multaFgts)}
+            <div class="item total">
+              <span>Total Verbas Rescisórias:</span>
+              <span>${formatarMoeda(resultados.verbasRescisorias.total)}</span>
+            </div>
+          </div>
+          
+          <div class="section">
+            <h2>Adicionais e Multas</h2>
+            ${resultados.adicionais.adicionalInsalubridade > 0 ? renderVerbaItem('Adicional de Insalubridade', resultados.adicionais.adicionalInsalubridade) : ''}
+            ${resultados.adicionais.adicionalPericulosidade > 0 ? renderVerbaItem('Adicional de Periculosidade', resultados.adicionais.adicionalPericulosidade) : ''}
+            ${resultados.adicionais.multa467 > 0 ? renderVerbaItem('Multa Art. 467 da CLT', resultados.adicionais.multa467) : ''}
+            ${resultados.adicionais.multa477 > 0 ? renderVerbaItem('Multa Art. 477 da CLT', resultados.adicionais.multa477) : ''}
+            ${resultados.adicionais.adicionalNoturno > 0 ? renderVerbaItem('Adicional Noturno', resultados.adicionais.adicionalNoturno) : ''}
+            ${resultados.adicionais.horasExtras > 0 ? renderVerbaItem('Horas Extras', resultados.adicionais.horasExtras) : ''}
+            ${resultados.adicionais.feriasVencidas > 0 ? renderVerbaItem('Férias Vencidas (+ 1/3)', resultados.adicionais.feriasVencidas) : ''}
+            ${resultados.adicionais.indenizacaoDemissao > 0 ? renderVerbaItem('Indenização por Demissão Indevida', resultados.adicionais.indenizacaoDemissao) : ''}
+            ${resultados.adicionais.valeTransporte > 0 ? renderVerbaItem('Vale Transporte Não Pago', resultados.adicionais.valeTransporte) : ''}
+            ${resultados.adicionais.valeAlimentacao > 0 ? renderVerbaItem('Vale Alimentação Não Pago', resultados.adicionais.valeAlimentacao) : ''}
+            ${resultados.adicionais.adicionalTransferencia > 0 ? renderVerbaItem('Adicional de Transferência', resultados.adicionais.adicionalTransferencia) : ''}
+            ${resultados.adicionais.descontosIndevidos > 0 ? renderVerbaItem('Descontos Indevidos', resultados.adicionais.descontosIndevidos) : ''}
+            ${resultados.adicionais.diferencasSalariais > 0 ? renderVerbaItem('Diferenças Salariais', resultados.adicionais.diferencasSalariais) : ''}
+            ${resultados.adicionais.customCalculo > 0 ? renderVerbaItem(adicionais.descricaoCustom || 'Cálculo Personalizado', resultados.adicionais.customCalculo) : ''}
+            <div class="item total">
+              <span>Total Adicionais:</span>
+              <span>${formatarMoeda(totalAdicionais)}</span>
+            </div>
+          </div>
+          
+          <div class="grand-total">
+            <div>Valor Total da Reclamação: ${formatarMoeda(totalGeral)}</div>
+          </div>
+        </body>
+      </html>
+    `;
+    
+    printWindow.document.open();
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+    
+    setTimeout(() => {
+      printWindow.print();
+    }, 500);
+    
+    toast.success('Preparando impressão dos cálculos...');
+  };
+
+  function renderVerbaItem(label: string, value: number) {
+    if (value <= 0) return '';
+    return `
+      <div class="item">
+        <span>${label}:</span>
+        <span>${formatarMoeda(value)}</span>
+      </div>
+    `;
+  }
+
+  // Função para gerar petição
+  const handleGerarPeticao = () => {
+    // Salvando os cálculos no localStorage para usar na página de petições
+    const calculosParaPeticao = {
+      verbasRescisorias: resultados.verbasRescisorias,
+      adicionais: resultados.adicionais,
+      totalGeral: totalGeral,
+      timestamp: new Date().toISOString(),
+    };
+    
+    localStorage.setItem('calculosParaPeticao', JSON.stringify(calculosParaPeticao));
+    
+    toast.success('Cálculos prontos para serem inseridos na petição!');
+    navigate('/peticoes');
+  };
 
   return (
     <Card className="h-full">
@@ -200,10 +353,19 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({ resultados, adi
                 </div>
               </div>
               <div className="mt-4 flex justify-center">
-                <Button variant="outline" className="mr-2">
+                <Button 
+                  variant="outline" 
+                  className="mr-2"
+                  onClick={handleImprimirCalculos}
+                >
+                  <Printer className="mr-2 h-4 w-4" />
                   Imprimir Cálculos
                 </Button>
-                <Button className="bg-juriscalc-gold text-juriscalc-navy hover:bg-opacity-90">
+                <Button 
+                  className="bg-juriscalc-gold text-juriscalc-navy hover:bg-opacity-90"
+                  onClick={handleGerarPeticao}
+                >
+                  <FileText className="mr-2 h-4 w-4" />
                   Gerar Petição
                 </Button>
               </div>

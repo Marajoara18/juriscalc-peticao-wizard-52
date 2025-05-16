@@ -1,8 +1,13 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { Printer } from 'lucide-react';
 
 const HelpSection = () => {
+  const handleImprimir = () => {
+    window.print();
+  };
+  
   return (
     <div className="bg-juriscalc-lightgray rounded-lg p-6 mt-12">
       <div className="flex flex-col md:flex-row items-center justify-between">
@@ -15,8 +20,9 @@ const HelpSection = () => {
         <Button 
           variant="outline" 
           className="border-juriscalc-navy text-juriscalc-navy"
-          onClick={() => window.print()}
+          onClick={handleImprimir}
         >
+          <Printer className="mr-2 h-4 w-4" />
           Imprimir Petição
         </Button>
       </div>

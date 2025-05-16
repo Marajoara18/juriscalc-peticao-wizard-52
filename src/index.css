@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -114,5 +113,51 @@
   .juriscalc-card {
     @apply bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden transition-all 
     hover:shadow-lg;
+  }
+}
+
+@media print {
+  /* Esconder elementos desnecessários durante a impressão */
+  header, 
+  nav,
+  footer,
+  .no-print,
+  button {
+    display: none !important;
+  }
+  
+  /* Garantir que o conteúdo seja impresso adequadamente */
+  body {
+    padding: 0;
+    margin: 0;
+    font-size: 12pt;
+    background: #fff;
+  }
+
+  /* Melhorar a exibição de tabelas */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    page-break-inside: auto;
+  }
+  
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  /* Manter os elementos importantes em uma página */
+  .keep-together {
+    page-break-inside: avoid;
+  }
+  
+  /* Quebrar página onde necessário */
+  .page-break {
+    page-break-before: always;
   }
 }

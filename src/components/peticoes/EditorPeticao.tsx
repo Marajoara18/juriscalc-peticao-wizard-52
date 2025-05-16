@@ -1,10 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, FileText } from 'lucide-react';
+import { toast } from "sonner";
+import TabelaCalculos from './TabelaCalculos';
 
 interface PeticaoFormData {
   id: number;
@@ -28,6 +30,7 @@ interface PeticaoFormData {
       formula: string;
     };
   };
+  calculosTabela?: any;
 }
 
 interface EditorPeticaoProps {
@@ -69,8 +72,23 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
         descricao: '',
         formula: ''
       }
-    }
+    },
+    calculosTabela: peticao?.calculosTabela || null
   });
+  
+  const [calculosImportados, setCalculosImportados] = useState<any>(null);
+  
+  // Carregar cálculos do localStorage quando o componente for montado
+  useEffect(() => {
+    const calculosArmazenados = localStorage.getItem('calculosParaPeticao');
+    if (calculosArmazenados) {
+      try {
+        setCalculosImportados(JSON.parse(calculosArmazenados));
+      } catch (error) {
+        console.error('Erro ao carregar cálculos:', error);
+      }
+    }
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -116,6 +134,120 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
       }
     }));
   };
+  
+  // Função para inserir a tabela de cálculos na petição
+  const handleInserirCalculos = () => {
+    // Salvando os cálculos nos dados da petição
+    setFormData(prev => ({
+      ...prev,
+      calculosTabela: calculosImportados
+    }));
+    
+    // Inserir um texto indicativo no final da descrição
+    const textoCalculos = "\n\nCONFORME DEMONSTRADO NOS CÁLCULOS EM ANEXO, OS VALORES DEVIDOS AO RECLAMANTE SOMAM " + 
+      "R$ " + calculosImportados.totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + 
+      " (" + valorPorExtenso(calculosImportados.totalGeral) + ").";
+    
+    setFormData(prev => ({
+      ...prev,
+      descricao: prev.descricao + textoCalculos
+    }));
+    
+    toast.success('Cálculos inseridos na petição com sucesso!');
+    
+    // Limpar do localStorage após usar
+    localStorage.removeItem('calculosParaPeticao');
+    setCalculosImportados(null);
+  };
+  
+  // Função para converter valor numérico para texto por extenso
+  const valorPorExtenso = (valor: number): string => {
+    if (valor === 0) return "zero reais";
+    
+    const unidades = ["", "um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove"];
+    const dezADezenove = ["dez", "onze", "doze", "treze", "quatorze", "quinze", "dezesseis", "dezessete", "dezoito", "dezenove"];
+    const dezenas = ["", "", "vinte", "trinta", "quarenta", "cinquenta", "sessenta", "setenta", "oitenta", "noventa"];
+    const centenas = ["", "cento", "duzentos", "trezentos", "quatrocentos", "quinhentos", "seiscentos", "setecentos", "oitocentos", "novecentos"];
+    
+    const valorInteiro = Math.floor(valor);
+    const centavos = Math.round((valor - valorInteiro) * 100);
+    
+    let extenso = "";
+    
+    // Processando a parte inteira
+    if (valorInteiro > 0) {
+      if (valorInteiro === 1) {
+        extenso = "um real";
+      } else {
+        // Processamento para milhões
+        const milhoes = Math.floor(valorInteiro / 1000000);
+        if (milhoes > 0) {
+          if (milhoes === 1) {
+            extenso += "um milhão";
+          } else {
+            extenso += converterNumero(milhoes) + " milhões";
+          }
+          if (valorInteiro % 1000000 !== 0) extenso += " e ";
+        }
+        
+        // Processamento para milhares
+        const restoDivisaoMilhoes = valorInteiro % 1000000;
+        const milhares = Math.floor(restoDivisaoMilhoes / 1000);
+        if (milhares > 0) {
+          if (milhares === 1) {
+            extenso += "mil";
+          } else {
+            extenso += converterNumero(milhares) + " mil";
+          }
+          if (valorInteiro % 1000 !== 0) extenso += " e ";
+        }
+        
+        // Processamento para unidades
+        const resto = valorInteiro % 1000;
+        if (resto > 0) {
+          extenso += converterNumero(resto);
+        }
+        
+        extenso += " reais";
+      }
+    }
+    
+    // Processando os centavos
+    if (centavos > 0) {
+      if (extenso !== "") {
+        extenso += " e ";
+      }
+      
+      if (centavos === 1) {
+        extenso += "um centavo";
+      } else {
+        extenso += converterNumero(centavos) + " centavos";
+      }
+    }
+    
+    return extenso;
+    
+    // Função auxiliar para converter números menores
+    function converterNumero(num: number): string {
+      if (num < 10) return unidades[num];
+      if (num < 20) return dezADezenove[num - 10];
+      if (num < 100) {
+        const dezena = Math.floor(num / 10);
+        const unidade = num % 10;
+        return dezenas[dezena] + (unidade > 0 ? " e " + unidades[unidade] : "");
+      }
+      if (num < 1000) {
+        const centena = Math.floor(num / 100);
+        const resto = num % 100;
+        
+        // Caso especial para 100
+        if (centena === 1 && resto === 0) return "cem";
+        
+        return centenas[centena] + (resto > 0 ? " e " + converterNumero(resto) : "");
+      }
+      return "";
+    }
+  };
 
   const handleSaveRascunho = () => {
     onSave({
@@ -142,6 +274,35 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
           {modelo ? `Novo documento: ${modelo.titulo}` : `Editando: ${peticao?.titulo}`}
         </h2>
       </div>
+
+      {/* Exibir cálculos importados se existirem */}
+      {calculosImportados && (
+        <TabelaCalculos 
+          calculos={calculosImportados} 
+          onInserirNoPeticao={handleInserirCalculos}
+        />
+      )}
+      
+      {/* Exibir cálculos salvos com a petição se existirem */}
+      {!calculosImportados && formData.calculosTabela && (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center">
+              <FileText className="mr-2 h-5 w-5" />
+              Cálculos Inseridos na Petição
+            </CardTitle>
+            <CardDescription>
+              Os cálculos abaixo foram incluídos nesta petição
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="bg-gray-50 p-3 rounded-md text-center">
+              <p className="font-medium">Valor Total: {formData.calculosTabela.totalGeral.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+              <p className="text-sm text-gray-500">Os valores detalhados estão inclusos no documento da petição</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       
       <Card>
         <CardHeader>
