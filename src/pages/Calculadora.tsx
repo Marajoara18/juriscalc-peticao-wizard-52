@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -82,6 +81,10 @@ const Calculadora = () => {
       calcularCustom: false,
       descricaoCustom: '',
       valorCustom: '',
+      calcularSeguroDesemprego: false,
+      ultimoSalario: '',
+      mesesTrabalhadosUltimoEmprego: '',
+      tempoContribuicaoINSS: '',
     });
     
     // Reiniciar resultados

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { toast } from "@/components/ui/use-toast";
 import { calcularMesesEntreDatas, calcularDiasEntreDatas } from '@/utils/formatters';
@@ -30,6 +29,7 @@ const resultadosIniciais: Resultados = {
     descontosIndevidos: 0,
     diferencasSalariais: 0,
     customCalculo: 0,
+    seguroDesemprego: 0,
   }
 };
 
@@ -79,6 +79,10 @@ export const useCalculadora = () => {
     calcularCustom: false,
     descricaoCustom: '',
     valorCustom: '',
+    calcularSeguroDesemprego: false,
+    ultimoSalario: '',
+    mesesTrabalhadosUltimoEmprego: '',
+    tempoContribuicaoINSS: '',
   });
 
   // Estado para os resultados
@@ -233,6 +237,7 @@ export const useCalculadora = () => {
       let descontosIndevidos = 0;
       let diferencasSalariais = 0;
       let customCalculo = 0;
+      let seguroDesemprego = 0;
 
       // Férias Vencidas
       if (adicionais.calcularFeriasVencidas) {
@@ -280,6 +285,52 @@ export const useCalculadora = () => {
         customCalculo = parseFloat(adicionais.valorCustom) || 0;
       }
 
+      // Cálculo do Seguro-Desemprego
+      if (adicionais.calcularSeguroDesemprego) {
+        // Verificar se é elegível para o seguro-desemprego
+        // - Demissão sem justa causa
+        // - Trabalhou pelo menos 12 meses nos últimos 18 meses (para primeira solicitação)
+        const ultimoSalario = parseFloat(adicionais.ultimoSalario || dadosContrato.salarioBase) || 0;
+        const mesesTrabalhadosUltimoEmprego = parseInt(adicionais.mesesTrabalhadosUltimoEmprego) || 0;
+        const tempoContribuicaoINSS = parseFloat(adicionais.tempoContribuicaoINSS) || 0;
+        
+        // Verifica se é elegível com base no tipo de rescisão
+        const elegivel = dadosContrato.tipoRescisao === 'sem_justa_causa' || dadosContrato.tipoRescisao === 'rescisao_indireta';
+        
+        if (elegivel) {
+          let parcelas = 0;
+          
+          // Determinar número de parcelas com base no tempo de trabalho
+          if (tempoContribuicaoINSS < 1) {
+            if (mesesTrabalhadosUltimoEmprego >= 12 && mesesTrabalhadosUltimoEmprego < 24) {
+              parcelas = 4;
+            }
+          } else if (tempoContribuicaoINSS >= 1 && tempoContribuicaoINSS < 2) {
+            if (mesesTrabalhadosUltimoEmprego >= 9) {
+              parcelas = 5;
+            }
+          } else if (tempoContribuicaoINSS >= 2) {
+            if (mesesTrabalhadosUltimoEmprego >= 6) {
+              parcelas = 5;
+            }
+          }
+          
+          // Cálculo do valor da parcela
+          let valorParcela = 0;
+          
+          if (ultimoSalario <= 1968.36) {
+            valorParcela = ultimoSalario * 0.8;
+          } else if (ultimoSalario <= 3280.93) {
+            valorParcela = (1968.36 * 0.8) + ((ultimoSalario - 1968.36) * 0.5);
+          } else {
+            valorParcela = 2230.97; // Valor máximo da parcela em 2024
+          }
+          
+          // Valor total do seguro-desemprego
+          seguroDesemprego = valorParcela * parcelas;
+        }
+      }
+
       // Atualiza o estado com os resultados calculados
       setResultados({
         verbasRescisorias: {
@@ -307,6 +358,7 @@ export const useCalculadora = () => {
           descontosIndevidos,
           diferencasSalariais,
           customCalculo,
+          seguroDesemprego,
         }
       });
 
@@ -348,6 +400,7 @@ export const useCalculadora = () => {
           descontosIndevidos,
           diferencasSalariais,
           customCalculo,
+          seguroDesemprego,
         }
       });
     } catch (error) {

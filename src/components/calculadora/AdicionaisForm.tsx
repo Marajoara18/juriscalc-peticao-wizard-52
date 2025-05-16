@@ -7,6 +7,7 @@ import { VerbasAdicionais } from './adicionais/VerbasAdicionais';
 import { Multas } from './adicionais/Multas';
 import { OutrosAdicionais } from './adicionais/OutrosAdicionais';
 import { CalculoPersonalizado } from './adicionais/CalculoPersonalizado';
+import { SeguroDesemprego } from './adicionais/SeguroDesemprego';
 import { Adicionais } from '@/types/calculadora';
 
 interface AdicionaisFormProps {
@@ -42,6 +43,13 @@ const AdicionaisForm: React.FC<AdicionaisFormProps> = ({ adicionais, onChange })
           <Separator className="my-4" />
           <h3 className="font-serif font-semibold text-juriscalc-navy">Multas</h3>
           <Multas adicionais={adicionais} onChange={onChange} />
+        </div>
+
+        {/* Seguro-Desemprego */}
+        <div className="space-y-3">
+          <Separator className="my-4" />
+          <h3 className="font-serif font-semibold text-juriscalc-navy">Seguro-Desemprego</h3>
+          <SeguroDesemprego adicionais={adicionais} onChange={onChange} />
         </div>
 
         {/* Outros Adicionais */}
