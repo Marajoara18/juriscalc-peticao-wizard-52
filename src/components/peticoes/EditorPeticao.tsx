@@ -146,6 +146,25 @@ const EditorPeticao: React.FC<PeticaoProps> = ({
     }
   };
   
+  // Função para inserir o marcador de tabela no texto da descrição na posição atual do cursor
+  const handleInsertTableMarker = () => {
+    const textArea = document.getElementById('descricao') as HTMLTextAreaElement;
+    if (!textArea) return;
+    
+    const cursorPosition = textArea.selectionStart;
+    const textBefore = formData.descricao.substring(0, cursorPosition);
+    const textAfter = formData.descricao.substring(cursorPosition);
+    
+    const newDescription = textBefore + "[TABELA_CALCULOS]" + textAfter;
+    
+    setFormData(prev => ({
+      ...prev,
+      descricao: newDescription
+    }));
+    
+    toast.success('Marcador de tabela inserido. A tabela de cálculos será exibida neste local.');
+  };
+  
   // Função para inserir a tabela de cálculos na petição
   const handleInserirCalculos = () => {
     if (!calculosImportados) return;
@@ -156,7 +175,7 @@ const EditorPeticao: React.FC<PeticaoProps> = ({
       calculosTabela: calculosImportados
     }));
     
-    // Inserir texto indicativo no final da descrição
+    // Inserir texto indicativo no final da descrição sem adicionar automaticamente a tabela
     const textoCalculos = "\n\nOS VALORES DEVIDOS AO RECLAMANTE SOMAM " + 
       "R$ " + calculosImportados.totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + 
       " (" + valorPorExtenso(calculosImportados.totalGeral) + "), conforme demonstrativo ABAIXO.";
@@ -169,7 +188,7 @@ const EditorPeticao: React.FC<PeticaoProps> = ({
     // Definir o preview dos cálculos para mostrar na interface
     setCalculosPreview("com_calculos");
     
-    toast.success('Cálculos inseridos na petição com sucesso!');
+    toast.success('Cálculos inseridos na petição com sucesso! Use o botão "Inserir Tabela de Cálculos" para posicionar a tabela dentro do texto.');
     
     // Limpar do localStorage após usar
     localStorage.removeItem('calculosParaPeticao');
@@ -224,7 +243,11 @@ const EditorPeticao: React.FC<PeticaoProps> = ({
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <PeticaoForm formData={formData} onChange={handleInputChange} />
+            <PeticaoForm 
+              formData={formData} 
+              onChange={handleInputChange} 
+              onInsertTableMarker={handleInsertTableMarker}
+            />
             
             <PeticaoPrintView formData={formData} />
 

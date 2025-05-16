@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { PeticaoFormData } from '@/types/peticao';
 import TabelaCalculos from './TabelaCalculos';
@@ -8,6 +7,38 @@ interface PeticaoPrintViewProps {
 }
 
 const PeticaoPrintView: React.FC<PeticaoPrintViewProps> = ({ formData }) => {
+  // Parse description text to find placeholder for calculation table
+  const renderDescriptionWithCalculos = () => {
+    if (!formData.descricao || !formData.calculosTabela) return formData.descricao;
+    
+    // Split the description by the special marker if it exists
+    if (formData.descricao.includes("[TABELA_CALCULOS]")) {
+      const parts = formData.descricao.split("[TABELA_CALCULOS]");
+      
+      return (
+        <>
+          {parts.map((part, index) => (
+            <React.Fragment key={index}>
+              <div className="whitespace-pre-wrap">{part}</div>
+              {index < parts.length - 1 && (
+                <div className="my-6 border-2 border-gray-200 rounded-md p-4 print:break-inside-avoid">
+                  <TabelaCalculos 
+                    calculos={formData.calculosTabela}
+                    onInserirNoPeticao={() => {}}
+                    embutido={true}
+                  />
+                </div>
+              )}
+            </React.Fragment>
+          ))}
+        </>
+      );
+    }
+    
+    // If no marker, just return the description
+    return <div className="whitespace-pre-wrap">{formData.descricao}</div>;
+  };
+
   return (
     <>
       <div className="hidden print:block print:break-inside-avoid">
@@ -21,10 +52,13 @@ const PeticaoPrintView: React.FC<PeticaoPrintViewProps> = ({ formData }) => {
           <p>{formData.reclamado || "[Nome do Reclamado/Empresa]"}</p>
         </div>
         
-        <div className="whitespace-pre-wrap mb-6">{formData.descricao}</div>
+        {/* Render description with embedded calculation table if marker exists */}
+        <div className="mb-6">
+          {renderDescriptionWithCalculos()}
+        </div>
         
-        {/* Inserir tabela de cálculos diretamente no documento quando for imprimir */}
-        {formData.calculosTabela && (
+        {/* We'll keep this for backward compatibility but hide if using the marker approach */}
+        {formData.calculosTabela && !formData.descricao.includes("[TABELA_CALCULOS]") && (
           <div className="print:break-inside-avoid print:page-break-inside-avoid">
             <TabelaCalculos 
               calculos={formData.calculosTabela}
@@ -39,7 +73,6 @@ const PeticaoPrintView: React.FC<PeticaoPrintViewProps> = ({ formData }) => {
         <div className="border-2 border-gray-200 rounded-md p-4 print:hidden">
           <h3 className="text-lg font-medium mb-3 text-juriscalc-navy">Preview da Petição com Cálculos</h3>
           <div className="p-4 bg-white border rounded-md max-h-[400px] overflow-y-auto">
-            <div className="whitespace-pre-wrap mb-6">{formData.descricao}</div>
             {renderCalculosPreview(formData)}
           </div>
         </div>
@@ -52,14 +85,42 @@ const PeticaoPrintView: React.FC<PeticaoPrintViewProps> = ({ formData }) => {
 const renderCalculosPreview = (formData: PeticaoFormData) => {
   if (!formData.calculosTabela) return null;
   
+  // Check if there's a placeholder in the description
+  if (formData.descricao.includes("[TABELA_CALCULOS]")) {
+    const parts = formData.descricao.split("[TABELA_CALCULOS]");
+    
+    return (
+      <>
+        {parts.map((part, index) => (
+          <React.Fragment key={index}>
+            <div className="whitespace-pre-wrap">{part}</div>
+            {index < parts.length - 1 && (
+              <div className="mt-4 mb-4 border-2 border-gray-300 rounded-md p-4">
+                <TabelaCalculos 
+                  calculos={formData.calculosTabela}
+                  onInserirNoPeticao={() => {}}
+                  embutido={true}
+                />
+              </div>
+            )}
+          </React.Fragment>
+        ))}
+      </>
+    );
+  }
+  
+  // If no marker is found, show the old way
   return (
-    <div className="mt-6 border-t-2 border-dashed border-gray-300 pt-6">
-      <TabelaCalculos 
-        calculos={formData.calculosTabela}
-        onInserirNoPeticao={() => {}}
-        embutido={true}
-      />
-    </div>
+    <>
+      <div className="whitespace-pre-wrap mb-6">{formData.descricao}</div>
+      <div className="mt-6 border-t-2 border-dashed border-gray-300 pt-6">
+        <TabelaCalculos 
+          calculos={formData.calculosTabela}
+          onInserirNoPeticao={() => {}}
+          embutido={true}
+        />
+      </div>
+    </>
   );
 };
 
