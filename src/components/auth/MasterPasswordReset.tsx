@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 
@@ -58,7 +57,7 @@ const MasterPasswordReset: React.FC = () => {
         <Button 
           onClick={handleSendResetLink} 
           disabled={loading}
-          className="w-full"
+          className="w-full bg-juriscalc-navy hover:bg-opacity-90"
         >
           {loading ? 'Enviando...' : 'Enviar Link de Redefinição'}
         </Button>

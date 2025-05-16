@@ -23,6 +23,7 @@ const App = () => (
           <Route path="/" element={<Login />} />
           <Route path="/calculadora" element={<Calculadora />} />
           <Route path="/peticoes" element={<Peticoes />} />
+          <Route path="/reset-password" element={<MasterPasswordReset />} />
           {/* Redirecionar a página index antiga para o login */}
           <Route path="/index" element={<Navigate to="/" replace />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

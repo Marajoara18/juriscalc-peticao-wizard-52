@@ -22,13 +22,23 @@ const PeticaoPrintView: React.FC<PeticaoPrintViewProps> = ({ formData }) => {
         </div>
         
         <div className="whitespace-pre-wrap mb-6">{formData.descricao}</div>
+        
+        {formData.calculosTabela && (
+          <div className="print:break-inside-avoid print:page-break-inside-avoid">
+            <TabelaCalculos 
+              calculos={formData.calculosTabela}
+              onInserirNoPeticao={() => {}}
+              embutido={true}
+            />
+          </div>
+        )}
       </div>
 
       {formData.calculosTabela && (
-        <div className="border-2 border-gray-200 rounded-md p-4 print:p-0 print:border-0">
-          <h3 className="text-lg font-medium mb-3 text-juriscalc-navy print:hidden">Preview da Petição com Cálculos</h3>
-          <div className="p-4 bg-white border rounded-md max-h-[400px] overflow-y-auto print:p-0 print:border-0 print:max-h-none print:overflow-visible">
-            <div className="whitespace-pre-wrap mb-6 print:hidden">{formData.descricao}</div>
+        <div className="border-2 border-gray-200 rounded-md p-4 print:hidden">
+          <h3 className="text-lg font-medium mb-3 text-juriscalc-navy">Preview da Petição com Cálculos</h3>
+          <div className="p-4 bg-white border rounded-md max-h-[400px] overflow-y-auto">
+            <div className="whitespace-pre-wrap mb-6">{formData.descricao}</div>
             {renderCalculosPreview(formData)}
           </div>
         </div>
@@ -42,7 +52,7 @@ const renderCalculosPreview = (formData: PeticaoFormData) => {
   if (!formData.calculosTabela) return null;
   
   return (
-    <div className="mt-6 border-t-2 border-dashed border-gray-300 pt-6 print:break-inside-avoid print:page-break-inside-avoid">
+    <div className="mt-6 border-t-2 border-dashed border-gray-300 pt-6">
       <TabelaCalculos 
         calculos={formData.calculosTabela}
         onInserirNoPeticao={() => {}}

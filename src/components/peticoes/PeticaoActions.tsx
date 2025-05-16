@@ -15,6 +15,7 @@ const PeticaoActions: React.FC<PeticaoActionsProps> = ({ onSaveRascunho, onSaveF
       <Button 
         variant="outline"
         onClick={onPrint}
+        className="border-juriscalc-navy text-juriscalc-navy hover:bg-juriscalc-navy hover:text-white"
       >
         <Printer className="mr-2 h-4 w-4" />
         Imprimir Petição

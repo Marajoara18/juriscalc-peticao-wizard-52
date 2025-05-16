@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { formatarMoeda } from '@/utils/formatters';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -122,12 +121,6 @@ const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPe
 
   // Verifica se há um nome para os cálculos
   const nomeCalculo = calculos.nome ? `${calculos.nome} - ` : '';
-
-  // Obter o logo da empresa do usuário atual
-  const logoUrl = localStorage.getItem('userLogoUrl');
-  
-  // Obter o nome do escritório do usuário atual ou dos cálculos
-  const nomeEscritorio = calculos.nomeEscritorio || localStorage.getItem('userName') || 'JurisCalc Trabalhista';
 
   // Versão para quando estiver embutido na petição
   if (embutido) {
