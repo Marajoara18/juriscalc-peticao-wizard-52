@@ -9,9 +9,10 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter }
 interface TabelaCalculosProps {
   calculos: any;
   onInserirNoPeticao: () => void;
+  embutido?: boolean; // Novo prop para indicar se está embutido na petição
 }
 
-const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPeticao }) => {
+const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPeticao, embutido = false }) => {
   if (!calculos) {
     return (
       <Card className="mb-6 border-dashed border-2 border-gray-300">
@@ -88,6 +89,94 @@ const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPe
   // Obter o nome do escritório do usuário atual ou dos cálculos
   const nomeEscritorio = calculos.nomeEscritorio || localStorage.getItem('userName') || 'JurisCalc Trabalhista';
 
+  // Versão para quando estiver embutido na petição
+  if (embutido) {
+    return (
+      <div className="my-6 print:page-break-inside-avoid">
+        <div className="text-center mb-6">
+          <h3 className="text-2xl font-bold border-b-2 border-juriscalc-navy pb-2">DEMONSTRATIVO DE CÁLCULOS TRABALHISTAS</h3>
+          {logoUrl && (
+            <img 
+              src={logoUrl} 
+              alt="Logo" 
+              className="h-16 mx-auto my-4" 
+            />
+          )}
+          {nomeCalculo && <p className="font-medium">{nomeCalculo}</p>}
+          <p className="text-sm text-gray-600">Gerado em: {dataCalculo}</p>
+        </div>
+        
+        <div className="space-y-6">
+          {itensVerbaRescisoria.length > 0 && (
+            <div>
+              <h4 className="text-lg font-medium mb-2 text-juriscalc-navy">1. VERBAS RESCISÓRIAS</h4>
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="border border-gray-300 p-2 text-left w-2/3">Descrição</th>
+                    <th className="border border-gray-300 p-2 text-right w-1/3">Valor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {itensVerbaRescisoria.map((item, index) => (
+                    <tr key={`verbas-${index}`} className="border-b">
+                      <td className="border border-gray-300 p-2">{item.descricao}</td>
+                      <td className="border border-gray-300 p-2 text-right">{formatarMoeda(item.valor)}</td>
+                    </tr>
+                  ))}
+                  <tr className="font-bold bg-gray-50">
+                    <td className="border border-gray-300 p-2">Total Verbas Rescisórias</td>
+                    <td className="border border-gray-300 p-2 text-right">{formatarMoeda(calculos.verbasRescisorias.total)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {itensAdicionais.length > 0 && (
+            <div>
+              <h4 className="text-lg font-medium mb-2 text-juriscalc-navy">2. ADICIONAIS E MULTAS</h4>
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="border border-gray-300 p-2 text-left w-2/3">Descrição</th>
+                    <th className="border border-gray-300 p-2 text-right w-1/3">Valor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {itensAdicionais.map((item, index) => (
+                    <tr key={`adicionais-${index}`} className="border-b">
+                      <td className="border border-gray-300 p-2">{item.descricao}</td>
+                      <td className="border border-gray-300 p-2 text-right">{formatarMoeda(item.valor)}</td>
+                    </tr>
+                  ))}
+                  <tr className="font-bold bg-gray-50">
+                    <td className="border border-gray-300 p-2">Total Adicionais</td>
+                    <td className="border border-gray-300 p-2 text-right">{formatarMoeda(totalAdicionais)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <div className="bg-juriscalc-navy p-4 rounded-md text-white">
+            <div className="text-center">
+              <p className="text-sm font-medium mb-2">VALOR TOTAL DA RECLAMAÇÃO</p>
+              <p className="text-2xl font-bold">
+                {formatarMoeda(calculos.totalGeral)}
+              </p>
+            </div>
+          </div>
+          
+          <div className="text-center text-sm text-gray-500 pt-4 border-t mt-6">
+            <p>Cálculos realizados por: <span className="font-medium">{nomeEscritorio}</span></p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Versão normal para exibição fora da petição
   return (
     <Card className="mb-6">
       <CardHeader className="pb-3">

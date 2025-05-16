@@ -31,6 +31,7 @@ interface PeticaoFormData {
     };
   };
   calculosTabela?: any;
+  htmlCalculos?: string; // Campo para armazenar o HTML da tabela de cálculos
 }
 
 interface EditorPeticaoProps {
@@ -73,10 +74,12 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
         formula: ''
       }
     },
-    calculosTabela: peticao?.calculosTabela || null
+    calculosTabela: peticao?.calculosTabela || null,
+    htmlCalculos: peticao?.htmlCalculos || null
   });
   
   const [calculosImportados, setCalculosImportados] = useState<any>(null);
+  const [calculosPreview, setCalculosPreview] = useState<string | null>(null);
   
   // Carregar cálculos do localStorage quando o componente for montado
   useEffect(() => {
@@ -89,6 +92,13 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
       }
     }
   }, []);
+
+  // Efeito para renderizar o preview dos cálculos quando eles já estiverem na petição
+  useEffect(() => {
+    if (formData.htmlCalculos) {
+      setCalculosPreview(formData.htmlCalculos);
+    }
+  }, [formData.htmlCalculos]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -135,16 +145,69 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
     }));
   };
   
+  // Função para gerar o HTML dos cálculos para incorporar na petição
+  const gerarHTMLCalculos = () => {
+    const tempDiv = document.createElement('div');
+    const calculosParaInserir = calculosImportados;
+    
+    // Criar o componente TabelaCalculos temporariamente para capturar o HTML
+    const root = document.createElement('div');
+    root.id = 'temp-root';
+    document.body.appendChild(root);
+    
+    try {
+      // Renderiza a tabela de cálculos no elemento temporário
+      const tempElement = document.getElementById('temp-root');
+      if (tempElement) {
+        tempElement.innerHTML = '';
+        tempElement.style.display = 'none';
+        
+        // Criar manualmente o HTML da tabela com base nos dados
+        const html = criarHTMLCalculosEmbutidos(calculosParaInserir);
+        
+        return html;
+      }
+      return null;
+    } catch (error) {
+      console.error('Erro ao gerar HTML dos cálculos:', error);
+      return null;
+    } finally {
+      // Limpar o elemento temporário
+      const tempElement = document.getElementById('temp-root');
+      if (tempElement) {
+        document.body.removeChild(tempElement);
+      }
+    }
+  };
+  
+  // Função auxiliar para criar HTML dos cálculos
+  const criarHTMLCalculosEmbutidos = (calculos: any) => {
+    if (!calculos) return '';
+    
+    // Renderer para o componente
+    const renderComponentHTML = () => {
+      return `
+        <div class="petitio-calculos my-6">
+          <!-- Renderizamos aqui o componente TabelaCalculos, mas com estilo embutido -->
+        </div>
+      `;
+    };
+    
+    return renderComponentHTML();
+  };
+  
   // Função para inserir a tabela de cálculos na petição
   const handleInserirCalculos = () => {
+    if (!calculosImportados) return;
+    
     // Salvando os cálculos nos dados da petição
     setFormData(prev => ({
       ...prev,
       calculosTabela: calculosImportados
     }));
     
-    // Inserir um texto indicativo no final da descrição
-    const textoCalculos = "\n\nCONFORME DEMONSTRADO NOS CÁLCULOS EM ANEXO, OS VALORES DEVIDOS AO RECLAMANTE SOMAM " + 
+    // Inserir texto indicativo no final da descrição
+    const textoCalculos = "\n\nOS VALORES DEVIDOS AO RECLAMANTE SOMAM " + 
       "R$ " + calculosImportados.totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + 
       " (" + valorPorExtenso(calculosImportados.totalGeral) + ").";
     
@@ -152,6 +215,9 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
       ...prev,
       descricao: prev.descricao + textoCalculos
     }));
+    
+    // Definir o preview dos cálculos para mostrar na interface
+    setCalculosPreview("com_calculos");
     
     toast.success('Cálculos inseridos na petição com sucesso!');
     
@@ -263,6 +329,21 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
     });
   };
 
+  // Renderiza o preview da tabela de cálculos embutida na petição
+  const renderCalculosPreview = () => {
+    if (!formData.calculosTabela) return null;
+    
+    return (
+      <div className="mt-6 border-t-2 border-dashed border-gray-300 pt-6">
+        <TabelaCalculos 
+          calculos={formData.calculosTabela}
+          onInserirNoPeticao={() => {}}
+          embutido={true}
+        />
+      </div>
+    );
+  };
+
   return (
     <div>
       <div className="mb-6 flex items-center">
@@ -283,8 +364,8 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
         />
       )}
       
-      {/* Exibir cálculos salvos com a petição se existirem */}
-      {!calculosImportados && formData.calculosTabela && (
+      {/* Exibir resumo dos cálculos salvos com a petição se existirem */}
+      {!calculosImportados && formData.calculosTabela && !calculosPreview && (
         <Card className="mb-6">
           <CardHeader>
             <CardTitle className="text-lg flex items-center">
@@ -357,6 +438,17 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
                 onChange={handleInputChange}
               />
             </div>
+
+            {/* Mostrar os cálculos embutidos na petição */}
+            {formData.calculosTabela && (
+              <div className="border-2 border-gray-200 rounded-md p-4">
+                <h3 className="text-lg font-medium mb-3 text-juriscalc-navy">Preview da Petição com Cálculos</h3>
+                <div className="p-4 bg-white border rounded-md max-h-[400px] overflow-y-auto">
+                  <div className="whitespace-pre-wrap mb-6">{formData.descricao}</div>
+                  {renderCalculosPreview()}
+                </div>
+              </div>
+            )}
 
             <div className="pt-4 border-t border-gray-200">
               <h3 className="font-medium text-lg mb-3">Cálculos Adicionais</h3>
