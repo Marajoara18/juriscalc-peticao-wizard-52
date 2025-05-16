@@ -45,7 +45,8 @@ const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPe
     calculos.adicionais.adicionalTransferencia +
     calculos.adicionais.descontosIndevidos +
     calculos.adicionais.diferencasSalariais +
-    calculos.adicionais.customCalculo;
+    calculos.adicionais.customCalculo +
+    calculos.adicionais.seguroDesemprego;
 
   // Preparando os itens para a tabela
   const itensVerbaRescisoria = [
@@ -72,6 +73,7 @@ const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPe
     { descricao: 'Adicional de Transferência', valor: calculos.adicionais.adicionalTransferencia },
     { descricao: 'Descontos Indevidos', valor: calculos.adicionais.descontosIndevidos },
     { descricao: 'Diferenças Salariais', valor: calculos.adicionais.diferencasSalariais },
+    { descricao: 'Seguro Desemprego', valor: calculos.adicionais.seguroDesemprego },
   ].filter(item => item.valor > 0);
 
   // Data da criação dos cálculos

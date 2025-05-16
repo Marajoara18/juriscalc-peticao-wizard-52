@@ -3,10 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Save, Trash, Edit, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { formatarMoeda } from '@/utils/formatters';
+import { useNavigate } from 'react-router-dom';
 
 interface CalculoSalvo {
   id: string;
@@ -16,6 +17,7 @@ interface CalculoSalvo {
   adicionais: any;
   totalGeral: number;
   userId?: string;
+  nomeEscritorio?: string;
 }
 
 interface CalculosSalvosProps {
@@ -25,10 +27,13 @@ interface CalculosSalvosProps {
 }
 
 const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral, onLoadCalculo }) => {
+  const navigate = useNavigate();
   const [calculosSalvos, setCalculosSalvos] = useState<CalculoSalvo[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [nomeCalculo, setNomeCalculo] = useState('');
   const [editandoId, setEditandoId] = useState<string | null>(null);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [selectedCalculoForPeticao, setSelectedCalculoForPeticao] = useState<CalculoSalvo | null>(null);
 
   // Carregar cálculos salvos
   useEffect(() => {
@@ -59,6 +64,8 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
       return;
     }
 
+    const nomeEscritorio = localStorage.getItem('userName') || undefined;
+    
     const novoCalculo: CalculoSalvo = {
       id: editandoId || Date.now().toString(),
       nome: nomeCalculo,
@@ -66,7 +73,8 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
       verbasRescisorias: resultados.verbasRescisorias,
       adicionais: resultados.adicionais,
       totalGeral: totalGeral,
-      userId: localStorage.getItem('userId') || undefined
+      userId: localStorage.getItem('userId') || undefined,
+      nomeEscritorio
     };
 
     let novosCalculos: CalculoSalvo[];
@@ -105,15 +113,30 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
   };
 
   const handleUsarNaPeticao = (calculo: CalculoSalvo) => {
-    localStorage.setItem('calculosParaPeticao', JSON.stringify({
-      verbasRescisorias: calculo.verbasRescisorias,
-      adicionais: calculo.adicionais,
-      totalGeral: calculo.totalGeral,
-      timestamp: new Date().toISOString(),
-      nome: calculo.nome
-    }));
-    
-    toast.success('Cálculo preparado para ser inserido na petição!');
+    setSelectedCalculoForPeticao(calculo);
+    setConfirmDialogOpen(true);
+  };
+
+  const confirmarUsarNaPeticao = () => {
+    if (selectedCalculoForPeticao) {
+      localStorage.setItem('calculosParaPeticao', JSON.stringify({
+        verbasRescisorias: selectedCalculoForPeticao.verbasRescisorias,
+        adicionais: selectedCalculoForPeticao.adicionais,
+        totalGeral: selectedCalculoForPeticao.totalGeral,
+        timestamp: selectedCalculoForPeticao.timestamp,
+        nome: selectedCalculoForPeticao.nome,
+        nomeEscritorio: selectedCalculoForPeticao.nomeEscritorio || localStorage.getItem('userName')
+      }));
+      
+      setConfirmDialogOpen(false);
+      toast.success('Cálculo preparado para ser inserido na petição!');
+      
+      // Perguntar se deseja ir para a página de petições
+      const confirmRedirect = window.confirm('Deseja ir para a página de petições agora?');
+      if (confirmRedirect) {
+        navigate('/peticoes');
+      }
+    }
   };
 
   // Filtrar cálculos do usuário atual
@@ -170,8 +193,11 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
                       variant="outline" 
                       size="sm"
                       onClick={() => handleUsarNaPeticao(calculo)}
+                      className="flex items-center gap-1"
+                      title="Usar na Petição"
                     >
                       <FileText className="h-4 w-4" />
+                      <span className="hidden sm:inline">Petição</span>
                     </Button>
                     <Button 
                       variant="outline" 
@@ -196,10 +222,12 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
         </CardContent>
       </Card>
 
+      {/* Dialog para salvar/editar cálculo */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{editandoId ? 'Editar Cálculo' : 'Salvar Cálculo'}</DialogTitle>
+            <DialogDescription>Dê um nome descritivo para identificar este cálculo posteriormente.</DialogDescription>
           </DialogHeader>
           <div className="py-4">
             <label className="block text-sm font-medium mb-2" htmlFor="nome-calculo">
@@ -220,6 +248,34 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
             </Button>
             <Button onClick={handleSalvar}>
               {editandoId ? 'Atualizar' : 'Salvar'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog de confirmação para usar na petição */}
+      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Usar Cálculo na Petição</DialogTitle>
+            <DialogDescription>
+              Este cálculo será disponibilizado para uso na próxima petição que você criar ou editar.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="mb-2">
+              <strong>Nome:</strong> {selectedCalculoForPeticao?.nome}
+            </p>
+            <p className="mb-4">
+              <strong>Total:</strong> {selectedCalculoForPeticao ? formatarMoeda(selectedCalculoForPeticao.totalGeral) : ''}
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={confirmarUsarNaPeticao}>
+              Continuar
             </Button>
           </DialogFooter>
         </DialogContent>
