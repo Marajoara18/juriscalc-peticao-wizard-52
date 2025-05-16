@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -6,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import DadosContratoForm from '@/components/calculadora/DadosContratoForm';
 import AdicionaisForm from '@/components/calculadora/AdicionaisForm';
 import ResultadosCalculos from '@/components/calculadora/ResultadosCalculos';
+import CorrecaoMonetaria from '@/components/calculadora/CorrecaoMonetaria';
 import UserManagement from '@/components/auth/UserManagement';
 import HelpSection from '@/components/peticoes/HelpSection';
 import useCalculadora from '@/hooks/useCalculadora';
@@ -22,10 +24,12 @@ const Calculadora = () => {
     setResultados,
     handleDadosContratoChange, 
     handleAdicionaisChange, 
-    calcularResultados 
+    calcularResultados,
+    aplicarCorrecaoMonetaria
   } = useCalculadora();
   
   const [showUserPanel, setShowUserPanel] = useState(false);
+  const [showCorrecaoMonetaria, setShowCorrecaoMonetaria] = useState(false);
   
   // Verificar se o usuário está logado
   useEffect(() => {
@@ -118,6 +122,7 @@ const Calculadora = () => {
       }
     });
     
+    setShowCorrecaoMonetaria(false);
     toast.info('Formulário reiniciado. Você pode iniciar um novo cálculo.');
   };
   
@@ -250,6 +255,32 @@ const Calculadora = () => {
                   Calcular Verbas
                 </Button>
               </div>
+              
+              {/* Mostrar módulo de correção monetária quando os cálculos estiverem prontos */}
+              {hasCalculos && (
+                <div className="mt-6">
+                  {showCorrecaoMonetaria ? (
+                    <>
+                      <CorrecaoMonetaria onAplicarCorrecao={aplicarCorrecaoMonetaria} />
+                      <Button 
+                        variant="outline"
+                        className="w-full border-juriscalc-navy text-juriscalc-navy"
+                        onClick={() => setShowCorrecaoMonetaria(false)}
+                      >
+                        Ocultar Correção Monetária
+                      </Button>
+                    </>
+                  ) : (
+                    <Button 
+                      variant="outline"
+                      className="w-full border-juriscalc-navy text-juriscalc-navy"
+                      onClick={() => setShowCorrecaoMonetaria(true)}
+                    >
+                      Aplicar Correção Monetária
+                    </Button>
+                  )}
+                </div>
+              )}
             </div>
             
             {/* Coluna 2 - Resultados */}

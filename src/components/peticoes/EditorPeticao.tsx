@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -95,10 +94,10 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
 
   // Efeito para renderizar o preview dos cálculos quando eles já estiverem na petição
   useEffect(() => {
-    if (formData.htmlCalculos) {
-      setCalculosPreview(formData.htmlCalculos);
+    if (formData.calculosTabela) {
+      setCalculosPreview("com_calculos");
     }
-  }, [formData.htmlCalculos]);
+  }, [formData.calculosTabela]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -209,7 +208,7 @@ const EditorPeticao: React.FC<EditorPeticaoProps> = ({
     // Inserir texto indicativo no final da descrição
     const textoCalculos = "\n\nOS VALORES DEVIDOS AO RECLAMANTE SOMAM " + 
       "R$ " + calculosImportados.totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + 
-      " (" + valorPorExtenso(calculosImportados.totalGeral) + ").";
+      " (" + valorPorExtenso(calculosImportados.totalGeral) + "), conforme demonstrativo ABAIXO.";
     
     setFormData(prev => ({
       ...prev,
