@@ -4,7 +4,7 @@ import { formatarMoeda } from '@/utils/formatters';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { FileText, Plus } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card";
 
 interface TabelaCalculosProps {
   calculos: any;
@@ -82,6 +82,9 @@ const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPe
 
   // Obter o logo da empresa do usuário atual
   const logoUrl = localStorage.getItem('userLogoUrl');
+  
+  // Obter o nome do escritório do usuário atual ou dos cálculos
+  const nomeEscritorio = calculos.nomeEscritorio || localStorage.getItem('userName') || 'JurisCalc Trabalhista';
 
   return (
     <Card className="mb-6">
@@ -173,6 +176,9 @@ const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPe
           </div>
         </div>
       </CardContent>
+      <CardFooter className="text-center text-sm text-gray-500 pt-2 border-t">
+        <p className="w-full">Cálculos realizados por: <span className="font-medium">{nomeEscritorio}</span></p>
+      </CardFooter>
     </Card>
   );
 };

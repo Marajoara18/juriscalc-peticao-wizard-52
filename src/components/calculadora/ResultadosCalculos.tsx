@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -52,6 +53,10 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
       toast.error('Não foi possível abrir a janela de impressão. Verifique se o bloqueador de pop-ups está desativado.');
       return;
     }
+    
+    // Obter o logo e o nome do escritório
+    const logoUrl = localStorage.getItem('userLogoUrl');
+    const nomeEscritorio = localStorage.getItem('userName') || 'JurisCalc Trabalhista';
     
     const htmlContent = `
       <!DOCTYPE html>
@@ -109,11 +114,19 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
               max-height: 100px;
               margin-bottom: 15px;
             }
+            .footer {
+              margin-top: 40px;
+              text-align: center;
+              font-size: 14px;
+              color: #666;
+              border-top: 1px solid #ddd;
+              padding-top: 20px;
+            }
           </style>
         </head>
         <body>
           <div class="header">
-            ${getLogoHtml()}
+            ${logoUrl ? `<img src="${logoUrl}" alt="Logo do Escritório" class="logo" />` : ''}
             <h1>Cálculos Trabalhistas</h1>
             <p>Data: ${new Date().toLocaleDateString('pt-BR')}</p>
           </div>
@@ -149,12 +162,7 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
             ${resultados.adicionais.descontosIndevidos > 0 ? renderVerbaItem('Descontos Indevidos', resultados.adicionais.descontosIndevidos) : ''}
             ${resultados.adicionais.diferencasSalariais > 0 ? renderVerbaItem('Diferenças Salariais', resultados.adicionais.diferencasSalariais) : ''}
             ${resultados.adicionais.customCalculo > 0 ? renderVerbaItem(adicionais.descricaoCustom || 'Cálculo Personalizado', resultados.adicionais.customCalculo) : ''}
-            {resultados.adicionais.seguroDesemprego > 0 && (
-              <div className="flex justify-between text-sm">
-                <span>Seguro-Desemprego:</span>
-                <span className="font-medium">{formatarMoeda(resultados.adicionais.seguroDesemprego)}</span>
-              </div>
-            )}
+            ${resultados.adicionais.seguroDesemprego > 0 ? renderVerbaItem('Seguro-Desemprego', resultados.adicionais.seguroDesemprego) : ''}
             <div class="item total">
               <span>Total Adicionais:</span>
               <span>${formatarMoeda(totalAdicionais)}</span>
@@ -163,6 +171,11 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
           
           <div class="grand-total">
             <div>Valor Total da Reclamação: ${formatarMoeda(totalGeral)}</div>
+          </div>
+          
+          <div class="footer">
+            <p>Cálculos realizados por: <strong>${nomeEscritorio}</strong></p>
+            <p>JurisCalc Trabalhista &copy; ${new Date().getFullYear()}</p>
           </div>
         </body>
       </html>
@@ -189,11 +202,6 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
     `;
   }
   
-  function getLogoHtml() {
-    const logoUrl = localStorage.getItem('userLogoUrl');
-    return logoUrl ? `<img src="${logoUrl}" alt="Logo da Empresa" class="logo" />` : '';
-  }
-
   // Função para gerar petição
   const handleGerarPeticao = () => {
     // Verificar se existe usuário logado
@@ -204,12 +212,16 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
       return;
     }
     
+    // Obter o nome do escritório
+    const nomeEscritorio = localStorage.getItem('userName') || 'JurisCalc Trabalhista';
+    
     // Salvando os cálculos no localStorage para usar na página de petições
     const calculosParaPeticao = {
       verbasRescisorias: resultados.verbasRescisorias,
       adicionais: resultados.adicionais,
       totalGeral: totalGeral,
       timestamp: new Date().toISOString(),
+      nomeEscritorio: nomeEscritorio
     };
     
     localStorage.setItem('calculosParaPeticao', JSON.stringify(calculosParaPeticao));
