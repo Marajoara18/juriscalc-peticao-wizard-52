@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -40,7 +39,8 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
     resultados.adicionais.adicionalTransferencia +
     resultados.adicionais.descontosIndevidos +
     resultados.adicionais.diferencasSalariais +
-    resultados.adicionais.customCalculo;
+    resultados.adicionais.customCalculo +
+    resultados.adicionais.seguroDesemprego;
 
   const totalGeral = resultados.verbasRescisorias.total + totalAdicionais;
 
@@ -149,6 +149,12 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
             ${resultados.adicionais.descontosIndevidos > 0 ? renderVerbaItem('Descontos Indevidos', resultados.adicionais.descontosIndevidos) : ''}
             ${resultados.adicionais.diferencasSalariais > 0 ? renderVerbaItem('Diferenças Salariais', resultados.adicionais.diferencasSalariais) : ''}
             ${resultados.adicionais.customCalculo > 0 ? renderVerbaItem(adicionais.descricaoCustom || 'Cálculo Personalizado', resultados.adicionais.customCalculo) : ''}
+            {resultados.adicionais.seguroDesemprego > 0 && (
+              <div className="flex justify-between text-sm">
+                <span>Seguro-Desemprego:</span>
+                <span className="font-medium">{formatarMoeda(resultados.adicionais.seguroDesemprego)}</span>
+              </div>
+            )}
             <div class="item total">
               <span>Total Adicionais:</span>
               <span>${formatarMoeda(totalAdicionais)}</span>
@@ -382,6 +388,13 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
                     <div className="flex justify-between text-sm">
                       <span>{adicionais.descricaoCustom || "Cálculo Personalizado"}:</span>
                       <span className="font-medium">{formatarMoeda(resultados.adicionais.customCalculo)}</span>
+                    </div>
+                  )}
+                  
+                  {resultados.adicionais.seguroDesemprego > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span>Seguro-Desemprego:</span>
+                      <span className="font-medium">{formatarMoeda(resultados.adicionais.seguroDesemprego)}</span>
                     </div>
                   )}
                   

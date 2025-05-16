@@ -114,6 +114,7 @@ const Calculadora = () => {
         descontosIndevidos: 0,
         diferencasSalariais: 0,
         customCalculo: 0,
+        seguroDesemprego: 0,
       }
     });
     
@@ -143,6 +144,7 @@ const Calculadora = () => {
         calcularDescontosIndevidos: calculo.adicionais.descontosIndevidos > 0,
         calcularDiferencasSalariais: calculo.adicionais.diferencasSalariais > 0,
         calcularCustom: calculo.adicionais.customCalculo > 0,
+        calcularSeguroDesemprego: calculo.adicionais.seguroDesemprego > 0,
       });
     }
     
