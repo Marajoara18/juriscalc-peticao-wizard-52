@@ -129,10 +129,16 @@ const Calculadora = () => {
   const handleLoadCalculo = (calculo: any) => {
     if (!calculo) return;
     
+    // Carregar dados do contrato
+    if (calculo.dadosContrato) {
+      setDadosContrato({
+        ...dadosContrato,
+        ...calculo.dadosContrato
+      });
+    }
+    
     // Carregar adicionais do cálculo
     if (calculo.adicionais) {
-      // Mapear adicionais para o formato esperado pelo hook
-      // Este é um exemplo simples, você pode precisar mapear mais campos
       setAdicionais({
         ...adicionais,
         calcularInsalubridade: calculo.adicionais.adicionalInsalubridade > 0,
@@ -154,10 +160,12 @@ const Calculadora = () => {
     }
     
     // Carregar resultados
-    setResultados({
-      verbasRescisorias: calculo.verbasRescisorias,
-      adicionais: calculo.adicionais
-    });
+    if (calculo.verbasRescisorias || calculo.adicionais) {
+      setResultados({
+        verbasRescisorias: calculo.verbasRescisorias || resultados.verbasRescisorias,
+        adicionais: calculo.adicionais || resultados.adicionais
+      });
+    }
     
     toast.success('Cálculo carregado com sucesso!');
   };
@@ -177,12 +185,18 @@ const Calculadora = () => {
     resultados.adicionais.adicionalTransferencia +
     resultados.adicionais.descontosIndevidos +
     resultados.adicionais.diferencasSalariais +
-    resultados.adicionais.customCalculo;
+    resultados.adicionais.customCalculo +
+    resultados.adicionais.seguroDesemprego;
 
   const totalGeral = resultados.verbasRescisorias.total + totalAdicionais;
   
   // Verificar se há cálculos para mostrar opção de salvar
   const hasCalculos = totalGeral > 0;
+
+  const handleCalcularClick = () => {
+    calcularResultados();
+    console.log("Cálculos realizados com sucesso. Total:", totalGeral);
+  };
 
   return (
     <Layout>
@@ -248,7 +262,7 @@ const Calculadora = () => {
 
               <div className="mt-6">
                 <Button 
-                  onClick={calcularResultados}
+                  onClick={handleCalcularClick}
                   className="w-full bg-juriscalc-navy text-white hover:bg-opacity-90"
                   size="lg"
                 >

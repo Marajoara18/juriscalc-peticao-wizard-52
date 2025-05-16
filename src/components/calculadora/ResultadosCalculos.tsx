@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -24,6 +24,7 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
 }) => {
   const navigate = useNavigate();
   const [showSalvos, setShowSalvos] = useState(false);
+  const [expandedAccordions, setExpandedAccordions] = useState<string[]>([]);
   
   // Calcular o total geral
   const totalAdicionais = 
@@ -44,6 +45,24 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
     resultados.adicionais.seguroDesemprego;
 
   const totalGeral = resultados.verbasRescisorias.total + totalAdicionais;
+
+  // Verificar se há valores calculados e expandir automaticamente os acordeões
+  useEffect(() => {
+    if (totalGeral > 0 && expandedAccordions.length === 0) {
+      setExpandedAccordions(['verbas_rescisorias', 'adicionais', 'total_geral']);
+    }
+  }, [totalGeral, expandedAccordions]);
+  
+  // Função para controlar acordeões
+  const handleAccordionChange = (value: string) => {
+    setExpandedAccordions(prev => {
+      if (prev.includes(value)) {
+        return prev.filter(item => item !== value);
+      } else {
+        return [...prev, value];
+      }
+    });
+  };
 
   // Função para imprimir cálculos
   const handleImprimirCalculos = () => {
@@ -240,6 +259,9 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
     }
   };
 
+  // Verificar se há resultados para exibir
+  const hasResults = totalGeral > 0;
+
   return (
     <Card className="h-full">
       <CardHeader>
@@ -267,42 +289,61 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
             totalGeral={totalGeral} 
             onLoadCalculo={handleLoadCalculo}
           />
-        ) : (
-          <Accordion type="single" collapsible className="w-full">
+        ) : hasResults ? (
+          <Accordion 
+            type="multiple" 
+            className="w-full"
+            value={expandedAccordions}
+            onValueChange={(newValues) => setExpandedAccordions(newValues)}
+          >
             <AccordionItem value="verbas_rescisorias">
               <AccordionTrigger className="font-serif font-semibold">
                 Verbas Rescisórias
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Saldo de Salário:</span>
-                    <span className="font-medium">{formatarMoeda(resultados.verbasRescisorias.saldoSalario)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Aviso Prévio:</span>
-                    <span className="font-medium">{formatarMoeda(resultados.verbasRescisorias.avisoPrevia)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>13º Salário Proporcional:</span>
-                    <span className="font-medium">{formatarMoeda(resultados.verbasRescisorias.decimoTerceiro)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Férias Proporcionais:</span>
-                    <span className="font-medium">{formatarMoeda(resultados.verbasRescisorias.ferias)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>1/3 Constitucional:</span>
-                    <span className="font-medium">{formatarMoeda(resultados.verbasRescisorias.tercoConstitucional)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>FGTS sobre verbas:</span>
-                    <span className="font-medium">{formatarMoeda(resultados.verbasRescisorias.fgts)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Multa FGTS (40%):</span>
-                    <span className="font-medium">{formatarMoeda(resultados.verbasRescisorias.multaFgts)}</span>
-                  </div>
+                  {resultados.verbasRescisorias.saldoSalario > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span>Saldo de Salário:</span>
+                      <span className="font-medium">{formatarMoeda(resultados.verbasRescisorias.saldoSalario)}</span>
+                    </div>
+                  )}
+                  {resultados.verbasRescisorias.avisoPrevia > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span>Aviso Prévio:</span>
+                      <span className="font-medium">{formatarMoeda(resultados.verbasRescisorias.avisoPrevia)}</span>
+                    </div>
+                  )}
+                  {resultados.verbasRescisorias.decimoTerceiro > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span>13º Salário Proporcional:</span>
+                      <span className="font-medium">{formatarMoeda(resultados.verbasRescisorias.decimoTerceiro)}</span>
+                    </div>
+                  )}
+                  {resultados.verbasRescisorias.ferias > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span>Férias Proporcionais:</span>
+                      <span className="font-medium">{formatarMoeda(resultados.verbasRescisorias.ferias)}</span>
+                    </div>
+                  )}
+                  {resultados.verbasRescisorias.tercoConstitucional > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span>1/3 Constitucional:</span>
+                      <span className="font-medium">{formatarMoeda(resultados.verbasRescisorias.tercoConstitucional)}</span>
+                    </div>
+                  )}
+                  {resultados.verbasRescisorias.fgts > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span>FGTS sobre verbas:</span>
+                      <span className="font-medium">{formatarMoeda(resultados.verbasRescisorias.fgts)}</span>
+                    </div>
+                  )}
+                  {resultados.verbasRescisorias.multaFgts > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span>Multa FGTS (40%):</span>
+                      <span className="font-medium">{formatarMoeda(resultados.verbasRescisorias.multaFgts)}</span>
+                    </div>
+                  )}
                   <Separator className="my-2" />
                   <div className="flex justify-between font-semibold">
                     <span>Total Rescisórias:</span>
@@ -452,6 +493,11 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
               </AccordionContent>
             </AccordionItem>
           </Accordion>
+        ) : (
+          <div className="text-center py-10 text-gray-500">
+            <p className="mb-2">Ainda não há cálculos para exibir.</p>
+            <p className="text-sm">Preencha os dados do contrato e adicionais e clique em "Calcular Verbas".</p>
+          </div>
         )}
       </CardContent>
     </Card>

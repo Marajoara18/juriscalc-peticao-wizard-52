@@ -13,7 +13,7 @@ interface TabelaCalculosProps {
 }
 
 const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPeticao, embutido = false }) => {
-  if (!calculos) {
+  if (!calculos || (!calculos.verbasRescisorias && !calculos.adicionais)) {
     return (
       <Card className="mb-6 border-dashed border-2 border-gray-300">
         <CardHeader className="pb-3">
@@ -31,54 +31,88 @@ const TabelaCalculos: React.FC<TabelaCalculosProps> = ({ calculos, onInserirNoPe
     );
   }
 
+  // Garantir que os objetos existam para evitar erros
+  const verbasRescisorias = calculos.verbasRescisorias || {
+    saldoSalario: 0,
+    avisoPrevia: 0,
+    decimoTerceiro: 0,
+    ferias: 0,
+    tercoConstitucional: 0,
+    fgts: 0,
+    multaFgts: 0,
+    total: 0
+  };
+  
+  const adicionais = calculos.adicionais || {
+    adicionalInsalubridade: 0,
+    adicionalPericulosidade: 0,
+    multa467: 0,
+    multa477: 0,
+    adicionalNoturno: 0,
+    horasExtras: 0,
+    feriasVencidas: 0,
+    indenizacaoDemissao: 0,
+    valeTransporte: 0,
+    valeAlimentacao: 0,
+    adicionalTransferencia: 0,
+    descontosIndevidos: 0,
+    diferencasSalariais: 0,
+    customCalculo: 0,
+    seguroDesemprego: 0
+  };
+  
   // Calcular o total geral
   const totalAdicionais = 
-    calculos.adicionais.adicionalInsalubridade +
-    calculos.adicionais.adicionalPericulosidade +
-    calculos.adicionais.multa467 +
-    calculos.adicionais.multa477 +
-    calculos.adicionais.adicionalNoturno +
-    calculos.adicionais.horasExtras +
-    calculos.adicionais.feriasVencidas +
-    calculos.adicionais.indenizacaoDemissao +
-    calculos.adicionais.valeTransporte +
-    calculos.adicionais.valeAlimentacao +
-    calculos.adicionais.adicionalTransferencia +
-    calculos.adicionais.descontosIndevidos +
-    calculos.adicionais.diferencasSalariais +
-    calculos.adicionais.customCalculo +
-    calculos.adicionais.seguroDesemprego;
+    adicionais.adicionalInsalubridade +
+    adicionais.adicionalPericulosidade +
+    adicionais.multa467 +
+    adicionais.multa477 +
+    adicionais.adicionalNoturno +
+    adicionais.horasExtras +
+    adicionais.feriasVencidas +
+    adicionais.indenizacaoDemissao +
+    adicionais.valeTransporte +
+    adicionais.valeAlimentacao +
+    adicionais.adicionalTransferencia +
+    adicionais.descontosIndevidos +
+    adicionais.diferencasSalariais +
+    adicionais.customCalculo +
+    adicionais.seguroDesemprego;
+
+  const totalGeral = calculos.totalGeral || verbasRescisorias.total + totalAdicionais;
 
   // Preparando os itens para a tabela
   const itensVerbaRescisoria = [
-    { descricao: 'Saldo de Salário', valor: calculos.verbasRescisorias.saldoSalario },
-    { descricao: 'Aviso Prévio', valor: calculos.verbasRescisorias.avisoPrevia },
-    { descricao: '13º Salário Proporcional', valor: calculos.verbasRescisorias.decimoTerceiro },
-    { descricao: 'Férias Proporcionais', valor: calculos.verbasRescisorias.ferias },
-    { descricao: '1/3 Constitucional', valor: calculos.verbasRescisorias.tercoConstitucional },
-    { descricao: 'FGTS sobre verbas', valor: calculos.verbasRescisorias.fgts },
-    { descricao: 'Multa FGTS (40%)', valor: calculos.verbasRescisorias.multaFgts },
+    { descricao: 'Saldo de Salário', valor: verbasRescisorias.saldoSalario },
+    { descricao: 'Aviso Prévio', valor: verbasRescisorias.avisoPrevia },
+    { descricao: '13º Salário Proporcional', valor: verbasRescisorias.decimoTerceiro },
+    { descricao: 'Férias Proporcionais', valor: verbasRescisorias.ferias },
+    { descricao: '1/3 Constitucional', valor: verbasRescisorias.tercoConstitucional },
+    { descricao: 'FGTS sobre verbas', valor: verbasRescisorias.fgts },
+    { descricao: 'Multa FGTS (40%)', valor: verbasRescisorias.multaFgts },
   ].filter(item => item.valor > 0);
 
   const itensAdicionais = [
-    { descricao: 'Adicional de Insalubridade', valor: calculos.adicionais.adicionalInsalubridade },
-    { descricao: 'Adicional de Periculosidade', valor: calculos.adicionais.adicionalPericulosidade },
-    { descricao: 'Multa Art. 467 da CLT', valor: calculos.adicionais.multa467 },
-    { descricao: 'Multa Art. 477 da CLT', valor: calculos.adicionais.multa477 },
-    { descricao: 'Adicional Noturno', valor: calculos.adicionais.adicionalNoturno },
-    { descricao: 'Horas Extras', valor: calculos.adicionais.horasExtras },
-    { descricao: 'Férias Vencidas (+ 1/3)', valor: calculos.adicionais.feriasVencidas },
-    { descricao: 'Indenização por Demissão Indevida', valor: calculos.adicionais.indenizacaoDemissao },
-    { descricao: 'Vale Transporte Não Pago', valor: calculos.adicionais.valeTransporte },
-    { descricao: 'Vale Alimentação Não Pago', valor: calculos.adicionais.valeAlimentacao },
-    { descricao: 'Adicional de Transferência', valor: calculos.adicionais.adicionalTransferencia },
-    { descricao: 'Descontos Indevidos', valor: calculos.adicionais.descontosIndevidos },
-    { descricao: 'Diferenças Salariais', valor: calculos.adicionais.diferencasSalariais },
-    { descricao: 'Seguro Desemprego', valor: calculos.adicionais.seguroDesemprego },
+    { descricao: 'Adicional de Insalubridade', valor: adicionais.adicionalInsalubridade },
+    { descricao: 'Adicional de Periculosidade', valor: adicionais.adicionalPericulosidade },
+    { descricao: 'Multa Art. 467 da CLT', valor: adicionais.multa467 },
+    { descricao: 'Multa Art. 477 da CLT', valor: adicionais.multa477 },
+    { descricao: 'Adicional Noturno', valor: adicionais.adicionalNoturno },
+    { descricao: 'Horas Extras', valor: adicionais.horasExtras },
+    { descricao: 'Férias Vencidas (+ 1/3)', valor: adicionais.feriasVencidas },
+    { descricao: 'Indenização por Demissão Indevida', valor: adicionais.indenizacaoDemissao },
+    { descricao: 'Vale Transporte Não Pago', valor: adicionais.valeTransporte },
+    { descricao: 'Vale Alimentação Não Pago', valor: adicionais.valeAlimentacao },
+    { descricao: 'Adicional de Transferência', valor: adicionais.adicionalTransferencia },
+    { descricao: 'Descontos Indevidos', valor: adicionais.descontosIndevidos },
+    { descricao: 'Diferenças Salariais', valor: adicionais.diferencasSalariais },
+    { descricao: 'Seguro Desemprego', valor: adicionais.seguroDesemprego },
   ].filter(item => item.valor > 0);
 
   // Data da criação dos cálculos
-  const dataCalculo = new Date(calculos.timestamp).toLocaleDateString('pt-BR');
+  const dataCalculo = calculos.timestamp ? 
+    new Date(calculos.timestamp).toLocaleDateString('pt-BR') : 
+    new Date().toLocaleDateString('pt-BR');
 
   // Verifica se há um nome para os cálculos
   const nomeCalculo = calculos.nome ? `${calculos.nome} - ` : '';
