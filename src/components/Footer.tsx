@@ -9,7 +9,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
           <div className="flex flex-col items-start md:items-start">
             <img 
-              src="/lovable-uploads/dd485275-21f8-461d-a865-29155207df4a.png"
+              src="/lovable-uploads/caf683c7-0cb3-4ef4-8e5f-5de22f996b8a.png"
               alt="Logo"
               className="h-28 w-auto mb-2"
               style={{ minWidth: 160 }}
@@ -32,7 +32,7 @@ const Footer = () => {
           
           <div>
             <h4 className="font-serif font-bold mb-4">Contato</h4>
-            <p className="text-gray-300">johnnyrnsantos@gmail.com</p>
+            <p className="text-gray-300">mktadvisory7@gmail.com</p>
           </div>
         </div>
         

@@ -16,7 +16,7 @@ const Header = () => {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link to="/" className="flex items-center">
           <img 
-            src="/lovable-uploads/dd485275-21f8-461d-a865-29155207df4a.png"
+            src="/lovable-uploads/caf683c7-0cb3-4ef4-8e5f-5de22f996b8a.png"
             alt="Logo"
             className="h-32 w-auto"
             style={{ minWidth: 180 }}
