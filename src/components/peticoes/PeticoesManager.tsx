@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -12,8 +13,6 @@ import HelpSection from '@/components/peticoes/HelpSection';
 import UserManagement from '@/components/auth/UserManagement';
 import MasterPasswordReset from '@/components/auth/MasterPasswordReset';
 import { peticoesModelo } from '@/data/peticoes-modelo';
-import { Shield } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const PeticoesManager = () => {
   const navigate = useNavigate();
@@ -22,7 +21,7 @@ const PeticoesManager = () => {
   const [view, setView] = useState<'list' | 'editor' | 'new' | 'user'>('list');
   const [peticoesRecentes, setPeticoesRecentes] = useState<any[]>([]);
   const [isPremium, setIsPremium] = useState(false);
-  const [canViewPanels, setCanViewPanels] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   
   // Carrega dados do localStorage
   useEffect(() => {
@@ -33,12 +32,9 @@ const PeticoesManager = () => {
       return;
     }
     
-    // Verificar se usuário tem permissão para ver painéis
-    const userCanViewPanels = localStorage.getItem('canViewPanels') === 'true';
+    // Verificar se usuário é admin
     const userIsAdmin = localStorage.getItem('userIsAdmin') === 'true';
-    
-    // Admin sempre pode ver painéis
-    setCanViewPanels(userIsAdmin || userCanViewPanels);
+    setIsAdmin(userIsAdmin);
     
     initializeLocalStorage();
     const storedPeticoes = localStorage.getItem('peticoesRecentes');
@@ -46,12 +42,13 @@ const PeticoesManager = () => {
       try {
         const allPeticoes = JSON.parse(storedPeticoes);
         
-        // Filtrar petições do usuário atual
-        const userPeticoes = allPeticoes.filter((p: any) => 
-          !p.userId || p.userId === userId
-        );
+        // Se for admin, mostrar petições de todos os usuários
+        // Se for usuário comum, filtrar apenas as próprias petições
+        const filteredPeticoes = userIsAdmin 
+          ? allPeticoes 
+          : allPeticoes.filter((p: any) => !p.userId || p.userId === userId);
         
-        setPeticoesRecentes(userPeticoes);
+        setPeticoesRecentes(filteredPeticoes);
       } catch (error) {
         console.error('Erro ao carregar petições:', error);
       }
@@ -113,7 +110,7 @@ const PeticoesManager = () => {
       userId
     };
   
-    // Carregar todas as petições armazenadas (não apenas do usuário atual)
+    // Carregar todas as petições armazenadas
     const allPeticoes = JSON.parse(localStorage.getItem('peticoesRecentes') || '[]');
     let updatedPeticoes = [...allPeticoes];
     
@@ -136,9 +133,15 @@ const PeticoesManager = () => {
     // Atualizar no localStorage todas as petições
     localStorage.setItem('peticoesRecentes', JSON.stringify(updatedPeticoes));
     
-    // Filtrar apenas as petições do usuário atual para o state
-    const userPeticoes = updatedPeticoes.filter(p => !p.userId || p.userId === userId);
-    setPeticoesRecentes(userPeticoes);
+    // Filtrar petições com base no tipo de usuário
+    const userId = localStorage.getItem('userId');
+    const userIsAdmin = localStorage.getItem('userIsAdmin') === 'true';
+    
+    const filteredPeticoes = userIsAdmin
+      ? updatedPeticoes
+      : updatedPeticoes.filter(p => !p.userId || p.userId === userId);
+    
+    setPeticoesRecentes(filteredPeticoes);
     
     toast.success(`Petição ${data.status === 'finalizada' ? 'finalizada' : 'salva como rascunho'} com sucesso!`);
     handleVoltar();
@@ -154,19 +157,21 @@ const PeticoesManager = () => {
       try {
         const allPeticoes = JSON.parse(storedPeticoes);
         
-        // Filter out the petition to delete
+        // Filtrar a petição a ser excluída
         const updatedPeticoes = allPeticoes.filter((p: any) => p.id !== id);
         
-        // Update localStorage
+        // Atualizar localStorage
         localStorage.setItem('peticoesRecentes', JSON.stringify(updatedPeticoes));
         
-        // Update state with only user's petitions
+        // Filtrar petições com base no tipo de usuário
         const userId = localStorage.getItem('userId');
-        const userPeticoes = updatedPeticoes.filter((p: any) => 
-          !p.userId || p.userId === userId
-        );
+        const userIsAdmin = localStorage.getItem('userIsAdmin') === 'true';
         
-        setPeticoesRecentes(userPeticoes);
+        const filteredPeticoes = userIsAdmin
+          ? updatedPeticoes
+          : updatedPeticoes.filter(p => !p.userId || p.userId === userId);
+        
+        setPeticoesRecentes(filteredPeticoes);
         
         toast.success('Petição excluída com sucesso!');
       } catch (error) {
@@ -211,39 +216,7 @@ const PeticoesManager = () => {
     );
   }
 
-  // Verificar permissão para visualizar os painéis
-  if (!canViewPanels) {
-    return (
-      <Layout>
-        <div className="container mx-auto py-10 px-4">
-          <Card className="border-red-200 bg-red-50">
-            <CardHeader>
-              <CardTitle className="flex items-center text-red-800">
-                <Shield className="h-5 w-5 mr-2" />
-                Acesso Restrito
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-center py-4 text-red-700">
-                Você não possui permissão para visualizar os painéis de petições. 
-                Entre em contato com o administrador mestre para solicitar acesso.
-              </p>
-              <div className="flex justify-center mt-4">
-                <Button 
-                  variant="outline" 
-                  onClick={handleUserClick} 
-                  className="border-juriscalc-navy text-juriscalc-navy"
-                >
-                  Acessar Minha Conta
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </Layout>
-    );
-  }
-
+  // Agora todos os usuários podem ver sua lista de petições
   return (
     <Layout>
       <div className="container mx-auto py-10 px-4">
