@@ -4,12 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { LayoutGrid, Smartphone } from "lucide-react";
 import DadosContratoForm from '@/components/calculadora/DadosContratoForm';
 import AdicionaisForm from '@/components/calculadora/AdicionaisForm';
 import ResultadosCalculos from '@/components/calculadora/ResultadosCalculos';
 import CorrecaoMonetaria from '@/components/calculadora/CorrecaoMonetaria';
 import UserManagement from '@/components/auth/UserManagement';
 import HelpSection from '@/components/peticoes/HelpSection';
+import CalculosSalvos from '@/components/calculadora/CalculosSalvos';
 import useCalculadora from '@/hooks/useCalculadora';
 import { toast } from 'sonner';
 
@@ -30,12 +32,19 @@ const Calculadora = () => {
   
   const [showUserPanel, setShowUserPanel] = useState(false);
   const [showCorrecaoMonetaria, setShowCorrecaoMonetaria] = useState(false);
+  const [layoutMode, setLayoutMode] = useState<'desktop' | 'mobile'>('desktop');
   
   // Verificar se o usuário está logado
   useEffect(() => {
     const userId = localStorage.getItem('userId');
     if (!userId) {
       navigate('/');
+    }
+
+    // Detectar tipo de dispositivo para layout inicial
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobileDevice) {
+      setLayoutMode('mobile');
     }
   }, [navigate]);
   
@@ -129,11 +138,15 @@ const Calculadora = () => {
   const handleLoadCalculo = (calculo: any) => {
     if (!calculo) return;
     
-    // Carregar dados do contrato (se disponíveis)
+    // Carregar dados do contrato
     if (calculo.dadosContrato) {
       setDadosContrato({
-        ...dadosContrato,
-        ...calculo.dadosContrato
+        dataAdmissao: calculo.dadosContrato.dataAdmissao || '',
+        dataDemissao: calculo.dadosContrato.dataDemissao || '',
+        salarioBase: calculo.dadosContrato.salarioBase || '',
+        tipoRescisao: calculo.dadosContrato.tipoRescisao || 'sem_justa_causa',
+        diasTrabalhados: calculo.dadosContrato.diasTrabalhados || '',
+        mesesTrabalhados: calculo.dadosContrato.mesesTrabalhados || '',
       });
     }
     
@@ -196,6 +209,12 @@ const Calculadora = () => {
     console.log("Cálculos realizados com sucesso. Total:", totalGeral);
   };
 
+  // Toggle para alternar entre layout para desktop e mobile
+  const toggleLayoutMode = () => {
+    setLayoutMode(prevMode => prevMode === 'desktop' ? 'mobile' : 'desktop');
+    toast.success(`Layout alterado para ${layoutMode === 'desktop' ? 'Smartphone' : 'Computador'}`);
+  };
+
   return (
     <Layout>
       <div className="container mx-auto py-10 px-4">
@@ -204,6 +223,19 @@ const Calculadora = () => {
             Calculadora de Verbas Trabalhistas
           </h1>
           <div className="flex gap-3">
+            <Button
+              variant="outline"
+              className="border-juriscalc-navy text-juriscalc-navy"
+              onClick={toggleLayoutMode}
+              title={`Alternar para layout de ${layoutMode === 'desktop' ? 'Smartphone' : 'Computador'}`}
+            >
+              {layoutMode === 'desktop' ? (
+                <Smartphone className="h-5 w-5 mr-2" />
+              ) : (
+                <LayoutGrid className="h-5 w-5 mr-2" />
+              )}
+              {layoutMode === 'desktop' ? 'Smartphone' : 'Computador'}
+            </Button>
             <Button
               variant="outline"
               className="border-juriscalc-navy text-juriscalc-navy"
@@ -226,89 +258,185 @@ const Calculadora = () => {
         {showUserPanel ? (
           <UserManagement />
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Coluna 1 - Formulário */}
-            <div className="lg:col-span-2">
-              <Tabs defaultValue="contrato">
-                <TabsList className="w-full">
-                  <TabsTrigger value="contrato" className="flex-1">Dados do Contrato</TabsTrigger>
-                  <TabsTrigger value="adicionais" className="flex-1">Adicionais e Multas</TabsTrigger>
-                </TabsList>
+          <>
+            {layoutMode === 'desktop' ? (
+              // Layout para desktop (grid com 2 colunas)
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Coluna 1 - Formulário */}
+                <div className="lg:col-span-2">
+                  <Tabs defaultValue="contrato">
+                    <TabsList className="w-full">
+                      <TabsTrigger value="contrato" className="flex-1">Dados do Contrato</TabsTrigger>
+                      <TabsTrigger value="adicionais" className="flex-1">Adicionais e Multas</TabsTrigger>
+                    </TabsList>
 
-                {/* Tab de Dados do Contrato */}
-                <TabsContent value="contrato">
-                  <DadosContratoForm 
-                    dadosContrato={dadosContrato}
-                    onChange={handleDadosContratoChange}
-                    onTipoRescisaoChange={(value) => {
-                      if (value === 'sem_justa_causa' || value === 'pedido_demissao' || 
-                          value === 'justa_causa' || value === 'rescisao_indireta') {
-                        handleAdicionaisChange('tipoRescisao', value);
-                      }
-                    }}
-                  />
-                </TabsContent>
+                    {/* Tab de Dados do Contrato */}
+                    <TabsContent value="contrato">
+                      <DadosContratoForm 
+                        dadosContrato={dadosContrato}
+                        onChange={handleDadosContratoChange}
+                        onTipoRescisaoChange={(value) => {
+                          if (value === 'sem_justa_causa' || value === 'pedido_demissao' || 
+                              value === 'justa_causa' || value === 'rescisao_indireta') {
+                            handleAdicionaisChange('tipoRescisao', value);
+                          }
+                        }}
+                      />
+                    </TabsContent>
 
-                {/* Tab de Adicionais */}
-                <TabsContent value="adicionais">
-                  <AdicionaisForm 
-                    adicionais={adicionais}
-                    onChange={handleAdicionaisChange}
-                  />
-                </TabsContent>
-              </Tabs>
+                    {/* Tab de Adicionais */}
+                    <TabsContent value="adicionais">
+                      <AdicionaisForm 
+                        adicionais={adicionais}
+                        onChange={handleAdicionaisChange}
+                      />
+                    </TabsContent>
+                  </Tabs>
 
-              <div className="mt-6">
-                <Button 
-                  onClick={handleCalcularClick}
-                  className="w-full bg-juriscalc-navy text-white hover:bg-opacity-90"
-                  size="lg"
-                >
-                  Calcular Verbas
-                </Button>
-              </div>
-              
-              {/* Mostrar módulo de correção monetária quando os cálculos estiverem prontos */}
-              {hasCalculos && (
-                <div className="mt-6">
-                  {showCorrecaoMonetaria ? (
-                    <>
-                      <CorrecaoMonetaria onAplicarCorrecao={aplicarCorrecaoMonetaria} />
-                      <Button 
-                        variant="outline"
-                        className="w-full border-juriscalc-navy text-juriscalc-navy"
-                        onClick={() => setShowCorrecaoMonetaria(false)}
-                      >
-                        Ocultar Correção Monetária
-                      </Button>
-                    </>
-                  ) : (
+                  <div className="mt-6">
                     <Button 
-                      variant="outline"
-                      className="w-full border-juriscalc-navy text-juriscalc-navy"
-                      onClick={() => setShowCorrecaoMonetaria(true)}
+                      onClick={handleCalcularClick}
+                      className="w-full bg-juriscalc-navy text-white hover:bg-opacity-90"
+                      size="lg"
                     >
-                      Aplicar Correção Monetária
+                      Calcular Verbas
                     </Button>
+                  </div>
+                  
+                  {/* Mostrar módulo de correção monetária quando os cálculos estiverem prontos */}
+                  {hasCalculos && (
+                    <div className="mt-6">
+                      {showCorrecaoMonetaria ? (
+                        <>
+                          <CorrecaoMonetaria onAplicarCorrecao={aplicarCorrecaoMonetaria} />
+                          <Button 
+                            variant="outline"
+                            className="w-full border-juriscalc-navy text-juriscalc-navy"
+                            onClick={() => setShowCorrecaoMonetaria(false)}
+                          >
+                            Ocultar Correção Monetária
+                          </Button>
+                        </>
+                      ) : (
+                        <Button 
+                          variant="outline"
+                          className="w-full border-juriscalc-navy text-juriscalc-navy"
+                          onClick={() => setShowCorrecaoMonetaria(true)}
+                        >
+                          Aplicar Correção Monetária
+                        </Button>
+                      )}
+                    </div>
                   )}
                 </div>
-              )}
-            </div>
-            
-            {/* Coluna 2 - Resultados */}
-            <div>
-              <ResultadosCalculos 
-                resultados={resultados} 
-                adicionais={adicionais} 
-                onLoadCalculo={handleLoadCalculo}
-              />
-            </div>
-          </div>
-        )}
+                
+                {/* Coluna 2 - Resultados */}
+                <div>
+                  <ResultadosCalculos 
+                    resultados={resultados} 
+                    adicionais={adicionais}
+                    onLoadCalculo={handleLoadCalculo}
+                  />
+                  
+                  <CalculosSalvos 
+                    resultados={resultados}
+                    totalGeral={totalGeral}
+                    dadosContrato={dadosContrato}
+                    onLoadCalculo={handleLoadCalculo}
+                  />
+                </div>
+              </div>
+            ) : (
+              // Layout para mobile (empilhado)
+              <div className="space-y-6">
+                {/* Área de Formulário */}
+                <Tabs defaultValue="contrato">
+                  <TabsList className="w-full">
+                    <TabsTrigger value="contrato" className="flex-1">Dados do Contrato</TabsTrigger>
+                    <TabsTrigger value="adicionais" className="flex-1">Adicionais e Multas</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="contrato">
+                    <DadosContratoForm 
+                      dadosContrato={dadosContrato}
+                      onChange={handleDadosContratoChange}
+                      onTipoRescisaoChange={(value) => {
+                        if (value === 'sem_justa_causa' || value === 'pedido_demissao' || 
+                            value === 'justa_causa' || value === 'rescisao_indireta') {
+                          handleAdicionaisChange('tipoRescisao', value);
+                        }
+                      }}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="adicionais">
+                    <AdicionaisForm 
+                      adicionais={adicionais}
+                      onChange={handleAdicionaisChange}
+                    />
+                  </TabsContent>
+                </Tabs>
+
+                <div>
+                  <Button 
+                    onClick={handleCalcularClick}
+                    className="w-full bg-juriscalc-navy text-white hover:bg-opacity-90"
+                    size="lg"
+                  >
+                    Calcular Verbas
+                  </Button>
+                </div>
+
+                {/* Área de Resultados */}
+                <div>
+                  <ResultadosCalculos 
+                    resultados={resultados} 
+                    adicionais={adicionais}
+                    onLoadCalculo={handleLoadCalculo}
+                  />
+                  
+                  {/* Mostrar módulo de correção monetária quando os cálculos estiverem prontos */}
+                  {hasCalculos && (
+                    <div className="mt-4">
+                      {showCorrecaoMonetaria ? (
+                        <>
+                          <CorrecaoMonetaria onAplicarCorrecao={aplicarCorrecaoMonetaria} />
+                          <Button 
+                            variant="outline"
+                            className="w-full border-juriscalc-navy text-juriscalc-navy mt-2"
+                            onClick={() => setShowCorrecaoMonetaria(false)}
+                          >
+                            Ocultar Correção Monetária
+                          </Button>
+                        </>
+                      ) : (
+                        <Button 
+                          variant="outline"
+                          className="w-full border-juriscalc-navy text-juriscalc-navy"
+                          onClick={() => setShowCorrecaoMonetaria(true)}
+                        >
+                          Aplicar Correção Monetária
+                        </Button>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Cálculos Salvos */}
+                  <CalculosSalvos 
+                    resultados={resultados}
+                    totalGeral={totalGeral}
+                    dadosContrato={dadosContrato}
+                    onLoadCalculo={handleLoadCalculo}
+                  />
+                </div>
+              </div>
+            )}
         
-        <HelpSection 
-          calculosDisponiveis={hasCalculos}
-        />
+            <HelpSection 
+              calculosDisponiveis={hasCalculos}
+            />
+          </>
+        )}
       </div>
     </Layout>
   );

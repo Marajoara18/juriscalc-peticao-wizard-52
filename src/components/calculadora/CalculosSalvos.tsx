@@ -21,15 +21,24 @@ interface CalculoSalvo {
   totalGeral: number;
   userId?: string;
   nomeEscritorio?: string;
+  dadosContrato?: {
+    dataAdmissao?: string;
+    dataDemissao?: string;
+    salarioBase?: string;
+    tipoRescisao?: 'sem_justa_causa' | 'pedido_demissao' | 'justa_causa' | 'rescisao_indireta';
+    diasTrabalhados?: string;
+    mesesTrabalhados?: string;
+  };
 }
 
 interface CalculosSalvosProps {
   resultados: any;
   totalGeral: number;
+  dadosContrato: any;
   onLoadCalculo: (calculo: CalculoSalvo) => void;
 }
 
-const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral, onLoadCalculo }) => {
+const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral, dadosContrato, onLoadCalculo }) => {
   const navigate = useNavigate();
   const [calculosSalvos, setCalculosSalvos] = useState<CalculoSalvo[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -79,7 +88,15 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
       adicionais: resultados.adicionais,
       totalGeral: totalGeral,
       userId: localStorage.getItem('userId') || undefined,
-      nomeEscritorio
+      nomeEscritorio,
+      dadosContrato: {
+        dataAdmissao: dadosContrato.dataAdmissao,
+        dataDemissao: dadosContrato.dataDemissao,
+        salarioBase: dadosContrato.salarioBase,
+        tipoRescisao: dadosContrato.tipoRescisao,
+        diasTrabalhados: dadosContrato.diasTrabalhados,
+        mesesTrabalhados: dadosContrato.mesesTrabalhados,
+      }
     };
 
     let novosCalculos: CalculoSalvo[];
@@ -106,27 +123,18 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
   };
 
   const handleReabrirCalculo = (calculo: CalculoSalvo) => {
-    // Create a complete calculo object with all required properties
-    const calculoCompleto = {
-      ...calculo,
-      // Add dados do contrato if we can extract it from the saved calculation
-      dadosContrato: {
-        // We'll set default values that will be overridden in the parent component if needed
-        salarioBase: extractSalarioBase(calculo).toString(),
-        dataAdmissao: '',
-        dataDemissao: '',
-        tipoRescisao: 'sem_justa_causa',
-        diasTrabalhados: '',
-        mesesTrabalhados: '',
-      }
-    };
-    
-    onLoadCalculo(calculoCompleto);
+    // Reabrir o cálculo mantendo todas as informações disponíveis
+    onLoadCalculo(calculo);
     toast.success(`Cálculo "${calculo.nome}" reaberto para edição!`);
   };
-  
+
   // Helper function to extract the base salary from a saved calculation
   const extractSalarioBase = (calculo: CalculoSalvo): number => {
+    // Use dados do contrato se disponível
+    if (calculo.dadosContrato?.salarioBase) {
+      return parseFloat(calculo.dadosContrato.salarioBase);
+    }
+    
     // Try to determine salary from verbas rescisórias
     if (calculo.verbasRescisorias && calculo.verbasRescisorias.avisoPrevia) {
       return calculo.verbasRescisorias.avisoPrevia;
@@ -227,6 +235,12 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
                       {new Date(calculo.timestamp).toLocaleDateString('pt-BR')} - 
                       {formatarMoeda(calculo.totalGeral)}
                     </p>
+                    {calculo.dadosContrato?.dataAdmissao && calculo.dadosContrato?.dataDemissao && (
+                      <p className="text-xs text-gray-500">
+                        Período: {new Date(calculo.dadosContrato.dataAdmissao).toLocaleDateString('pt-BR')} a{' '}
+                        {new Date(calculo.dadosContrato.dataDemissao).toLocaleDateString('pt-BR')}
+                      </p>
+                    )}
                   </div>
                   <div className="flex flex-wrap gap-2 w-full sm:w-auto justify-end">
                     <Button 
