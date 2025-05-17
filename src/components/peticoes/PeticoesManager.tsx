@@ -104,10 +104,10 @@ const PeticoesManager = () => {
 
   const handleSavePeticao = (data: any) => {
     // Adicionar ID do usuário atual à petição
-    const userId = localStorage.getItem('userId');
+    const currentUserId = localStorage.getItem('userId');
     const updatedData = {
       ...data,
-      userId
+      userId: currentUserId
     };
   
     // Carregar todas as petições armazenadas
@@ -134,12 +134,11 @@ const PeticoesManager = () => {
     localStorage.setItem('peticoesRecentes', JSON.stringify(updatedPeticoes));
     
     // Filtrar petições com base no tipo de usuário
-    const userId = localStorage.getItem('userId');
-    const userIsAdmin = localStorage.getItem('userIsAdmin') === 'true';
+    const currentUserIsAdmin = localStorage.getItem('userIsAdmin') === 'true';
     
-    const filteredPeticoes = userIsAdmin
+    const filteredPeticoes = currentUserIsAdmin
       ? updatedPeticoes
-      : updatedPeticoes.filter(p => !p.userId || p.userId === userId);
+      : updatedPeticoes.filter(p => !p.userId || p.userId === currentUserId);
     
     setPeticoesRecentes(filteredPeticoes);
     
@@ -164,12 +163,12 @@ const PeticoesManager = () => {
         localStorage.setItem('peticoesRecentes', JSON.stringify(updatedPeticoes));
         
         // Filtrar petições com base no tipo de usuário
-        const userId = localStorage.getItem('userId');
-        const userIsAdmin = localStorage.getItem('userIsAdmin') === 'true';
+        const currentUserId = localStorage.getItem('userId');
+        const currentUserIsAdmin = localStorage.getItem('userIsAdmin') === 'true';
         
-        const filteredPeticoes = userIsAdmin
+        const filteredPeticoes = currentUserIsAdmin
           ? updatedPeticoes
-          : updatedPeticoes.filter(p => !p.userId || p.userId === userId);
+          : updatedPeticoes.filter(p => !p.userId || p.userId === currentUserId);
         
         setPeticoesRecentes(filteredPeticoes);
         
