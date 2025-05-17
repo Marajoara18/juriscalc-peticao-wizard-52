@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FileText } from "lucide-react";
+import { FileText, Calculator } from "lucide-react";
 import { Button } from '@/components/ui/button';
 
 const Header = () => {
@@ -9,6 +9,10 @@ const Header = () => {
   
   const handleNewPeticao = () => {
     navigate('/peticoes');
+  };
+  
+  const handleCalculadora = () => {
+    navigate('/calculadora');
   };
   
   return (
@@ -30,6 +34,13 @@ const Header = () => {
           <Link to="/peticoes" className="hover:text-juriscalc-gold transition-colors">Petições</Link>
         </nav>
         <div className="flex items-center gap-2">
+          <Button 
+            className="bg-white text-juriscalc-navy hover:bg-gray-100"
+            onClick={handleCalculadora}
+          >
+            <Calculator className="mr-2 h-4 w-4" />
+            Calculadora
+          </Button>
           <Button 
             className="bg-juriscalc-gold text-juriscalc-navy hover:bg-opacity-90"
             onClick={handleNewPeticao}
