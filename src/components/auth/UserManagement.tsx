@@ -5,8 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { LogOut, Users, User, Upload } from "lucide-react";
+import { LogOut, Users, User, Upload, Eye, EyeOff, Shield } from "lucide-react";
 import { toast } from "sonner";
+import { Switch } from "@/components/ui/switch";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "@/components/ui/form";
 
 interface UserData {
   id: string;
@@ -14,6 +16,7 @@ interface UserData {
   email: string;
   isAdmin: boolean;
   logoUrl?: string;
+  canViewPanels?: boolean;
 }
 
 const UserManagement = () => {
@@ -24,6 +27,7 @@ const UserManagement = () => {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isMasterAdmin, setIsMasterAdmin] = useState(false);
   
   useEffect(() => {
     // Carregar dados do usuário atual
@@ -42,6 +46,10 @@ const UserManagement = () => {
         logoUrl: userLogoUrl
       });
       setIsAdmin(userIsAdmin);
+      
+      // Verificar se é admin mestre (admin-1)
+      const isMaster = userId === 'admin-1';
+      setIsMasterAdmin(isMaster);
       
       // Se for admin, carregar todos os usuários
       if (userIsAdmin) {
@@ -126,6 +134,28 @@ const UserManagement = () => {
     setLogoDialogOpen(false);
   };
   
+  const handleTogglePanelAccess = (userId: string, currentValue: boolean) => {
+    // Apenas o admin mestre pode modificar permissões
+    if (!isMasterAdmin) {
+      toast.error('Apenas o administrador mestre pode modificar permissões de visualização.');
+      return;
+    }
+    
+    // Atualizar a lista de usuários com a nova permissão
+    const updatedUsers = allUsers.map(user => {
+      if (user.id === userId) {
+        return { ...user, canViewPanels: !currentValue };
+      }
+      return user;
+    });
+    
+    setAllUsers(updatedUsers);
+    localStorage.setItem('allUsers', JSON.stringify(updatedUsers));
+    
+    const userName = updatedUsers.find(user => user.id === userId)?.nome;
+    toast.success(`Permissões de ${userName} atualizadas com sucesso!`);
+  };
+  
   return (
     <>
       <Card className="mb-8">
@@ -166,7 +196,9 @@ const UserManagement = () => {
                 <p className="text-gray-600 mb-3">{userData.email}</p>
                 <p className="text-sm mb-4">
                   {userData.isAdmin 
-                    ? 'Administrador do Sistema' 
+                    ? isMasterAdmin 
+                      ? 'Administrador Mestre do Sistema' 
+                      : 'Administrador do Sistema' 
                     : 'Usuário Padrão'}
                 </p>
                 
@@ -191,6 +223,12 @@ const UserManagement = () => {
             <CardTitle className="flex items-center">
               <Users className="mr-2 h-5 w-5" />
               Painel de Administração
+              {isMasterAdmin && (
+                <span className="ml-2 bg-juriscalc-gold text-juriscalc-navy text-xs px-2 py-1 rounded-full flex items-center">
+                  <Shield className="h-3 w-3 mr-1" />
+                  Admin Mestre
+                </span>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -208,21 +246,52 @@ const UserManagement = () => {
                           <User className="h-6 w-6 text-juriscalc-navy" />
                         )}
                       </div>
-                      <div>
+                      <div className="flex-grow">
                         <h4 className="font-medium">{user.nome}</h4>
                         <p className="text-sm text-gray-600">{user.email}</p>
-                        <p className="text-xs mt-1">
+                        <div className="flex flex-wrap items-center gap-2 mt-1">
                           {user.isAdmin ? (
-                            <span className="bg-juriscalc-gold text-juriscalc-navy px-2 py-1 rounded-full">
+                            <span className="bg-juriscalc-gold text-juriscalc-navy px-2 py-1 rounded-full text-xs">
                               Admin
                             </span>
                           ) : (
-                            <span className="bg-juriscalc-lightgray px-2 py-1 rounded-full">
+                            <span className="bg-juriscalc-lightgray px-2 py-1 rounded-full text-xs">
                               Usuário
                             </span>
                           )}
-                        </p>
+                          
+                          {user.canViewPanels && (
+                            <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs flex items-center">
+                              <Eye className="h-3 w-3 mr-1" />
+                              Acesso aos Painéis
+                            </span>
+                          )}
+                        </div>
                       </div>
+                      
+                      {/* Controle de acesso aos painéis - apenas para admin mestre */}
+                      {isMasterAdmin && user.id !== 'admin-1' && (
+                        <div className="ml-auto flex items-center">
+                          <Switch
+                            checked={!!user.canViewPanels}
+                            onCheckedChange={() => handleTogglePanelAccess(user.id, !!user.canViewPanels)}
+                            className="data-[state=checked]:bg-green-500"
+                          />
+                          <span className="ml-2 text-sm">
+                            {user.canViewPanels ? (
+                              <span className="flex items-center text-green-600">
+                                <Eye className="h-4 w-4 mr-1" />
+                                Acesso permitido
+                              </span>
+                            ) : (
+                              <span className="flex items-center text-gray-500">
+                                <EyeOff className="h-4 w-4 mr-1" />
+                                Sem acesso
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

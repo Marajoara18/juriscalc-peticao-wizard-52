@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,6 +14,7 @@ interface User {
   senha: string;
   isAdmin: boolean;
   logoUrl?: string;
+  canViewPanels?: boolean;
 }
 
 const Login = () => {
@@ -52,7 +52,8 @@ const Login = () => {
         nome: 'Administrador',
         email: 'admin@iuscalc.com',
         senha: 'admin123',
-        isAdmin: true
+        isAdmin: true,
+        canViewPanels: true
       };
       
       allUsers.push(adminUser);
@@ -90,6 +91,8 @@ const Login = () => {
     localStorage.setItem('userEmail', user.email);
     localStorage.setItem('userName', user.nome);
     localStorage.setItem('userIsAdmin', String(user.isAdmin));
+    localStorage.setItem('canViewPanels', String(!!user.canViewPanels));
+    
     if (user.logoUrl) {
       localStorage.setItem('userLogoUrl', user.logoUrl);
     }
@@ -128,7 +131,8 @@ const Login = () => {
       nome,
       email,
       senha,
-      isAdmin: false
+      isAdmin: false,
+      canViewPanels: false // Novos usuários não têm acesso aos painéis por padrão
     };
     
     allUsers.push(newUser);
@@ -139,6 +143,7 @@ const Login = () => {
     localStorage.setItem('userEmail', newUser.email);
     localStorage.setItem('userName', newUser.nome);
     localStorage.setItem('userIsAdmin', 'false');
+    localStorage.setItem('canViewPanels', 'false');
     
     toast.success('Cadastro realizado com sucesso!');
     navigate('/calculadora');

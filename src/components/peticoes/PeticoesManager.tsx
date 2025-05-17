@@ -12,6 +12,8 @@ import HelpSection from '@/components/peticoes/HelpSection';
 import UserManagement from '@/components/auth/UserManagement';
 import MasterPasswordReset from '@/components/auth/MasterPasswordReset';
 import { peticoesModelo } from '@/data/peticoes-modelo';
+import { Shield } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const PeticoesManager = () => {
   const navigate = useNavigate();
@@ -20,6 +22,7 @@ const PeticoesManager = () => {
   const [view, setView] = useState<'list' | 'editor' | 'new' | 'user'>('list');
   const [peticoesRecentes, setPeticoesRecentes] = useState<any[]>([]);
   const [isPremium, setIsPremium] = useState(false);
+  const [canViewPanels, setCanViewPanels] = useState(false);
   
   // Carrega dados do localStorage
   useEffect(() => {
@@ -29,6 +32,13 @@ const PeticoesManager = () => {
       navigate('/');
       return;
     }
+    
+    // Verificar se usuário tem permissão para ver painéis
+    const userCanViewPanels = localStorage.getItem('canViewPanels') === 'true';
+    const userIsAdmin = localStorage.getItem('userIsAdmin') === 'true';
+    
+    // Admin sempre pode ver painéis
+    setCanViewPanels(userIsAdmin || userCanViewPanels);
     
     initializeLocalStorage();
     const storedPeticoes = localStorage.getItem('peticoesRecentes');
@@ -196,6 +206,39 @@ const PeticoesManager = () => {
             onVoltar={handleVoltar}
             onSave={handleSavePeticao}
           />
+        </div>
+      </Layout>
+    );
+  }
+
+  // Verificar permissão para visualizar os painéis
+  if (!canViewPanels) {
+    return (
+      <Layout>
+        <div className="container mx-auto py-10 px-4">
+          <Card className="border-red-200 bg-red-50">
+            <CardHeader>
+              <CardTitle className="flex items-center text-red-800">
+                <Shield className="h-5 w-5 mr-2" />
+                Acesso Restrito
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-center py-4 text-red-700">
+                Você não possui permissão para visualizar os painéis de petições. 
+                Entre em contato com o administrador mestre para solicitar acesso.
+              </p>
+              <div className="flex justify-center mt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={handleUserClick} 
+                  className="border-juriscalc-navy text-juriscalc-navy"
+                >
+                  Acessar Minha Conta
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </Layout>
     );
