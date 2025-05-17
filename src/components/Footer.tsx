@@ -11,10 +11,10 @@ const Footer = () => {
             <img 
               src="/lovable-uploads/520e0a12-c37a-4e2d-8eb3-0abe543bc359.png"
               alt="Logo IusCalc"
-              className="h-10 w-auto mb-2"
-              style={{ minWidth: 40 }}
+              className="h-14 w-auto mb-2"
+              style={{ minWidth: 56 }}
             />
-            <span className="font-serif text-xl font-bold mb-4">IusCalc Trabalhista</span>
+            {/* Removido o span com o nome textual */}
             <p className="text-gray-300 mb-4">
               Ferramenta completa para advogados trabalhistas automatizarem petições iniciais e 
               calcularem verbas trabalhistas com precisão.
@@ -45,3 +45,4 @@ const Footer = () => {
 };
 
 export default Footer;
+

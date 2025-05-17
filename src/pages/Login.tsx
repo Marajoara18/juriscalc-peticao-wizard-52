@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -157,10 +156,9 @@ const Login = () => {
           <img 
             src="/lovable-uploads/520e0a12-c37a-4e2d-8eb3-0abe543bc359.png"
             alt="Logo IusCalc"
-            className="h-16 w-auto mb-2"
-            style={{ minWidth: 60 }}
+            className="h-20 w-auto mb-4"
+            style={{ minWidth: 80 }}
           />
-          <h1 className="text-4xl font-serif font-bold text-juriscalc-navy">IusCalc</h1>
           <p className="mt-2 text-gray-600">Sua plataforma de cálculos trabalhistas</p>
         </div>
         

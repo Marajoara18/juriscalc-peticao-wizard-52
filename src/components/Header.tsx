@@ -14,12 +14,12 @@ const Header = () => {
   return (
     <header className="bg-juriscalc-navy text-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link to="/" className="flex items-center gap-3">
+        <Link to="/" className="flex items-center">
           <img 
             src="/lovable-uploads/520e0a12-c37a-4e2d-8eb3-0abe543bc359.png"
             alt="Logo IusCalc" 
-            className="h-10 w-auto"
-            style={{ minWidth: 40 }} 
+            className="h-14 w-auto" // aumentada de h-10 para h-14
+            style={{ minWidth: 56 }}
           />
         </Link>
         <nav className="hidden md:flex items-center gap-6">
