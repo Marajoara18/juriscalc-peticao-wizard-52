@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import { formatarMoeda } from '@/utils/formatters';
 import { useNavigate } from 'react-router-dom';
 import { handlePrint } from '@/utils/peticaoUtils';
+// Import the TabelaCalculos component
+import TabelaCalculos from '@/components/peticoes/TabelaCalculos';
 
 interface CalculoSalvo {
   id: string;
@@ -320,8 +322,8 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
         </DialogContent>
       </Dialog>
 
-      {/* Dialog para preview e impressão dos cálculos */}
-      <Dialog open={previewDialogOpen} onOpenChange={setPreviewDialogOpen} className="max-w-4xl">
+      {/* Dialog para preview e impressão dos cálculos - Removed className from Dialog */}
+      <Dialog open={previewDialogOpen} onOpenChange={setPreviewDialogOpen}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
             <DialogTitle>Demonstrativo de Cálculos</DialogTitle>
