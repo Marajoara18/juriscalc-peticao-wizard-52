@@ -6,9 +6,15 @@ const Footer = () => {
   return (
     <footer className="bg-juriscalc-navy text-white py-8">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h3 className="text-xl font-serif font-bold mb-4">IusCalc Trabalhista</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+          <div className="flex flex-col items-start md:items-start">
+            <img 
+              src="/lovable-uploads/520e0a12-c37a-4e2d-8eb3-0abe543bc359.png"
+              alt="Logo IusCalc"
+              className="h-10 w-auto mb-2"
+              style={{ minWidth: 40 }}
+            />
+            <span className="font-serif text-xl font-bold mb-4">IusCalc Trabalhista</span>
             <p className="text-gray-300 mb-4">
               Ferramenta completa para advogados trabalhistas automatizarem petições iniciais e 
               calcularem verbas trabalhistas com precisão.

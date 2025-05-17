@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Calculator, FileText } from "lucide-react";
+import { FileText } from "lucide-react";
 import { Button } from '@/components/ui/button';
 
 const Header = () => {
@@ -14,11 +14,13 @@ const Header = () => {
   return (
     <header className="bg-juriscalc-navy text-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="bg-juriscalc-gold p-1 rounded">
-            <Calculator size={24} className="text-juriscalc-navy" />
-          </div>
-          <span className="font-serif text-xl font-bold">IusCalc Trabalhista</span>
+        <Link to="/" className="flex items-center gap-3">
+          <img 
+            src="/lovable-uploads/520e0a12-c37a-4e2d-8eb3-0abe543bc359.png"
+            alt="Logo IusCalc" 
+            className="h-10 w-auto"
+            style={{ minWidth: 40 }} 
+          />
         </Link>
         <nav className="hidden md:flex items-center gap-6">
           <Link to="/" className="hover:text-juriscalc-gold transition-colors">Home</Link>
@@ -40,3 +42,4 @@ const Header = () => {
 };
 
 export default Header;
+
