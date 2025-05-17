@@ -15,12 +15,14 @@ const Header = () => {
     <header className="bg-juriscalc-navy text-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link to="/" className="flex items-center">
-          <img 
-            src="/lovable-uploads/caf683c7-0cb3-4ef4-8e5f-5de22f996b8a.png"
-            alt="Logo"
-            className="h-32 w-auto"
-            style={{ minWidth: 180 }}
-          />
+          <div className="bg-white p-2 rounded-lg">
+            <img 
+              src="/lovable-uploads/caf683c7-0cb3-4ef4-8e5f-5de22f996b8a.png"
+              alt="Logo"
+              className="h-28 w-auto"
+              style={{ minWidth: 180 }}
+            />
+          </div>
         </Link>
         <nav className="hidden md:flex items-center gap-6">
           <Link to="/" className="hover:text-juriscalc-gold transition-colors">Home</Link>

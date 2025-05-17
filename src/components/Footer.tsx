@@ -8,12 +8,14 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
           <div className="flex flex-col items-start md:items-start">
-            <img 
-              src="/lovable-uploads/caf683c7-0cb3-4ef4-8e5f-5de22f996b8a.png"
-              alt="Logo"
-              className="h-28 w-auto mb-2"
-              style={{ minWidth: 160 }}
-            />
+            <div className="bg-white p-2 rounded-lg mb-2">
+              <img 
+                src="/lovable-uploads/caf683c7-0cb3-4ef4-8e5f-5de22f996b8a.png"
+                alt="Logo"
+                className="h-24 w-auto"
+                style={{ minWidth: 160 }}
+              />
+            </div>
             <p className="text-gray-300 mb-4">
               Ferramenta completa para advogados trabalhistas automatizarem petições iniciais e 
               calcularem verbas trabalhistas com precisão.
