@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -14,12 +13,14 @@ import CalculosSalvos from './CalculosSalvos';
 interface ResultadosCalculosProps {
   resultados: Resultados;
   adicionais: Adicionais;
+  dadosContrato?: any; // Add dadosContrato prop
   onLoadCalculo?: (calculo: any) => void;
 }
 
 const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({ 
   resultados, 
   adicionais,
+  dadosContrato = {}, // Default to empty object
   onLoadCalculo
 }) => {
   const navigate = useNavigate();
@@ -287,6 +288,7 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
           <CalculosSalvos 
             resultados={resultados} 
             totalGeral={totalGeral} 
+            dadosContrato={dadosContrato} // Pass the dadosContrato prop
             onLoadCalculo={handleLoadCalculo}
           />
         ) : hasResults ? (

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -260,9 +259,9 @@ const Calculadora = () => {
         ) : (
           <>
             {layoutMode === 'desktop' ? (
-              // Layout para desktop (grid com 2 colunas)
+              // Layout for desktop
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Coluna 1 - Formulário */}
+                {/* Column 1 - Form */}
                 <div className="lg:col-span-2">
                   <Tabs defaultValue="contrato">
                     <TabsList className="w-full">
@@ -335,6 +334,7 @@ const Calculadora = () => {
                   <ResultadosCalculos 
                     resultados={resultados} 
                     adicionais={adicionais}
+                    dadosContrato={dadosContrato} // Pass dadosContrato here
                     onLoadCalculo={handleLoadCalculo}
                   />
                   
@@ -347,9 +347,9 @@ const Calculadora = () => {
                 </div>
               </div>
             ) : (
-              // Layout para mobile (empilhado)
+              // Layout for mobile
               <div className="space-y-6">
-                {/* Área de Formulário */}
+                {/* Form area */}
                 <Tabs defaultValue="contrato">
                   <TabsList className="w-full">
                     <TabsTrigger value="contrato" className="flex-1">Dados do Contrato</TabsTrigger>
@@ -387,11 +387,12 @@ const Calculadora = () => {
                   </Button>
                 </div>
 
-                {/* Área de Resultados */}
+                {/* Results area */}
                 <div>
                   <ResultadosCalculos 
                     resultados={resultados} 
                     adicionais={adicionais}
+                    dadosContrato={dadosContrato} // Pass dadosContrato here
                     onLoadCalculo={handleLoadCalculo}
                   />
                   
@@ -421,7 +422,7 @@ const Calculadora = () => {
                     </div>
                   )}
 
-                  {/* Cálculos Salvos */}
+                  {/* Calculos Salvos */}
                   <CalculosSalvos 
                     resultados={resultados}
                     totalGeral={totalGeral}
