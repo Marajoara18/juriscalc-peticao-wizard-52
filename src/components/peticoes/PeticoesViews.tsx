@@ -10,9 +10,10 @@ interface PeticoesViewsProps {
   peticoesRecentes: any[];
   onUseModelo: (id: number) => void;
   onEditPeticao: (id: number) => void;
+  onDeletePeticao: (id: number) => void;
 }
 
-const PeticoesViews = ({ peticoesRecentes, onUseModelo, onEditPeticao }: PeticoesViewsProps) => {
+const PeticoesViews = ({ peticoesRecentes, onUseModelo, onEditPeticao, onDeletePeticao }: PeticoesViewsProps) => {
   return (
     <Tabs defaultValue="recentes" className="mb-8">
       <TabsList className="w-full mb-6">
@@ -28,6 +29,7 @@ const PeticoesViews = ({ peticoesRecentes, onUseModelo, onEditPeticao }: Peticoe
                 key={peticao.id} 
                 peticao={peticao} 
                 onEditPeticao={onEditPeticao}
+                onDeletePeticao={onDeletePeticao}
               />
             ))}
           </div>

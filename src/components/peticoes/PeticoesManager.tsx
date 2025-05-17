@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Button } from '@/components/ui/button'; // Adding the missing import
+import { Button } from '@/components/ui/button';
 import Layout from '@/components/Layout';
 import { initializeLocalStorage } from '@/utils/localStorage';
 import PeticoesHeader from '@/components/peticoes/PeticoesHeader';
@@ -138,6 +138,34 @@ const PeticoesManager = () => {
     setView('user');
   };
 
+  const handleDeletePeticao = (id: number) => {
+    const storedPeticoes = localStorage.getItem('peticoesRecentes');
+    if (storedPeticoes) {
+      try {
+        const allPeticoes = JSON.parse(storedPeticoes);
+        
+        // Filter out the petition to delete
+        const updatedPeticoes = allPeticoes.filter((p: any) => p.id !== id);
+        
+        // Update localStorage
+        localStorage.setItem('peticoesRecentes', JSON.stringify(updatedPeticoes));
+        
+        // Update state with only user's petitions
+        const userId = localStorage.getItem('userId');
+        const userPeticoes = updatedPeticoes.filter((p: any) => 
+          !p.userId || p.userId === userId
+        );
+        
+        setPeticoesRecentes(userPeticoes);
+        
+        toast.success('Petição excluída com sucesso!');
+      } catch (error) {
+        console.error('Erro ao excluir petição:', error);
+        toast.error('Erro ao excluir petição. Tente novamente.');
+      }
+    }
+  };
+
   if (view === 'user') {
     return (
       <Layout>
@@ -187,6 +215,7 @@ const PeticoesManager = () => {
           peticoesRecentes={peticoesRecentes}
           onUseModelo={handleUseModelo}
           onEditPeticao={handleEditPeticao}
+          onDeletePeticao={handleDeletePeticao}
         />
 
         <HelpSection />

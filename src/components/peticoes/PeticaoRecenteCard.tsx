@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Printer } from 'lucide-react';
+import { Printer, Trash } from 'lucide-react';
 
 interface PeticaoRecenteProps {
   peticao: {
@@ -13,9 +13,10 @@ interface PeticaoRecenteProps {
     data: string;
   };
   onEditPeticao: (id: number) => void;
+  onDeletePeticao?: (id: number) => void;
 }
 
-const PeticaoRecenteCard: React.FC<PeticaoRecenteProps> = ({ peticao, onEditPeticao }) => {
+const PeticaoRecenteCard: React.FC<PeticaoRecenteProps> = ({ peticao, onEditPeticao, onDeletePeticao }) => {
   const handlePrint = () => {
     // Store the ID of the petition to print
     localStorage.setItem('peticaoToPrint', String(peticao.id));
@@ -26,6 +27,12 @@ const PeticaoRecenteCard: React.FC<PeticaoRecenteProps> = ({ peticao, onEditPeti
       window.print();
       localStorage.removeItem('peticaoToPrint');
     }, 500);
+  };
+
+  const handleDelete = () => {
+    if (onDeletePeticao && window.confirm('Tem certeza que deseja excluir esta petição?')) {
+      onDeletePeticao(peticao.id);
+    }
   };
 
   return (
@@ -66,6 +73,17 @@ const PeticaoRecenteCard: React.FC<PeticaoRecenteProps> = ({ peticao, onEditPeti
             >
               Editar
             </Button>
+            {onDeletePeticao && (
+              <Button 
+                size="sm" 
+                variant="outline"
+                className="text-red-500 hover:bg-red-50"
+                onClick={handleDelete}
+              >
+                <Trash className="h-4 w-4" />
+                Excluir
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>
