@@ -98,7 +98,7 @@ export const criarHTMLCalculosEmbutidos = (calculos: any) => {
 
   // Importar dados necessários
   const logoUrl = localStorage.getItem('userLogoUrl');
-  const nomeEscritorio = calculos?.nomeEscritorio || localStorage.getItem('userName') || 'JurisCalc Trabalhista';
+  const nomeEscritorio = calculos?.nomeEscritorio || localStorage.getItem('userName') || 'IusCalc Trabalhista';
   const dataCalculo = calculos.timestamp ? 
     new Date(calculos.timestamp).toLocaleDateString('pt-BR') : 
     new Date().toLocaleDateString('pt-BR');
@@ -168,6 +168,12 @@ export const criarHTMLCalculosEmbutidos = (calculos: any) => {
         
         <div style="text-align: center; font-size: 0.75rem; color: #6b7280; border-top: 1px solid #e5e7eb; margin-top: 0.5rem; padding-top: 0.25rem;">
           <p>Cálculos: <span style="font-weight: 500;">${nomeEscritorio}</span></p>
+          <div style="display: flex; justify-content: center; align-items: center; margin-top: 0.25rem;">
+            <div style="background-color: #fbbf24; padding: 0.125rem; border-radius: 0.125rem; margin-right: 0.25rem;">
+              <span style="color: #0f172a; font-weight: bold; font-size: 0.625rem;">Ius</span>
+            </div>
+            <span style="font-weight: bold; font-size: 0.75rem; color: #0f172a; font-family: serif;">IusCalc Trabalhista</span>
+          </div>
         </div>
       </div>
     </div>

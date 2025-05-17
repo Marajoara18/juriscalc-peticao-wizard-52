@@ -174,6 +174,12 @@ const TabelaCalculosEmbutida: React.FC<TabelaCalculosEmbutidaProps> = ({
         
         <div className="text-center text-xs text-gray-500 border-t mt-2 pt-1">
           <p>Cálculos: <span className="font-medium">{nomeEscritorio}</span></p>
+          <div className="flex items-center justify-center mt-1">
+            <div className="bg-juriscalc-gold p-1 rounded mr-1">
+              <span className="text-juriscalc-navy font-bold text-[10px]">Ius</span>
+            </div>
+            <p className="font-serif font-bold text-xs text-juriscalc-navy">IusCalc Trabalhista</p>
+          </div>
         </div>
       </div>
     </div>
