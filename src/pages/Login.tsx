@@ -154,10 +154,10 @@ const Login = () => {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center flex flex-col items-center justify-center">
           <img 
-            src="/lovable-uploads/520e0a12-c37a-4e2d-8eb3-0abe543bc359.png"
+            src="/lovable-uploads/88674bc0-199a-473d-a898-432bb5bc7240.png"
             alt="Logo IusCalc"
-            className="h-20 w-auto mb-4"
-            style={{ minWidth: 80 }}
+            className="h-24 w-auto mb-6"
+            style={{ minWidth: 130 }}
           />
           <p className="mt-2 text-gray-600">Sua plataforma de cálculos trabalhistas</p>
         </div>

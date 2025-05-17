@@ -9,12 +9,12 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
           <div className="flex flex-col items-start md:items-start">
             <img 
-              src="/lovable-uploads/520e0a12-c37a-4e2d-8eb3-0abe543bc359.png"
+              src="/lovable-uploads/88674bc0-199a-473d-a898-432bb5bc7240.png"
               alt="Logo IusCalc"
-              className="h-14 w-auto mb-2"
-              style={{ minWidth: 56 }}
+              className="h-20 w-auto mb-2"
+              style={{ minWidth: 120 }}
             />
-            {/* Removido o span com o nome textual */}
+            {/* Logo sem nome textual */}
             <p className="text-gray-300 mb-4">
               Ferramenta completa para advogados trabalhistas automatizarem petições iniciais e 
               calcularem verbas trabalhistas com precisão.
@@ -45,4 +45,3 @@ const Footer = () => {
 };
 
 export default Footer;
-

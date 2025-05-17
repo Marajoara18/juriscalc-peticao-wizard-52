@@ -16,10 +16,10 @@ const Header = () => {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link to="/" className="flex items-center">
           <img 
-            src="/lovable-uploads/520e0a12-c37a-4e2d-8eb3-0abe543bc359.png"
+            src="/lovable-uploads/88674bc0-199a-473d-a898-432bb5bc7240.png"
             alt="Logo IusCalc" 
-            className="h-14 w-auto" // aumentada de h-10 para h-14
-            style={{ minWidth: 56 }}
+            className="h-20 w-auto" // aumentada para ficar proporcional ao nome IUSCALC
+            style={{ minWidth: 120 }}
           />
         </Link>
         <nav className="hidden md:flex items-center gap-6">
@@ -42,4 +42,3 @@ const Header = () => {
 };
 
 export default Header;
-
