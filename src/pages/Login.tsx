@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -154,7 +155,7 @@ const Login = () => {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center flex flex-col items-center justify-center">
           <img 
-            src="/lovable-uploads/dd485275-21f8-461d-a865-29155207df4a.png"
+            src="/lovable-uploads/caf683c7-0cb3-4ef4-8e5f-5de22f996b8a.png"
             alt="Logo"
             className="h-36 w-auto mb-3"
             style={{ minWidth: 200 }}
