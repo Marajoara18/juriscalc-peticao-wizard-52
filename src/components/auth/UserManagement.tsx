@@ -45,8 +45,8 @@ const UserManagement = () => {
       });
       setIsAdmin(userIsAdmin);
       
-      // Verificar se é admin mestre (admin-1)
-      const isMaster = userId === 'admin-1';
+      // Verificar se é admin mestre (admin-1 OU email admin@juriscalc.com)
+      const isMaster = userId === 'admin-1' || userEmail === 'admin@juriscalc.com';
       setIsMasterAdmin(isMaster);
       
       // Se for admin, carregar todos os usuários

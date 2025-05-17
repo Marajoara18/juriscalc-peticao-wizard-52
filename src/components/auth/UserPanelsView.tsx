@@ -79,7 +79,7 @@ const UserPanelsView = ({ isMasterAdmin, allUsers }: UserPanelsViewProps) => {
       <CardHeader>
         <CardTitle className="flex items-center">
           <PanelLeft className="mr-2 h-5 w-5" />
-          Visualização de Painéis
+          Visualização de Painéis de Usuários
           <span className="ml-2 bg-juriscalc-gold text-juriscalc-navy text-xs px-2 py-1 rounded-full flex items-center">
             <Shield className="h-3 w-3 mr-1" />
             Recurso Admin Mestre
@@ -113,7 +113,7 @@ const UserPanelsView = ({ isMasterAdmin, allUsers }: UserPanelsViewProps) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {allUsers.map(user => (
+            {allUsers.filter(user => user.id !== currentUserId).map(user => (
               <TableRow key={user.id}>
                 <TableCell className="font-medium">{user.nome}</TableCell>
                 <TableCell>{user.email}</TableCell>
@@ -133,7 +133,6 @@ const UserPanelsView = ({ isMasterAdmin, allUsers }: UserPanelsViewProps) => {
                     variant="outline"
                     size="sm"
                     onClick={() => handleViewUserPanel(user.id)}
-                    disabled={user.id === currentUserId}
                     className="text-juriscalc-navy border-juriscalc-navy"
                   >
                     <Eye className="h-4 w-4 mr-1" />
