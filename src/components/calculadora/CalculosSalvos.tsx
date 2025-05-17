@@ -106,8 +106,34 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
   };
 
   const handleReabrirCalculo = (calculo: CalculoSalvo) => {
-    onLoadCalculo(calculo);
+    // Create a complete calculo object with all required properties
+    const calculoCompleto = {
+      ...calculo,
+      // Add dados do contrato if we can extract it from the saved calculation
+      dadosContrato: {
+        // We'll set default values that will be overridden in the parent component if needed
+        salarioBase: extractSalarioBase(calculo).toString(),
+        dataAdmissao: '',
+        dataDemissao: '',
+        tipoRescisao: 'sem_justa_causa',
+        diasTrabalhados: '',
+        mesesTrabalhados: '',
+      }
+    };
+    
+    onLoadCalculo(calculoCompleto);
     toast.success(`Cálculo "${calculo.nome}" reaberto para edição!`);
+  };
+  
+  // Helper function to extract the base salary from a saved calculation
+  const extractSalarioBase = (calculo: CalculoSalvo): number => {
+    // Try to determine salary from verbas rescisórias
+    if (calculo.verbasRescisorias && calculo.verbasRescisorias.avisoPrevia) {
+      return calculo.verbasRescisorias.avisoPrevia;
+    }
+    
+    // If not found in verbas, try to estimate from other values
+    return 0; // Default fallback if we can't determine
   };
 
   const handleApagar = (id: string) => {
@@ -322,7 +348,7 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
         </DialogContent>
       </Dialog>
 
-      {/* Dialog para preview e impressão dos cálculos - Removed className from Dialog */}
+      {/* Dialog para preview e impressão dos cálculos */}
       <Dialog open={previewDialogOpen} onOpenChange={setPreviewDialogOpen}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>

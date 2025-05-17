@@ -129,7 +129,7 @@ const Calculadora = () => {
   const handleLoadCalculo = (calculo: any) => {
     if (!calculo) return;
     
-    // Carregar dados do contrato
+    // Carregar dados do contrato (se disponíveis)
     if (calculo.dadosContrato) {
       setDadosContrato({
         ...dadosContrato,
@@ -137,35 +137,33 @@ const Calculadora = () => {
       });
     }
     
-    // Carregar adicionais do cálculo
-    if (calculo.adicionais) {
-      setAdicionais({
-        ...adicionais,
-        calcularInsalubridade: calculo.adicionais.adicionalInsalubridade > 0,
-        calcularPericulosidade: calculo.adicionais.adicionalPericulosidade > 0,
-        calcularMulta467: calculo.adicionais.multa467 > 0,
-        calcularMulta477: calculo.adicionais.multa477 > 0,
-        calcularAdicionalNoturno: calculo.adicionais.adicionalNoturno > 0,
-        calcularHorasExtras: calculo.adicionais.horasExtras > 0,
-        calcularFeriasVencidas: calculo.adicionais.feriasVencidas > 0,
-        calcularIndenizacaoDemissao: calculo.adicionais.indenizacaoDemissao > 0,
-        calcularValeTransporte: calculo.adicionais.valeTransporte > 0,
-        calcularValeAlimentacao: calculo.adicionais.valeAlimentacao > 0,
-        calcularAdicionalTransferencia: calculo.adicionais.adicionalTransferencia > 0,
-        calcularDescontosIndevidos: calculo.adicionais.descontosIndevidos > 0,
-        calcularDiferencasSalariais: calculo.adicionais.diferencasSalariais > 0,
-        calcularCustom: calculo.adicionais.customCalculo > 0,
-        calcularSeguroDesemprego: calculo.adicionais.seguroDesemprego > 0,
-      });
-    }
-    
-    // Carregar resultados
+    // Carregar verbas rescisórias e adicionais
     if (calculo.verbasRescisorias || calculo.adicionais) {
       setResultados({
         verbasRescisorias: calculo.verbasRescisorias || resultados.verbasRescisorias,
         adicionais: calculo.adicionais || resultados.adicionais
       });
     }
+    
+    // Carregar configurações dos adicionais com base nos valores calculados
+    setAdicionais({
+      ...adicionais,
+      calcularInsalubridade: calculo.adicionais?.adicionalInsalubridade > 0,
+      calcularPericulosidade: calculo.adicionais?.adicionalPericulosidade > 0,
+      calcularMulta467: calculo.adicionais?.multa467 > 0,
+      calcularMulta477: calculo.adicionais?.multa477 > 0,
+      calcularAdicionalNoturno: calculo.adicionais?.adicionalNoturno > 0,
+      calcularHorasExtras: calculo.adicionais?.horasExtras > 0,
+      calcularFeriasVencidas: calculo.adicionais?.feriasVencidas > 0,
+      calcularIndenizacaoDemissao: calculo.adicionais?.indenizacaoDemissao > 0,
+      calcularValeTransporte: calculo.adicionais?.valeTransporte > 0,
+      calcularValeAlimentacao: calculo.adicionais?.valeAlimentacao > 0,
+      calcularAdicionalTransferencia: calculo.adicionais?.adicionalTransferencia > 0,
+      calcularDescontosIndevidos: calculo.adicionais?.descontosIndevidos > 0,
+      calcularDiferencasSalariais: calculo.adicionais?.diferencasSalariais > 0,
+      calcularCustom: calculo.adicionais?.customCalculo > 0,
+      calcularSeguroDesemprego: calculo.adicionais?.seguroDesemprego > 0,
+    });
     
     toast.success('Cálculo carregado com sucesso!');
   };
