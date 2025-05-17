@@ -8,13 +8,14 @@ import { FileText, Printer } from 'lucide-react';
 import { toast } from "sonner";
 import { formatarMoeda } from '@/utils/formatters';
 import { Resultados, Adicionais } from '@/types/calculadora';
+import { CalculoSalvo } from '@/types/calculoSalvo';
 import CalculosSalvos from './CalculosSalvos';
 
 interface ResultadosCalculosProps {
   resultados: Resultados;
   adicionais: Adicionais;
   dadosContrato?: any; // Add dadosContrato prop
-  onLoadCalculo?: (calculo: any) => void;
+  onLoadCalculo?: (calculo: CalculoSalvo) => void;
 }
 
 const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({ 
@@ -254,7 +255,7 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
     setShowSalvos(true);
   };
   
-  const handleLoadCalculo = (calculo: any) => {
+  const handleLoadCalculo = (calculo: CalculoSalvo) => {
     if (onLoadCalculo) {
       onLoadCalculo(calculo);
     }

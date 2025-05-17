@@ -2,34 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
-import { Save, Trash, Edit, FileText, RefreshCw, Printer } from "lucide-react";
+import { Save } from "lucide-react";
 import { toast } from "sonner";
-import { formatarMoeda } from '@/utils/formatters';
 import { useNavigate } from 'react-router-dom';
-import { handlePrint } from '@/utils/peticaoUtils';
-// Import the TabelaCalculos component
-import TabelaCalculos from '@/components/peticoes/TabelaCalculos';
-
-interface CalculoSalvo {
-  id: string;
-  nome: string;
-  timestamp: string;
-  verbasRescisorias: any;
-  adicionais: any;
-  totalGeral: number;
-  userId?: string;
-  nomeEscritorio?: string;
-  dadosContrato?: {
-    dataAdmissao?: string;
-    dataDemissao?: string;
-    salarioBase?: string;
-    tipoRescisao?: 'sem_justa_causa' | 'pedido_demissao' | 'justa_causa' | 'rescisao_indireta';
-    diasTrabalhados?: string;
-    mesesTrabalhados?: string;
-  };
-}
+import { CalculoSalvo } from '@/types/calculoSalvo';
+import CalculoItem from './CalculoItem';
+import SaveCalculoDialog from './dialogs/SaveCalculoDialog';
+import ConfirmPeticaoDialog from './dialogs/ConfirmPeticaoDialog';
+import PreviewCalculoDialog from './dialogs/PreviewCalculoDialog';
 
 interface CalculosSalvosProps {
   resultados: any;
@@ -128,22 +108,6 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
     toast.success(`Cálculo "${calculo.nome}" reaberto para edição!`);
   };
 
-  // Helper function to extract the base salary from a saved calculation
-  const extractSalarioBase = (calculo: CalculoSalvo): number => {
-    // Use dados do contrato se disponível
-    if (calculo.dadosContrato?.salarioBase) {
-      return parseFloat(calculo.dadosContrato.salarioBase);
-    }
-    
-    // Try to determine salary from verbas rescisórias
-    if (calculo.verbasRescisorias && calculo.verbasRescisorias.avisoPrevia) {
-      return calculo.verbasRescisorias.avisoPrevia;
-    }
-    
-    // If not found in verbas, try to estimate from other values
-    return 0; // Default fallback if we can't determine
-  };
-
   const handleApagar = (id: string) => {
     const novosCalculos = calculosSalvos.filter(calc => calc.id !== id);
     setCalculosSalvos(novosCalculos);
@@ -159,12 +123,6 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
   const handlePreviewCalculo = (calculo: CalculoSalvo) => {
     setSelectedCalculoForPreview(calculo);
     setPreviewDialogOpen(true);
-  };
-
-  const handlePrintCalculo = () => {
-    // Use the print function from peticaoUtils
-    handlePrint();
-    toast.success('Demonstrativo de cálculos enviado para impressão!');
   };
 
   const handleUsarNaPeticao = (calculo: CalculoSalvo) => {
@@ -225,182 +183,44 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
           ) : (
             <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
               {calculosFiltrados.map((calculo) => (
-                <div 
-                  key={calculo.id} 
-                  className="border rounded-md p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2"
-                >
-                  <div>
-                    <h4 className="font-medium">{calculo.nome}</h4>
-                    <p className="text-sm text-gray-500">
-                      {new Date(calculo.timestamp).toLocaleDateString('pt-BR')} - 
-                      {formatarMoeda(calculo.totalGeral)}
-                    </p>
-                    {calculo.dadosContrato?.dataAdmissao && calculo.dadosContrato?.dataDemissao && (
-                      <p className="text-xs text-gray-500">
-                        Período: {new Date(calculo.dadosContrato.dataAdmissao).toLocaleDateString('pt-BR')} a{' '}
-                        {new Date(calculo.dadosContrato.dataDemissao).toLocaleDateString('pt-BR')}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex flex-wrap gap-2 w-full sm:w-auto justify-end">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleUsarCalculo(calculo)}
-                    >
-                      Usar
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleReabrirCalculo(calculo)}
-                      className="flex items-center gap-1"
-                      title="Reabrir para Edição"
-                    >
-                      <RefreshCw className="h-4 w-4" />
-                      <span className="hidden sm:inline">Reabrir</span>
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handlePreviewCalculo(calculo)}
-                      className="flex items-center gap-1"
-                      title="Visualizar e Imprimir"
-                    >
-                      <Printer className="h-4 w-4" />
-                      <span className="hidden sm:inline">Imprimir</span>
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleUsarNaPeticao(calculo)}
-                      className="flex items-center gap-1"
-                      title="Usar na Petição"
-                    >
-                      <FileText className="h-4 w-4" />
-                      <span className="hidden sm:inline">Petição</span>
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleEditar(calculo)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleApagar(calculo.id)}
-                      className="text-red-500 hover:bg-red-50"
-                    >
-                      <Trash className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
+                <CalculoItem
+                  key={calculo.id}
+                  calculo={calculo}
+                  onEdit={handleEditar}
+                  onDelete={handleApagar}
+                  onUse={handleUsarCalculo}
+                  onReopen={handleReabrirCalculo}
+                  onPreview={handlePreviewCalculo}
+                  onUsePeticao={handleUsarNaPeticao}
+                />
               ))}
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Dialog para salvar/editar cálculo */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editandoId ? 'Editar Cálculo' : 'Salvar Cálculo'}</DialogTitle>
-            <DialogDescription>Dê um nome descritivo para identificar este cálculo posteriormente.</DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <label className="block text-sm font-medium mb-2" htmlFor="nome-calculo">
-              Nome do Cálculo
-            </label>
-            <Input 
-              id="nome-calculo"
-              value={nomeCalculo}
-              onChange={(e) => setNomeCalculo(e.target.value)}
-              placeholder="Ex: Cálculo Empresa XYZ"
-              className="w-full"
-              autoFocus
-            />
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Cancelar
-            </Button>
-            <Button onClick={handleSalvar}>
-              {editandoId ? 'Atualizar' : 'Salvar'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Dialogs */}
+      <SaveCalculoDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        nomeCalculo={nomeCalculo}
+        setNomeCalculo={setNomeCalculo}
+        isEditing={!!editandoId}
+        onSave={handleSalvar}
+      />
 
-      {/* Dialog de confirmação para usar na petição */}
-      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Usar Cálculo na Petição</DialogTitle>
-            <DialogDescription>
-              Este cálculo será disponibilizado para uso na próxima petição que você criar ou editar.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <p className="mb-2">
-              <strong>Nome:</strong> {selectedCalculoForPeticao?.nome}
-            </p>
-            <p className="mb-4">
-              <strong>Total:</strong> {selectedCalculoForPeticao ? formatarMoeda(selectedCalculoForPeticao.totalGeral) : ''}
-            </p>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setConfirmDialogOpen(false)}>
-              Cancelar
-            </Button>
-            <Button onClick={confirmarUsarNaPeticao}>
-              Continuar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmPeticaoDialog
+        open={confirmDialogOpen}
+        onOpenChange={setConfirmDialogOpen}
+        calculo={selectedCalculoForPeticao}
+        onConfirm={confirmarUsarNaPeticao}
+      />
 
-      {/* Dialog para preview e impressão dos cálculos */}
-      <Dialog open={previewDialogOpen} onOpenChange={setPreviewDialogOpen}>
-        <DialogContent className="max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>Demonstrativo de Cálculos</DialogTitle>
-            <DialogDescription>
-              Visualize e imprima o demonstrativo de cálculos
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4 print:py-0">
-            {selectedCalculoForPreview && (
-              <div className="print:block">
-                <div className="border rounded-md p-4 print:border-none">
-                  <h3 className="text-lg font-bold mb-4 text-center print:text-xl">
-                    {selectedCalculoForPreview.nome} - Demonstrativo de Cálculos Trabalhistas
-                  </h3>
-                  {/* Conteúdo da tabela de cálculos */}
-                  <div className="print:break-inside-avoid">
-                    <TabelaCalculos
-                      calculos={selectedCalculoForPreview}
-                      onInserirNoPeticao={() => {}}
-                      embutido={true}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setPreviewDialogOpen(false)}>
-              Fechar
-            </Button>
-            <Button onClick={handlePrintCalculo}>
-              <Printer className="h-4 w-4 mr-2" />
-              Imprimir
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <PreviewCalculoDialog
+        open={previewDialogOpen}
+        onOpenChange={setPreviewDialogOpen}
+        calculo={selectedCalculoForPreview}
+      />
     </>
   );
 };
