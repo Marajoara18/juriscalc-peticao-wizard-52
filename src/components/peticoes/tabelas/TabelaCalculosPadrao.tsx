@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { formatarMoeda } from '@/utils/formatters';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -104,13 +103,11 @@ const TabelaCalculosPadrao: React.FC<TabelaCalculosPadraoProps> = ({
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            {logoUrl && (
-              <img 
-                src={logoUrl} 
-                alt="Logo" 
-                className="h-10 mr-3" 
-              />
-            )}
+            <img 
+              src="/lovable-uploads/caf683c7-0cb3-4ef4-8e5f-5de22f996b8a.png"
+              alt="IusCalc Logo" 
+              className="h-10 mr-3" 
+            />
             <div>
               <CardTitle className="text-xl">Cálculos Trabalhistas</CardTitle>
               <CardDescription>{nomeCalculo}Gerado em: {dataCalculo}</CardDescription>
