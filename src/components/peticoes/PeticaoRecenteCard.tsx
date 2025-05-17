@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Printer } from 'lucide-react';
 
 interface PeticaoRecenteProps {
   peticao: {
@@ -15,6 +16,18 @@ interface PeticaoRecenteProps {
 }
 
 const PeticaoRecenteCard: React.FC<PeticaoRecenteProps> = ({ peticao, onEditPeticao }) => {
+  const handlePrint = () => {
+    // Store the ID of the petition to print
+    localStorage.setItem('peticaoToPrint', String(peticao.id));
+    // Navigate to the petition and trigger print
+    onEditPeticao(peticao.id);
+    // Set a small timeout to ensure the content is loaded before printing
+    setTimeout(() => {
+      window.print();
+      localStorage.removeItem('peticaoToPrint');
+    }, 500);
+  };
+
   return (
     <Card className="cursor-pointer hover:border-juriscalc-navy transition-all">
       <CardHeader className="pb-3">
@@ -37,13 +50,23 @@ const PeticaoRecenteCard: React.FC<PeticaoRecenteProps> = ({ peticao, onEditPeti
           <div className="text-sm text-gray-500">
             Criada em {peticao.data}
           </div>
-          <Button 
-            size="sm" 
-            variant="outline"
-            onClick={() => onEditPeticao(peticao.id)}
-          >
-            Editar
-          </Button>
+          <div className="flex space-x-2">
+            <Button 
+              size="sm" 
+              variant="outline"
+              onClick={handlePrint}
+            >
+              <Printer className="h-4 w-4 mr-1" />
+              Imprimir
+            </Button>
+            <Button 
+              size="sm" 
+              variant="outline"
+              onClick={() => onEditPeticao(peticao.id)}
+            >
+              Editar
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
