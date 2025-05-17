@@ -1,7 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button'; // Adding the missing import
 import Layout from '@/components/Layout';
 import { initializeLocalStorage } from '@/utils/localStorage';
 import PeticoesHeader from '@/components/peticoes/PeticoesHeader';
