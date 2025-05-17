@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { PeticaoFormData } from '@/types/peticao';
 import { toast } from "sonner";
@@ -109,10 +108,10 @@ export const usePeticaoForm = (peticao: any, modelo: any) => {
       calculosTabela: calculosImportados
     }));
     
-    // Inserir texto indicativo no final da descrição sem adicionar automaticamente a tabela
+    // Inserir texto indicativo no final da descrição com a tabela logo abaixo
     const textoCalculos = "\n\nOS VALORES DEVIDOS AO RECLAMANTE SOMAM " + 
       "R$ " + calculosImportados.totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + 
-      " (" + valorPorExtenso(calculosImportados.totalGeral) + "), conforme demonstrativo ABAIXO.";
+      " (" + valorPorExtenso(calculosImportados.totalGeral) + "), conforme demonstrativo ABAIXO.\n\n[TABELA_CALCULOS]";
     
     setFormData(prev => ({
       ...prev,
@@ -122,7 +121,7 @@ export const usePeticaoForm = (peticao: any, modelo: any) => {
     // Definir o preview dos cálculos para mostrar na interface
     setCalculosPreview("com_calculos");
     
-    toast.success('Cálculos inseridos na petição com sucesso! Use o botão "Inserir Tabela de Cálculos" para posicionar a tabela dentro do texto.');
+    toast.success('Cálculos inseridos na petição com sucesso!');
     
     // Limpar do localStorage após usar
     localStorage.removeItem('calculosParaPeticao');
