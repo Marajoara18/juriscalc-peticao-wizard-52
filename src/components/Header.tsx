@@ -16,10 +16,10 @@ const Header = () => {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link to="/" className="flex items-center">
           <img 
-            src="/lovable-uploads/88674bc0-199a-473d-a898-432bb5bc7240.png"
+            src="/lovable-uploads/dd485275-21f8-461d-a865-29155207df4a.png"
             alt="Logo"
-            className="h-28 w-auto"
-            style={{ minWidth: 160 }}
+            className="h-32 w-auto"
+            style={{ minWidth: 180 }}
           />
         </Link>
         <nav className="hidden md:flex items-center gap-6">

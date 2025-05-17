@@ -9,10 +9,10 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
           <div className="flex flex-col items-start md:items-start">
             <img 
-              src="/lovable-uploads/88674bc0-199a-473d-a898-432bb5bc7240.png"
+              src="/lovable-uploads/dd485275-21f8-461d-a865-29155207df4a.png"
               alt="Logo"
-              className="h-24 w-auto mb-2"
-              style={{ minWidth: 140 }}
+              className="h-28 w-auto mb-2"
+              style={{ minWidth: 160 }}
             />
             {/* Logo sem nome textual */}
             <p className="text-gray-300 mb-4">

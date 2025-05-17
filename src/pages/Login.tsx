@@ -154,12 +154,12 @@ const Login = () => {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center flex flex-col items-center justify-center">
           <img 
-            src="/lovable-uploads/88674bc0-199a-473d-a898-432bb5bc7240.png"
+            src="/lovable-uploads/dd485275-21f8-461d-a865-29155207df4a.png"
             alt="Logo"
-            className="h-32 w-auto mb-8"
-            style={{ minWidth: 180 }}
+            className="h-36 w-auto mb-3"
+            style={{ minWidth: 200 }}
           />
-          <p className="mt-2 text-gray-600">Sua plataforma de cálculos trabalhistas</p>
+          <p className="mt-1 text-gray-600">Sua plataforma de cálculos trabalhistas</p>
         </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
