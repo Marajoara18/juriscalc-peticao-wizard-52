@@ -72,7 +72,7 @@ const PeticaoForm: React.FC<PeticaoFormProps> = ({ formData, onChange, onInsertT
               className="flex items-center text-xs"
             >
               <Table className="h-4 w-4 mr-1" />
-              Inserir Tabela de Cálculos
+              Inserir Demonstrativo de Cálculos Trabalhistas
             </Button>
           )}
         </div>
@@ -84,9 +84,9 @@ const PeticaoForm: React.FC<PeticaoFormProps> = ({ formData, onChange, onInsertT
           onChange={onChange}
         />
         {formData.calculosTabela && formData.descricao.includes("[TABELA_CALCULOS]") && (
-          <div className="mt-2 p-2 bg-gray-50 border rounded-md">
-            <p className="text-xs text-gray-600">
-              A tabela de cálculos será inserida no local do marcador [TABELA_CALCULOS]
+          <div className="mt-2 p-2 bg-yellow-100 border rounded-md">
+            <p className="text-xs text-red-600 font-medium">
+              A tabela de cálculos será inserida no local do marcador [TABELA_CALCULOS]. Se você quiser alterar o local da tabela, recorte o marcador [TABELA_CALCULOS] e cole no local do texto que desejar.
             </p>
           </div>
         )}

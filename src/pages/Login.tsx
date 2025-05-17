@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { TabsContent, Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { LogIn, UserPlus, Lock } from 'lucide-react';
+import { LogIn, UserPlus } from 'lucide-react';
 
 interface User {
   id: string;
@@ -202,9 +202,6 @@ const Login = () => {
                   </Button>
                 </CardFooter>
               </form>
-              <div className="p-4 text-center text-sm text-gray-500">
-                <p>Admin padrão: admin@juriscalc.com / admin123</p>
-              </div>
             </Card>
           </TabsContent>
           

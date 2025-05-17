@@ -15,7 +15,7 @@ export const gerarHTMLCalculos = (calculosImportados: any) => {
   }
 };
 
-// Função para lidar com a impressão da petição
+// Função para lidar com a impressão da petição ou cálculos
 export const handlePrint = () => {
   window.print();
 };

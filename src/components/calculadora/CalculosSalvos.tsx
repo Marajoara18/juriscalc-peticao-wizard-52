@@ -4,10 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
-import { Save, Trash, Edit, FileText } from "lucide-react";
+import { Save, Trash, Edit, FileText, RefreshCw, Printer } from "lucide-react";
 import { toast } from "sonner";
 import { formatarMoeda } from '@/utils/formatters';
 import { useNavigate } from 'react-router-dom';
+import { handlePrint } from '@/utils/peticaoUtils';
 
 interface CalculoSalvo {
   id: string;
@@ -34,6 +35,8 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
   const [editandoId, setEditandoId] = useState<string | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [selectedCalculoForPeticao, setSelectedCalculoForPeticao] = useState<CalculoSalvo | null>(null);
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
+  const [selectedCalculoForPreview, setSelectedCalculoForPreview] = useState<CalculoSalvo | null>(null);
 
   // Carregar cálculos salvos
   useEffect(() => {
@@ -100,6 +103,11 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
     setDialogOpen(true);
   };
 
+  const handleReabrirCalculo = (calculo: CalculoSalvo) => {
+    onLoadCalculo(calculo);
+    toast.success(`Cálculo "${calculo.nome}" reaberto para edição!`);
+  };
+
   const handleApagar = (id: string) => {
     const novosCalculos = calculosSalvos.filter(calc => calc.id !== id);
     setCalculosSalvos(novosCalculos);
@@ -110,6 +118,17 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
   const handleUsarCalculo = (calculo: CalculoSalvo) => {
     onLoadCalculo(calculo);
     toast.success(`Cálculo "${calculo.nome}" carregado com sucesso!`);
+  };
+
+  const handlePreviewCalculo = (calculo: CalculoSalvo) => {
+    setSelectedCalculoForPreview(calculo);
+    setPreviewDialogOpen(true);
+  };
+
+  const handlePrintCalculo = () => {
+    // Use the print function from peticaoUtils
+    handlePrint();
+    toast.success('Demonstrativo de cálculos enviado para impressão!');
   };
 
   const handleUsarNaPeticao = (calculo: CalculoSalvo) => {
@@ -181,13 +200,33 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
                       {formatarMoeda(calculo.totalGeral)}
                     </p>
                   </div>
-                  <div className="flex space-x-2 w-full sm:w-auto justify-end">
+                  <div className="flex flex-wrap gap-2 w-full sm:w-auto justify-end">
                     <Button 
                       variant="outline" 
                       size="sm"
                       onClick={() => handleUsarCalculo(calculo)}
                     >
                       Usar
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleReabrirCalculo(calculo)}
+                      className="flex items-center gap-1"
+                      title="Reabrir para Edição"
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                      <span className="hidden sm:inline">Reabrir</span>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handlePreviewCalculo(calculo)}
+                      className="flex items-center gap-1"
+                      title="Visualizar e Imprimir"
+                    >
+                      <Printer className="h-4 w-4" />
+                      <span className="hidden sm:inline">Imprimir</span>
                     </Button>
                     <Button 
                       variant="outline" 
@@ -276,6 +315,46 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
             </Button>
             <Button onClick={confirmarUsarNaPeticao}>
               Continuar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog para preview e impressão dos cálculos */}
+      <Dialog open={previewDialogOpen} onOpenChange={setPreviewDialogOpen} className="max-w-4xl">
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Demonstrativo de Cálculos</DialogTitle>
+            <DialogDescription>
+              Visualize e imprima o demonstrativo de cálculos
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 print:py-0">
+            {selectedCalculoForPreview && (
+              <div className="print:block">
+                <div className="border rounded-md p-4 print:border-none">
+                  <h3 className="text-lg font-bold mb-4 text-center print:text-xl">
+                    {selectedCalculoForPreview.nome} - Demonstrativo de Cálculos Trabalhistas
+                  </h3>
+                  {/* Conteúdo da tabela de cálculos */}
+                  <div className="print:break-inside-avoid">
+                    <TabelaCalculos
+                      calculos={selectedCalculoForPreview}
+                      onInserirNoPeticao={() => {}}
+                      embutido={true}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPreviewDialogOpen(false)}>
+              Fechar
+            </Button>
+            <Button onClick={handlePrintCalculo}>
+              <Printer className="h-4 w-4 mr-2" />
+              Imprimir
             </Button>
           </DialogFooter>
         </DialogContent>
