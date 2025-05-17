@@ -58,6 +58,36 @@ const UserPanelsView = ({ isMasterAdmin, allUsers }: UserPanelsViewProps) => {
     }
   };
 
+  const handleLoginAsUser = (userId: string) => {
+    // Salva o ID do usuário original
+    localStorage.setItem('originalUserId', currentUserId || '');
+    
+    // Salva os dados do usuário que está sendo visualizado
+    const user = allUsers.find(u => u.id === userId);
+    if (user) {
+      // Armazena as credenciais originais do admin
+      const adminId = localStorage.getItem('userId');
+      const adminEmail = localStorage.getItem('userEmail');
+      const adminName = localStorage.getItem('userName');
+      
+      localStorage.setItem('adminOriginalId', adminId || '');
+      localStorage.setItem('adminOriginalEmail', adminEmail || '');
+      localStorage.setItem('adminOriginalName', adminName || '');
+      
+      // Define as credenciais do usuário
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('userEmail', user.email);
+      localStorage.setItem('userName', user.nome);
+      localStorage.setItem('userIsAdmin', String(user.isAdmin));
+      if (user.logoUrl) {
+        localStorage.setItem('userLogoUrl', user.logoUrl);
+      }
+      
+      toast.success(`Login como ${user.nome} realizado com sucesso!`);
+      navigate('/calculadora');
+    }
+  };
+
   const handleStopViewingAs = () => {
     const originalUserId = localStorage.getItem('originalUserId');
     if (originalUserId) {
@@ -73,6 +103,32 @@ const UserPanelsView = ({ isMasterAdmin, allUsers }: UserPanelsViewProps) => {
 
   // Verificar se admin está visualizando como outro usuário
   const isViewingAs = localStorage.getItem('viewingAsUserId') !== null;
+
+  // Verificar se admin está logado como outro usuário
+  const isLoggedInAsUser = localStorage.getItem('adminOriginalId') !== null;
+
+  // Botão para retornar ao admin original
+  const handleReturnToAdmin = () => {
+    const adminId = localStorage.getItem('adminOriginalId');
+    const adminEmail = localStorage.getItem('adminOriginalEmail');
+    const adminName = localStorage.getItem('adminOriginalName');
+    
+    if (adminId && adminEmail) {
+      // Restaurar credenciais do admin
+      localStorage.setItem('userId', adminId);
+      localStorage.setItem('userEmail', adminEmail);
+      localStorage.setItem('userName', adminName || 'Administrador');
+      localStorage.setItem('userIsAdmin', 'true');
+      
+      // Limpar dados temporários
+      localStorage.removeItem('adminOriginalId');
+      localStorage.removeItem('adminOriginalEmail');
+      localStorage.removeItem('adminOriginalName');
+      
+      toast.success('Retornando à conta de administrador');
+      navigate('/peticoes');
+    }
+  };
 
   return (
     <Card className="mt-8">
@@ -103,13 +159,28 @@ const UserPanelsView = ({ isMasterAdmin, allUsers }: UserPanelsViewProps) => {
           </div>
         )}
         
+        {isLoggedInAsUser && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-300 rounded-md">
+            <p className="text-red-800 mb-2">
+              Você está logado como outro usuário. 
+            </p>
+            <Button 
+              variant="outline" 
+              onClick={handleReturnToAdmin}
+              className="text-red-800 border-red-500 hover:bg-red-100"
+            >
+              Voltar para conta de administrador
+            </Button>
+          </div>
+        )}
+        
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Nome</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Tipo</TableHead>
-              <TableHead>Ação</TableHead>
+              <TableHead className="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -128,16 +199,29 @@ const UserPanelsView = ({ isMasterAdmin, allUsers }: UserPanelsViewProps) => {
                     </span>
                   )}
                 </TableCell>
-                <TableCell>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleViewUserPanel(user.id)}
-                    className="text-juriscalc-navy border-juriscalc-navy"
-                  >
-                    <Eye className="h-4 w-4 mr-1" />
-                    Ver Painéis
-                  </Button>
+                <TableCell className="text-right">
+                  <div className="flex gap-2 justify-end">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleViewUserPanel(user.id)}
+                      className="text-juriscalc-navy border-juriscalc-navy"
+                      title="Visualizar como este usuário (apenas interface)"
+                    >
+                      <Eye className="h-4 w-4 mr-1" />
+                      Ver Como
+                    </Button>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => handleLoginAsUser(user.id)}
+                      className="bg-juriscalc-navy text-white"
+                      title="Entrar com a conta deste usuário"
+                    >
+                      <Shield className="h-4 w-4 mr-1" />
+                      Entrar Como
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

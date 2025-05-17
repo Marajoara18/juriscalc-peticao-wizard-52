@@ -6,6 +6,8 @@ import { UserData } from '@/types/user';
 import UserProfile from './UserProfile';
 import AdminPanel from './AdminPanel';
 import UserPanelsView from './UserPanelsView';
+import { Button } from '@/components/ui/button';
+import { Shield } from 'lucide-react';
 
 const UserManagement = () => {
   const navigate = useNavigate();
@@ -13,6 +15,7 @@ const UserManagement = () => {
   const [allUsers, setAllUsers] = useState<UserData[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isMasterAdmin, setIsMasterAdmin] = useState(false);
+  const [isLoggedInAsUser, setIsLoggedInAsUser] = useState(false);
   
   useEffect(() => {
     // Verificar se estamos visualizando como outro usuário
@@ -27,6 +30,10 @@ const UserManagement = () => {
         id: 'viewing-as-toast',
       });
     }
+
+    // Verificar se admin está logado como outro usuário
+    const adminOriginalId = localStorage.getItem('adminOriginalId');
+    setIsLoggedInAsUser(!!adminOriginalId);
     
     // Carregar dados do usuário atual
     const userId = localStorage.getItem('userId');
@@ -76,6 +83,30 @@ const UserManagement = () => {
   };
   
   const handleLogout = () => {
+    // Verificar se é admin logado como outro usuário
+    if (isLoggedInAsUser) {
+      const adminId = localStorage.getItem('adminOriginalId');
+      const adminEmail = localStorage.getItem('adminOriginalEmail');
+      const adminName = localStorage.getItem('adminOriginalName');
+      
+      // Restaurar credenciais do admin
+      if (adminId && adminEmail) {
+        localStorage.setItem('userId', adminId);
+        localStorage.setItem('userEmail', adminEmail);
+        localStorage.setItem('userName', adminName || 'Administrador');
+        localStorage.setItem('userIsAdmin', 'true');
+        
+        // Limpar dados temporários
+        localStorage.removeItem('adminOriginalId');
+        localStorage.removeItem('adminOriginalEmail');
+        localStorage.removeItem('adminOriginalName');
+        
+        toast.success('Retornando à conta de administrador');
+        navigate('/peticoes');
+        return;
+      }
+    }
+    
     // Limpar dados de visualização como outro usuário
     localStorage.removeItem('viewingAsUserId');
     localStorage.removeItem('viewingAsUserName');
@@ -87,6 +118,11 @@ const UserManagement = () => {
     localStorage.removeItem('userName');
     localStorage.removeItem('userIsAdmin');
     localStorage.removeItem('userLogoUrl');
+    
+    // Limpar dados de admin logado como outro usuário
+    localStorage.removeItem('adminOriginalId');
+    localStorage.removeItem('adminOriginalEmail');
+    localStorage.removeItem('adminOriginalName');
     
     toast.success('Logout realizado com sucesso!');
     navigate('/');
@@ -109,9 +145,48 @@ const UserManagement = () => {
     setAllUsers(updatedUsers);
     localStorage.setItem('allUsers', JSON.stringify(updatedUsers));
   };
+
+  // Retornar à conta de administrador original
+  const handleReturnToAdmin = () => {
+    const adminId = localStorage.getItem('adminOriginalId');
+    const adminEmail = localStorage.getItem('adminOriginalEmail');
+    const adminName = localStorage.getItem('adminOriginalName');
+    
+    if (adminId && adminEmail) {
+      // Restaurar credenciais do admin
+      localStorage.setItem('userId', adminId);
+      localStorage.setItem('userEmail', adminEmail);
+      localStorage.setItem('userName', adminName || 'Administrador');
+      localStorage.setItem('userIsAdmin', 'true');
+      
+      // Limpar dados temporários
+      localStorage.removeItem('adminOriginalId');
+      localStorage.removeItem('adminOriginalEmail');
+      localStorage.removeItem('adminOriginalName');
+      
+      toast.success('Retornando à conta de administrador');
+      navigate('/peticoes');
+    }
+  };
   
   return (
     <>
+      {isLoggedInAsUser && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-300 rounded-md">
+          <p className="font-medium text-red-800 mb-2">
+            <Shield className="inline-block mr-2 h-4 w-4" />
+            Você está logado como outro usuário (modo admin)
+          </p>
+          <Button 
+            variant="outline" 
+            onClick={handleReturnToAdmin}
+            className="text-red-800 border-red-500 hover:bg-red-100"
+          >
+            Retornar à conta de administrador
+          </Button>
+        </div>
+      )}
+
       {userData && (
         <UserProfile 
           userData={userData} 

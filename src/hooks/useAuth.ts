@@ -24,6 +24,15 @@ export const useAuth = () => {
       allUsers.push(adminUser);
       localStorage.setItem('allUsers', JSON.stringify(allUsers));
       console.log('Usuário admin criado com sucesso!');
+    } else {
+      // Verificar se o usuário admin@juriscalc.com existe, e se existir, garantir que seja admin
+      const adminIndex = allUsers.findIndex(u => u.email === 'admin@juriscalc.com');
+      if (adminIndex >= 0) {
+        // Garantir que o usuário tenha privilégios de administrador mestre
+        allUsers[adminIndex].isAdmin = true;
+        allUsers[adminIndex].canViewPanels = true;
+        localStorage.setItem('allUsers', JSON.stringify(allUsers));
+      }
     }
   };
 
@@ -58,6 +67,19 @@ export const useAuth = () => {
     if (user.senha !== data.senha) {
       toast.error('Senha incorreta');
       return;
+    }
+    
+    // Verificar se é o admin mestre e atualizar seus privilégios
+    if (user.email === 'admin@juriscalc.com') {
+      user.isAdmin = true;
+      user.canViewPanels = true;
+      
+      // Atualizar o usuário no array
+      const updatedUsers = allUsers.map((u: User) => 
+        u.email === 'admin@juriscalc.com' ? user : u
+      );
+      
+      localStorage.setItem('allUsers', JSON.stringify(updatedUsers));
     }
     
     // Login bem-sucedido
@@ -97,14 +119,17 @@ export const useAuth = () => {
       return;
     }
     
+    // Verificar se é o e-mail do administrador mestre
+    const isMasterAdmin = data.email === 'admin@juriscalc.com';
+    
     // Criar novo usuário
     const newUser: User = {
       id: `user-${Date.now()}`,
       nome: data.nome,
       email: data.email,
       senha: data.senha,
-      isAdmin: false,
-      canViewPanels: false // Novos usuários não têm acesso aos painéis por padrão
+      isAdmin: isMasterAdmin, // Será admin se for o e-mail admin@juriscalc.com
+      canViewPanels: isMasterAdmin // Terá acesso aos painéis se for admin@juriscalc.com
     };
     
     allUsers.push(newUser);
@@ -114,8 +139,8 @@ export const useAuth = () => {
     localStorage.setItem('userId', newUser.id);
     localStorage.setItem('userEmail', newUser.email);
     localStorage.setItem('userName', newUser.nome);
-    localStorage.setItem('userIsAdmin', 'false');
-    localStorage.setItem('canViewPanels', 'false');
+    localStorage.setItem('userIsAdmin', String(newUser.isAdmin));
+    localStorage.setItem('canViewPanels', String(!!newUser.canViewPanels));
     
     toast.success('Cadastro realizado com sucesso!');
     navigate('/calculadora');
