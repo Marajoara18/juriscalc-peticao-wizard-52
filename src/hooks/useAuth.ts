@@ -15,7 +15,7 @@ export const useAuth = () => {
       const adminUser: User = {
         id: 'admin-1',
         nome: 'Administrador',
-        email: 'admin@iuscalc.com',
+        email: 'admin@juriscalc.com',
         senha: 'admin123',
         isAdmin: true,
         canViewPanels: true

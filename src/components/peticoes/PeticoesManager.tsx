@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -22,6 +21,8 @@ const PeticoesManager = () => {
   const [peticoesRecentes, setPeticoesRecentes] = useState<any[]>([]);
   const [isPremium, setIsPremium] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isViewingAsUser, setIsViewingAsUser] = useState(false);
+  const [viewingBanner, setViewingBanner] = useState<string | null>(null);
   
   // Carrega dados do localStorage
   useEffect(() => {
@@ -30,6 +31,18 @@ const PeticoesManager = () => {
     if (!userId) {
       navigate('/');
       return;
+    }
+    
+    // Verificar se admin está visualizando como outro usuário
+    const viewingAsUserId = localStorage.getItem('viewingAsUserId');
+    const viewingAsUserName = localStorage.getItem('viewingAsUserName');
+    
+    if (viewingAsUserId && viewingAsUserName) {
+      setIsViewingAsUser(true);
+      setViewingBanner(`Visualizando como ${viewingAsUserName}`);
+    } else {
+      setIsViewingAsUser(false);
+      setViewingBanner(null);
     }
     
     // Verificar se usuário é admin
@@ -42,13 +55,18 @@ const PeticoesManager = () => {
       try {
         const allPeticoes = JSON.parse(storedPeticoes);
         
-        // Se for admin, mostrar petições de todos os usuários
-        // Se for usuário comum, filtrar apenas as próprias petições
-        const filteredPeticoes = userIsAdmin 
-          ? allPeticoes 
-          : allPeticoes.filter((p: any) => !p.userId || p.userId === userId);
-        
-        setPeticoesRecentes(filteredPeticoes);
+        // Se admin está visualizando como outro usuário, mostrar apenas as petições desse usuário
+        if (viewingAsUserId) {
+          const filteredPeticoes = allPeticoes.filter((p: any) => !p.userId || p.userId === viewingAsUserId);
+          setPeticoesRecentes(filteredPeticoes);
+        } else if (userIsAdmin) {
+          // Se for admin normal, mostrar petições de todos os usuários
+          setPeticoesRecentes(allPeticoes);
+        } else {
+          // Se for usuário comum, filtrar apenas as próprias petições
+          const filteredPeticoes = allPeticoes.filter((p: any) => !p.userId || p.userId === userId);
+          setPeticoesRecentes(filteredPeticoes);
+        }
       } catch (error) {
         console.error('Erro ao carregar petições:', error);
       }
@@ -58,6 +76,22 @@ const PeticoesManager = () => {
     setIsPremium(userPremium);
   }, [navigate]);
   
+  const handleStopViewingAs = () => {
+    const originalUserId = localStorage.getItem('originalUserId');
+    if (originalUserId) {
+      localStorage.removeItem('viewingAsUserId');
+      localStorage.removeItem('viewingAsUserName');
+      localStorage.removeItem('viewingAsUserEmail');
+      localStorage.removeItem('originalUserId');
+      
+      setIsViewingAsUser(false);
+      setViewingBanner(null);
+      
+      toast.success('Retornando à visualização normal');
+      navigate('/peticoes');
+    }
+  };
+
   const selectedModelo = peticoesModelo.find(m => m.id === selectedModeloId);
   const selectedPeticao = peticoesRecentes.find(p => p.id === selectedPeticaoId);
   
@@ -204,6 +238,19 @@ const PeticoesManager = () => {
     return (
       <Layout>
         <div className="container mx-auto py-10 px-4">
+          {isViewingAsUser && viewingBanner && (
+            <div className="mb-6 p-4 bg-yellow-50 border border-yellow-300 rounded-md flex justify-between items-center">
+              <p className="text-yellow-800">{viewingBanner}</p>
+              <Button 
+                variant="outline" 
+                onClick={handleStopViewingAs}
+                className="text-yellow-800 border-yellow-500 hover:bg-yellow-100"
+              >
+                Voltar à visualização normal
+              </Button>
+            </div>
+          )}
+          
           <EditorPeticao 
             modelo={selectedModelo} 
             peticao={selectedPeticao}
@@ -219,6 +266,19 @@ const PeticoesManager = () => {
   return (
     <Layout>
       <div className="container mx-auto py-10 px-4">
+        {isViewingAsUser && viewingBanner && (
+          <div className="mb-6 p-4 bg-yellow-50 border border-yellow-300 rounded-md flex justify-between items-center">
+            <p className="text-yellow-800">{viewingBanner}</p>
+            <Button 
+              variant="outline" 
+              onClick={handleStopViewingAs}
+              className="text-yellow-800 border-yellow-500 hover:bg-yellow-100"
+            >
+              Voltar à visualização normal
+            </Button>
+          </div>
+        )}
+        
         <PeticoesHeader 
           onNewPeticao={handleNovaPeticao}
           onUserClick={handleUserClick}

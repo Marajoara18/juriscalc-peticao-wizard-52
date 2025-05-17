@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { UserData } from '@/types/user';
 import UserProfile from './UserProfile';
 import AdminPanel from './AdminPanel';
+import UserPanelsView from './UserPanelsView';
 
 const UserManagement = () => {
   const navigate = useNavigate();
@@ -14,6 +15,19 @@ const UserManagement = () => {
   const [isMasterAdmin, setIsMasterAdmin] = useState(false);
   
   useEffect(() => {
+    // Verificar se estamos visualizando como outro usuário
+    const viewingAsUserId = localStorage.getItem('viewingAsUserId');
+    const viewingAsUserName = localStorage.getItem('viewingAsUserName');
+    const viewingAsUserEmail = localStorage.getItem('viewingAsUserEmail');
+    
+    if (viewingAsUserId && viewingAsUserName && viewingAsUserEmail) {
+      // Exibir alerta de que estamos visualizando como outro usuário
+      toast.info(`Visualizando como ${viewingAsUserName}`, {
+        duration: 5000,
+        id: 'viewing-as-toast',
+      });
+    }
+    
     // Carregar dados do usuário atual
     const userId = localStorage.getItem('userId');
     const userEmail = localStorage.getItem('userEmail');
@@ -62,6 +76,12 @@ const UserManagement = () => {
   };
   
   const handleLogout = () => {
+    // Limpar dados de visualização como outro usuário
+    localStorage.removeItem('viewingAsUserId');
+    localStorage.removeItem('viewingAsUserName');
+    localStorage.removeItem('viewingAsUserEmail');
+    localStorage.removeItem('originalUserId');
+    
     localStorage.removeItem('userId');
     localStorage.removeItem('userEmail');
     localStorage.removeItem('userName');
@@ -107,6 +127,14 @@ const UserManagement = () => {
           isMasterAdmin={isMasterAdmin}
           allUsers={allUsers}
           updateUsers={updateUsers}
+        />
+      )}
+
+      {/* Visualização de Painéis - Visível apenas para o admin mestre */}
+      {isMasterAdmin && (
+        <UserPanelsView
+          isMasterAdmin={isMasterAdmin}
+          allUsers={allUsers}
         />
       )}
     </>
