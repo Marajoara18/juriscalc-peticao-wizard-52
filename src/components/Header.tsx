@@ -17,9 +17,9 @@ const Header = () => {
         <Link to="/" className="flex items-center">
           <img 
             src="/lovable-uploads/88674bc0-199a-473d-a898-432bb5bc7240.png"
-            alt="Logo IusCalc" 
-            className="h-20 w-auto" // aumentada para ficar proporcional ao nome IUSCALC
-            style={{ minWidth: 120 }}
+            alt="Logo"
+            className="h-28 w-auto"
+            style={{ minWidth: 160 }}
           />
         </Link>
         <nav className="hidden md:flex items-center gap-6">

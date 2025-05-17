@@ -10,9 +10,9 @@ const Footer = () => {
           <div className="flex flex-col items-start md:items-start">
             <img 
               src="/lovable-uploads/88674bc0-199a-473d-a898-432bb5bc7240.png"
-              alt="Logo IusCalc"
-              className="h-20 w-auto mb-2"
-              style={{ minWidth: 120 }}
+              alt="Logo"
+              className="h-24 w-auto mb-2"
+              style={{ minWidth: 140 }}
             />
             {/* Logo sem nome textual */}
             <p className="text-gray-300 mb-4">
