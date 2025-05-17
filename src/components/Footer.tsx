@@ -14,7 +14,6 @@ const Footer = () => {
               className="h-28 w-auto mb-2"
               style={{ minWidth: 160 }}
             />
-            {/* Logo sem nome textual */}
             <p className="text-gray-300 mb-4">
               Ferramenta completa para advogados trabalhistas automatizarem petições iniciais e 
               calcularem verbas trabalhistas com precisão.
