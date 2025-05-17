@@ -18,7 +18,7 @@ const Header = () => {
           <div className="bg-juriscalc-gold p-1 rounded">
             <Calculator size={24} className="text-juriscalc-navy" />
           </div>
-          <span className="font-serif text-xl font-bold">JurisCalc Trabalhista</span>
+          <span className="font-serif text-xl font-bold">IusCalc Trabalhista</span>
         </Link>
         <nav className="hidden md:flex items-center gap-6">
           <Link to="/" className="hover:text-juriscalc-gold transition-colors">Home</Link>

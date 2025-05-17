@@ -50,7 +50,7 @@ const Login = () => {
       const adminUser: User = {
         id: 'admin-1',
         nome: 'Administrador',
-        email: 'admin@juriscalc.com',
+        email: 'admin@iuscalc.com',
         senha: 'admin123',
         isAdmin: true
       };
@@ -148,7 +148,7 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <h1 className="text-4xl font-serif font-bold text-juriscalc-navy">JurisCalc</h1>
+          <h1 className="text-4xl font-serif font-bold text-juriscalc-navy">IusCalc</h1>
           <p className="mt-2 text-gray-600">Sua plataforma de cálculos trabalhistas</p>
         </div>
         

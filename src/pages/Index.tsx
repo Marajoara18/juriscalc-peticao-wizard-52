@@ -17,7 +17,7 @@ const Index = () => {
                 Automatize Petições Trabalhistas e Calcule Verbas com Precisão
               </h1>
               <p className="text-lg mb-8 text-gray-200">
-                O JurisCalc Trabalhista otimiza seu fluxo de trabalho, garantindo precisão nos cálculos e padronização nas peças processuais.
+                O IusCalc Trabalhista otimiza seu fluxo de trabalho, garantindo precisão nos cálculos e padronização nas peças processuais.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button size="lg" className="bg-juriscalc-gold text-juriscalc-navy hover:bg-opacity-90">
@@ -34,7 +34,7 @@ const Index = () => {
               <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg shadow-xl border border-white/20">
                 <img 
                   src="https://source.unsplash.com/photo-1461749280684-dccba630e2f6" 
-                  alt="JurisCalc App Interface" 
+                  alt="IusCalc App Interface" 
                   className="rounded-md w-full shadow-lg"
                 />
               </div>
@@ -94,7 +94,7 @@ const Index = () => {
             Pronto para Otimizar seu Trabalho?
           </h2>
           <p className="text-lg mb-8 max-w-2xl mx-auto text-juriscalc-darkgray">
-            Comece agora a usar o JurisCalc Trabalhista e reduza em até 70% o tempo gasto na elaboração de petições iniciais trabalhistas.
+            Comece agora a usar o IusCalc Trabalhista e reduza em até 70% o tempo gasto na elaboração de petições iniciais trabalhistas.
           </p>
           <Button size="lg" className="bg-juriscalc-navy text-white hover:bg-opacity-90">
             Começar Gratuitamente
