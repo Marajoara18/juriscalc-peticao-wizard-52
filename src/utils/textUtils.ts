@@ -91,6 +91,23 @@ export const valorPorExtenso = (valor: number): string => {
 };
 
 /**
+ * Get description for custom calculations
+ */
+const getCustomCalculoDescription = (calculos: any): string => {
+  if (calculos.calculosCustom && calculos.calculosCustom.length > 0) {
+    // If multiple custom calculations, join their names
+    if (calculos.calculosCustom.length > 1) {
+      return "Cálculos Personalizados";
+    } else {
+      // Return the description of the single custom calculation
+      return calculos.calculosCustom[0].descricao || "Cálculo Personalizado";
+    }
+  }
+  // Fallback to old system or if no description is available
+  return calculos.descricaoCustom || "Cálculo Personalizado";
+};
+
+/**
  * Creates HTML content for embedded calculations
  */
 export const criarHTMLCalculosEmbutidos = (calculos: any) => {
@@ -156,7 +173,7 @@ export const criarHTMLCalculosEmbutidos = (calculos: any) => {
       
       <div style="margin-top: 1rem;">
         ${renderVerbasRescisoriasHTML(verbasRescisorias)}
-        ${renderAdicionaisHTML(adicionais)}
+        ${renderAdicionaisHTML(adicionais, calculos)}
         
         <div style="background-color: #0f172a; padding: 0.5rem; border-radius: 0.375rem; color: white; margin-top: 0.5rem;">
           <div style="text-align: center;">
@@ -217,7 +234,7 @@ export const criarHTMLCalculosEmbutidos = (calculos: any) => {
     `;
   }
   
-  function renderAdicionaisHTML(adicionais: any) {
+  function renderAdicionaisHTML(adicionais: any, calculos: any) {
     // Calcular total de adicionais
     const totalAdicionais = 
       adicionais.adicionalInsalubridade +
@@ -253,6 +270,14 @@ export const criarHTMLCalculosEmbutidos = (calculos: any) => {
       { descricao: 'Diferenças Salariais', valor: adicionais.diferencasSalariais },
       { descricao: 'Seguro Desemprego', valor: adicionais.seguroDesemprego },
     ].filter(item => item.valor > 0);
+    
+    // Add custom calculation with proper description
+    if (adicionais.customCalculo > 0) {
+      itens.push({
+        descricao: getCustomCalculoDescription(calculos),
+        valor: adicionais.customCalculo
+      });
+    }
 
     if (itens.length === 0) return '';
 

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -194,7 +195,7 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
             ${resultados.adicionais.adicionalTransferencia > 0 ? renderVerbaItem('Adicional de Transferência', resultados.adicionais.adicionalTransferencia) : ''}
             ${resultados.adicionais.descontosIndevidos > 0 ? renderVerbaItem('Descontos Indevidos', resultados.adicionais.descontosIndevidos) : ''}
             ${resultados.adicionais.diferencasSalariais > 0 ? renderVerbaItem('Diferenças Salariais', resultados.adicionais.diferencasSalariais) : ''}
-            ${resultados.adicionais.customCalculo > 0 ? renderVerbaItem(adicionais.descricaoCustom || 'Cálculo Personalizado', resultados.adicionais.customCalculo) : ''}
+            ${resultados.adicionais.customCalculo > 0 ? renderVerbaItem(getCustomCalculoDescription(), resultados.adicionais.customCalculo) : ''}
             ${resultados.adicionais.seguroDesemprego > 0 ? renderVerbaItem('Seguro-Desemprego', resultados.adicionais.seguroDesemprego) : ''}
             <div class="item total">
               <span>Total Adicionais:</span>
@@ -238,6 +239,21 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
       </div>
     `;
   }
+  
+  // Helper function to get the custom calculation description
+  const getCustomCalculoDescription = () => {
+    if (adicionais.calculosCustom && adicionais.calculosCustom.length > 0) {
+      // If multiple custom calculations, join their names
+      if (adicionais.calculosCustom.length > 1) {
+        return "Cálculos Personalizados";
+      } else {
+        // Return the description of the single custom calculation
+        return adicionais.calculosCustom[0].descricao || "Cálculo Personalizado";
+      }
+    }
+    // Fallback to old system or if no description is available
+    return adicionais.descricaoCustom || "Cálculo Personalizado";
+  };
   
   // Função para gerar petição
   const handleGerarPeticao = () => {
@@ -515,7 +531,16 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
                         <span className="font-medium">{formatarMoeda(resultados.adicionais.diferencasSalariais)}</span>
                       </div>
                     )}
-                    {resultados.adicionais.customCalculo > 0 && (
+                    {resultados.adicionais.customCalculo > 0 && adicionais.calculosCustom && adicionais.calculosCustom.length > 0 ? (
+                      // Se há múltiplos cálculos personalizados, mostrar cada um individualmente
+                      adicionais.calculosCustom.map((calculo, index) => (
+                        <div key={calculo.id} className="flex justify-between text-sm">
+                          <span>{calculo.descricao || `Cálculo ${index + 1}`}:</span>
+                          <span className="font-medium">{formatarMoeda(parseFloat(calculo.valor) || 0)}</span>
+                        </div>
+                      ))
+                    ) : resultados.adicionais.customCalculo > 0 && (
+                      // Caso contrário, mostrar um único cálculo personalizado com a descrição ou nome padrão
                       <div className="flex justify-between text-sm">
                         <span>{adicionais.descricaoCustom || "Cálculo Personalizado"}:</span>
                         <span className="font-medium">{formatarMoeda(resultados.adicionais.customCalculo)}</span>

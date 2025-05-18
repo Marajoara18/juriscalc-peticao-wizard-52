@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { formatarMoeda } from '@/utils/formatters';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -81,6 +82,21 @@ const TabelaCalculosPadrao: React.FC<TabelaCalculosPadraoProps> = ({
     { descricao: 'Multa FGTS (40%)', valor: verbasRescisorias.multaFgts },
   ].filter(item => item.valor > 0);
 
+  // Get custom calculation description
+  const getCustomCalculoDescription = () => {
+    if (calculos.calculosCustom && calculos.calculosCustom.length > 0) {
+      // If multiple custom calculations, join their names
+      if (calculos.calculosCustom.length > 1) {
+        return "Cálculos Personalizados";
+      } else {
+        // Return the description of the single custom calculation
+        return calculos.calculosCustom[0].descricao || "Cálculo Personalizado";
+      }
+    }
+    // Fallback to old system or if no description is available
+    return calculos.descricaoCustom || "Cálculo Personalizado";
+  };
+
   const itensAdicionais = [
     { descricao: 'Adicional de Insalubridade', valor: adicionais.adicionalInsalubridade },
     { descricao: 'Adicional de Periculosidade', valor: adicionais.adicionalPericulosidade },
@@ -97,6 +113,14 @@ const TabelaCalculosPadrao: React.FC<TabelaCalculosPadraoProps> = ({
     { descricao: 'Diferenças Salariais', valor: adicionais.diferencasSalariais },
     { descricao: 'Seguro Desemprego', valor: adicionais.seguroDesemprego },
   ].filter(item => item.valor > 0);
+
+  // Add custom calculation with proper description
+  if (adicionais.customCalculo > 0) {
+    itensAdicionais.push({
+      descricao: getCustomCalculoDescription(),
+      valor: adicionais.customCalculo
+    });
+  }
 
   return (
     <Card className="mb-6">
