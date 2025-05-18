@@ -41,18 +41,25 @@ export const useCalculos = (
       console.log("Calculando com:", { salarioBase, diasTrabalhados, mesesTrabalhados });
 
       // Cálculo das verbas rescisórias
+      // Correção: Saldo de salário é (salário base / 30) * dias trabalhados no mês da demissão
       const saldoSalario = (salarioBase / 30) * diasTrabalhados;
+      
       const avisoPrevia = (dadosContrato.tipoRescisao === 'sem_justa_causa' || dadosContrato.tipoRescisao === 'rescisao_indireta') 
         ? salarioBase
         : 0;
       const decimoTerceiro = (salarioBase / 12) * mesesTrabalhados;
       const ferias = (salarioBase / 12) * mesesTrabalhados;
       const tercoConstitucional = ferias / 3;
-      const baseCalculoFgts = saldoSalario + avisoPrevia + decimoTerceiro;
-      const fgts = baseCalculoFgts * 0.08;
+      
+      // Correção: FGTS é salário base * 8% * meses trabalhados
+      const fgts = salarioBase * 0.08 * mesesTrabalhados;
+      
+      // Base de cálculo para multa do FGTS agora é o valor total do FGTS acumulado
       const multaFgts = (dadosContrato.tipoRescisao === 'sem_justa_causa' || dadosContrato.tipoRescisao === 'rescisao_indireta') 
         ? fgts * 0.4
         : 0;
+        
+      // Atualizando o cálculo do total
       const totalVerbaRescisoria = saldoSalario + avisoPrevia + decimoTerceiro + ferias + tercoConstitucional + fgts + multaFgts;
 
       // Cálculo dos adicionais
