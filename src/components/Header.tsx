@@ -1,11 +1,26 @@
 
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FileText, Calculator } from "lucide-react";
+import { FileText, Calculator, Crown } from "lucide-react";
 import { Button } from '@/components/ui/button';
+import { useState, useEffect } from 'react';
+import SubscriptionManager from '@/components/peticoes/SubscriptionManager';
 
 const Header = () => {
   const navigate = useNavigate();
+  const [isPremium, setIsPremium] = useState<boolean>(false);
+  const [showSubscription, setShowSubscription] = useState(false);
+  
+  useEffect(() => {
+    const userId = localStorage.getItem('userId');
+    const userEmail = localStorage.getItem('userEmail');
+    const isAdmin = localStorage.getItem('userIsAdmin') === 'true';
+    
+    // If the user is admin or specific emails, consider them premium
+    if (isAdmin || userEmail === 'johnnysantos_177@msn.com' || userEmail === 'admin@juriscalc.com') {
+      setIsPremium(true);
+    }
+  }, []);
   
   const handleNewPeticao = () => {
     navigate('/peticoes');
@@ -32,6 +47,15 @@ const Header = () => {
           <Link to="/" className="hover:text-juriscalc-gold transition-colors">Home</Link>
           <Link to="/calculadora" className="hover:text-juriscalc-gold transition-colors">Calculadora</Link>
           <Link to="/peticoes" className="hover:text-juriscalc-gold transition-colors">Petições</Link>
+          {!isPremium && (
+            <Button
+              onClick={() => setShowSubscription(true)}
+              className="bg-juriscalc-gold text-juriscalc-navy hover:bg-opacity-90 flex items-center gap-1"
+            >
+              <Crown className="h-4 w-4" />
+              Premium
+            </Button>
+          )}
         </nav>
         <div className="flex items-center gap-2">
           <Button 
@@ -50,6 +74,10 @@ const Header = () => {
           </Button>
         </div>
       </div>
+      
+      {showSubscription && (
+        <SubscriptionManager onClose={() => setShowSubscription(false)} />
+      )}
     </header>
   );
 };
