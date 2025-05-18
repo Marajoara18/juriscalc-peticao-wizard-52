@@ -6,7 +6,6 @@ import DadosContratoForm from '@/components/calculadora/DadosContratoForm';
 import AdicionaisForm from '@/components/calculadora/AdicionaisForm';
 import ResultadosCalculos from '@/components/calculadora/ResultadosCalculos';
 import CorrecaoMonetaria from '@/components/calculadora/CorrecaoMonetaria';
-import HonorariosAdvocaticios from '@/components/calculadora/HonorariosAdvocaticios';
 import CalculosSalvos from '@/components/calculadora/CalculosSalvos';
 import { DadosContrato, Adicionais } from '@/types/calculadora';
 
@@ -43,20 +42,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   setShowCorrecaoMonetaria,
   aplicarCorrecaoMonetaria
 }) => {
-  const [showHonorariosAdvocaticios, setShowHonorariosAdvocaticios] = useState(false);
   
-  // Handler para aplicar honorários advocatícios
-  const aplicarHonorariosAdvocaticios = (valorHonorarios: number) => {
-    // Atualiza o estado para incluir honorários
-    handleAdicionaisChange("calcularHonorariosAdvocaticios", true);
-    // Define o valor exato dos honorários calculados
-    handleAdicionaisChange("valorHonorariosAdvocaticios", valorHonorarios.toString());
-    // Define se os honorários devem ser incluídos no total geral
-    handleAdicionaisChange("incluirTotalGeralHonorarios", true);
-    // Recalcular os resultados para atualizar o valor dos honorários
-    handleCalcularClick();
-  };
-
   return (
     <div className="space-y-6">
       {/* Form area */}
@@ -128,31 +114,6 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
                 onClick={() => setShowCorrecaoMonetaria(true)}
               >
                 Aplicar Correção Monetária
-              </Button>
-            )}
-            
-            {/* Opção de honorários advocatícios - Agora após correção monetária */}
-            {showHonorariosAdvocaticios ? (
-              <>
-                <HonorariosAdvocaticios 
-                  totalGeral={totalGeral}
-                  onAplicarHonorarios={aplicarHonorariosAdvocaticios} 
-                />
-                <Button 
-                  variant="outline"
-                  className="w-full border-juriscalc-navy text-juriscalc-navy mt-2"
-                  onClick={() => setShowHonorariosAdvocaticios(false)}
-                >
-                  Ocultar Honorários Advocatícios
-                </Button>
-              </>
-            ) : (
-              <Button 
-                variant="outline"
-                className="w-full border-juriscalc-navy text-juriscalc-navy"
-                onClick={() => setShowHonorariosAdvocaticios(true)}
-              >
-                Aplicar Honorários Advocatícios
               </Button>
             )}
           </div>

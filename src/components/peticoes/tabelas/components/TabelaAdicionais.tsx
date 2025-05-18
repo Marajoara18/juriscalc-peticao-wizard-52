@@ -29,7 +29,7 @@ const TabelaAdicionais: React.FC<TabelaAdicionaisProps> = ({
     return descricaoCustom || "Cálculo Personalizado";
   };
 
-  // Calcular o total adicionais
+  // Calcular o total adicionais (sem honorários advocatícios)
   const totalAdicionais = 
     adicionais.adicionalInsalubridade +
     adicionais.adicionalPericulosidade +
@@ -73,21 +73,10 @@ const TabelaAdicionais: React.FC<TabelaAdicionaisProps> = ({
       valor: adicionais.customCalculo
     });
   }
-  
-  // Adicionar honorários advocatícios, se existirem
-  if (adicionais.honorariosAdvocaticios > 0) {
-    itensAdicionais.push({
-      descricao: 'Honorários Advocatícios',
-      valor: adicionais.honorariosAdvocaticios
-    });
-  }
 
   if (itensAdicionais.length === 0) {
     return null;
   }
-  
-  // Total incluindo honorários
-  const totalComHonorarios = totalAdicionais + (adicionais.honorariosAdvocaticios || 0);
 
   return (
     <div>
@@ -108,7 +97,7 @@ const TabelaAdicionais: React.FC<TabelaAdicionaisProps> = ({
           ))}
           <TableRow className="font-bold">
             <TableCell>Total Adicionais</TableCell>
-            <TableCell className="text-right">{formatarMoeda(adicionais.honorariosAdvocaticios > 0 ? totalComHonorarios : totalAdicionais)}</TableCell>
+            <TableCell className="text-right">{formatarMoeda(totalAdicionais)}</TableCell>
           </TableRow>
         </TableBody>
       </Table>

@@ -36,21 +36,17 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
     typeof value === 'number' && value > 0 && key !== 'total' && key !== 'honorariosAdvocaticios'
   );
   
-  // Verificar se tem honorários para mostrar
-  const temHonorarios = typeof adicionaisResultado.honorariosAdvocaticios === 'number' && 
-    adicionaisResultado.honorariosAdvocaticios > 0;
-  
   // Calcular total dos adicionais (excluindo honorários advocatícios)
   const totalAdicionais = adicionaisAMostrar.reduce((acc, [_, value]) => acc + parseFloat(value as string), 0);
   
   // Verificar se há desconto de aviso prévio a mostrar
   const temDescontoAvisoPrevio = typeof verbas.descontoAvisoPrevio === 'number' && verbas.descontoAvisoPrevio > 0;
   
-  // Calcular o subtotal (sem considerar honorários) - BASE PARA CÁLCULO DOS HONORÁRIOS
+  // Calcular o subtotal (sem considerar honorários)
   const subTotal = verbas.total + totalAdicionais - (verbas.descontoAvisoPrevio || 0);
   
-  // Calcular o total geral (considerando honorários apenas se incluirTotalGeralHonorarios for true)
-  const totalGeral = subTotal + (adicionais.incluirTotalGeralHonorarios ? adicionaisResultado.honorariosAdvocaticios || 0 : 0);
+  // Total geral é o mesmo que subtotal agora que não mostramos honorários
+  const totalGeral = subTotal;
 
   return (
     <Card className="p-4 mt-4">
@@ -138,22 +134,13 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
         </Accordion>
       )}
       
-      {/* Mostrar subtotal sempre, pois é a base de cálculo dos honorários */}
+      {/* Mostrar subtotal */}
       <div className="flex justify-between mb-2">
         <span className="font-medium">
           Subtotal {temDescontoAvisoPrevio ? "(com desconto aviso prévio)" : ""} 
-          {temHonorarios && " (base para honorários)"}
         </span>
         <span className="font-medium">{formatarMoeda(subTotal)}</span>
       </div>
-
-      {/* Mostrar honorários se calculados */}
-      {temHonorarios && (
-        <div className="flex justify-between mb-3 p-2 bg-gray-50 rounded-md border">
-          <span className="font-medium">Honorários Advocatícios</span>
-          <span className="font-medium">{formatarMoeda(adicionaisResultado.honorariosAdvocaticios as number)}</span>
-        </div>
-      )}
       
       {/* Total Geral */}
       <div 
