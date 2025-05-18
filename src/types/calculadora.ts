@@ -91,6 +91,7 @@ export type Adicionais = {
   quantidadeFilhos: string;
   calcularHonorariosAdvocaticios: boolean;
   percentualHonorariosAdvocaticios: string;
+  valorHonorariosAdvocaticios: string; // Adicionado para armazenar o valor exato
   incluirTotalGeralHonorarios: boolean;
 };
 

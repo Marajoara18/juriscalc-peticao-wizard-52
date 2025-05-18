@@ -30,6 +30,8 @@ const HonorariosAdvocaticios: React.FC<HonorariosAdvocaticiosProps> = ({
   }, [percentualHonorarios, totalGeral]);
   
   const calcularHonorarios = () => {
+    // Passamos diretamente o valorCalculado para a função de callback
+    // sem fazer nenhum cálculo adicional
     onAplicarHonorarios(valorCalculado);
   };
 

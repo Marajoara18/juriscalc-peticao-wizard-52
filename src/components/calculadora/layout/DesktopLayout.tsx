@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -49,9 +48,8 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   const aplicarHonorariosAdvocaticios = (valorHonorarios: number) => {
     // Atualiza o estado para incluir honorários
     handleAdicionaisChange("calcularHonorariosAdvocaticios", true);
-    // Calcula o percentual baseado no valor calculado e no total geral (que aqui é o subtotal)
-    const percentual = (valorHonorarios / totalGeral * 100).toFixed(2);
-    handleAdicionaisChange("percentualHonorariosAdvocaticios", percentual);
+    // Define o valor dos honorários diretamente, sem recalcular
+    handleAdicionaisChange("valorHonorariosAdvocaticios", valorHonorarios.toString());
     handleAdicionaisChange("incluirTotalGeralHonorarios", true);
   };
 
