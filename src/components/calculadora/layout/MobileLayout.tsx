@@ -49,7 +49,9 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   const aplicarHonorariosAdvocaticios = (valorHonorarios: number) => {
     // Atualiza o estado para incluir honorários
     handleAdicionaisChange("calcularHonorariosAdvocaticios", true);
-    handleAdicionaisChange("percentualHonorariosAdvocaticios", (valorHonorarios / totalGeral * 100).toString());
+    // Calcula o percentual baseado no valor calculado e no total geral
+    const percentual = (valorHonorarios / totalGeral * 100).toFixed(2);
+    handleAdicionaisChange("percentualHonorariosAdvocaticios", percentual);
     handleAdicionaisChange("incluirTotalGeralHonorarios", true);
   };
 

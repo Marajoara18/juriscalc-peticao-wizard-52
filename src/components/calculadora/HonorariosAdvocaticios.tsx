@@ -23,6 +23,7 @@ const HonorariosAdvocaticios: React.FC<HonorariosAdvocaticiosProps> = ({
   // Atualizar o valor calculado quando o percentual ou total mudar
   useEffect(() => {
     const percentual = parseFloat(percentualHonorarios) || 20;
+    // Cálculo do valor baseado no percentual escolhido sobre o totalGeral
     const valor = totalGeral * (percentual / 100);
     setValorCalculado(valor);
   }, [percentualHonorarios, totalGeral]);
