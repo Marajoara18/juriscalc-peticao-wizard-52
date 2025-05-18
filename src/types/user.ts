@@ -6,4 +6,5 @@ export interface UserData {
   isAdmin: boolean;
   logoUrl?: string;
   canViewPanels?: boolean;
+  isPremium?: boolean;
 }

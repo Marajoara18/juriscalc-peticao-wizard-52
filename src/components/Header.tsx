@@ -16,10 +16,20 @@ const Header = () => {
     const userEmail = localStorage.getItem('userEmail');
     const isAdmin = localStorage.getItem('userIsAdmin') === 'true';
     
-    // If the user is admin or specific emails, consider them premium
-    if (isAdmin || userEmail === 'johnnysantos_177@msn.com' || userEmail === 'admin@juriscalc.com') {
+    // Verificar acesso premium diretamente do localStorage para garantir atualização em tempo real
+    const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+    const currentUser = allUsers.find((u: any) => u.id === userId);
+    
+    // Se for admin mestre ou tiver marcado como premium, considere-o premium
+    if (isAdmin || 
+        userEmail === 'johnnysantos_177@msn.com' || 
+        userEmail === 'admin@juriscalc.com' ||
+        (currentUser && currentUser.isPremium)) {
       setIsPremium(true);
+      return;
     }
+    
+    setIsPremium(false);
   }, []);
   
   const handleNewPeticao = () => {

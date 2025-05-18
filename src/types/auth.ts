@@ -7,6 +7,7 @@ export interface User {
   isAdmin: boolean;
   logoUrl?: string;
   canViewPanels?: boolean;
+  isPremium?: boolean;
 }
 
 export interface LoginFormData {

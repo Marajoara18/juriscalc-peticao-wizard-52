@@ -18,7 +18,8 @@ export const useAuth = () => {
         email: 'admin@juriscalc.com',
         senha: 'admin123',
         isAdmin: true,
-        canViewPanels: true
+        canViewPanels: true,
+        isPremium: true
       };
       
       allUsers.push(adminUser);
@@ -31,6 +32,7 @@ export const useAuth = () => {
         // Garantir que o usuário tenha privilégios de administrador mestre
         allUsers[adminIndex].isAdmin = true;
         allUsers[adminIndex].canViewPanels = true;
+        allUsers[adminIndex].isPremium = true;
         localStorage.setItem('allUsers', JSON.stringify(allUsers));
       }
       
@@ -40,6 +42,7 @@ export const useAuth = () => {
         // Garantir que o administrador mestre tenha todos os privilégios
         allUsers[masterAdminIndex].isAdmin = true;
         allUsers[masterAdminIndex].canViewPanels = true;
+        allUsers[masterAdminIndex].isPremium = true;
         localStorage.setItem('allUsers', JSON.stringify(allUsers));
       }
     }
@@ -82,10 +85,13 @@ export const useAuth = () => {
     if (user.email === 'admin@juriscalc.com' || user.email === 'johnnysantos_177@msn.com') {
       user.isAdmin = true;
       user.canViewPanels = true;
+      user.isPremium = true;
       
       // Atualizar o usuário no array
       const updatedUsers = allUsers.map((u: User) => 
-        (u.email === 'admin@juriscalc.com' || u.email === 'johnnysantos_177@msn.com') ? {...u, isAdmin: true, canViewPanels: true} : u
+        (u.email === 'admin@juriscalc.com' || u.email === 'johnnysantos_177@msn.com') 
+          ? {...u, isAdmin: true, canViewPanels: true, isPremium: true} 
+          : u
       );
       
       localStorage.setItem('allUsers', JSON.stringify(updatedUsers));
@@ -97,6 +103,7 @@ export const useAuth = () => {
     localStorage.setItem('userName', user.nome);
     localStorage.setItem('userIsAdmin', String(user.isAdmin));
     localStorage.setItem('canViewPanels', String(!!user.canViewPanels));
+    localStorage.setItem('isPremium', String(!!user.isPremium));
     
     if (user.logoUrl) {
       localStorage.setItem('userLogoUrl', user.logoUrl);
@@ -138,7 +145,8 @@ export const useAuth = () => {
       email: data.email,
       senha: data.senha,
       isAdmin: isMasterAdmin, // Será admin se for o e-mail admin@juriscalc.com
-      canViewPanels: isMasterAdmin // Terá acesso aos painéis se for admin@juriscalc.com
+      canViewPanels: isMasterAdmin, // Terá acesso aos painéis se for admin@juriscalc.com
+      isPremium: isMasterAdmin // Terá acesso premium se for admin@juriscalc.com
     };
     
     allUsers.push(newUser);
@@ -150,6 +158,7 @@ export const useAuth = () => {
     localStorage.setItem('userName', newUser.nome);
     localStorage.setItem('userIsAdmin', String(newUser.isAdmin));
     localStorage.setItem('canViewPanels', String(!!newUser.canViewPanels));
+    localStorage.setItem('isPremium', String(!!newUser.isPremium));
     
     toast.success('Cadastro realizado com sucesso!');
     navigate('/calculadora');

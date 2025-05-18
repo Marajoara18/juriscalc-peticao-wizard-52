@@ -17,14 +17,20 @@ const Layout = ({ children }: LayoutProps) => {
     const userEmail = localStorage.getItem('userEmail');
     const isAdmin = localStorage.getItem('userIsAdmin') === 'true';
     
-    // If the user is admin or specific emails, consider them premium
-    if (isAdmin || userEmail === 'johnnysantos_177@msn.com' || userEmail === 'admin@juriscalc.com') {
+    // Verificar acesso premium diretamente do localStorage para garantir atualização em tempo real
+    const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+    const currentUser = allUsers.find((u: any) => u.id === userId);
+    
+    // Se for admin mestre ou tiver marcado como premium, considere-o premium
+    if (isAdmin || 
+        userEmail === 'johnnysantos_177@msn.com' || 
+        userEmail === 'admin@juriscalc.com' ||
+        (currentUser && currentUser.isPremium)) {
       setIsPremium(true);
       return;
     }
     
-    // Here we could check if the user has a premium subscription in the future
-    // For now we just assume they don't if they're not admin
+    setIsPremium(false);
   }, []);
   
   return (
