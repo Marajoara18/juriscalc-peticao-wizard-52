@@ -1,11 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DadosContratoForm from '@/components/calculadora/DadosContratoForm';
 import AdicionaisForm from '@/components/calculadora/AdicionaisForm';
 import ResultadosCalculos from '@/components/calculadora/ResultadosCalculos';
 import CorrecaoMonetaria from '@/components/calculadora/CorrecaoMonetaria';
+import HonorariosAdvocaticios from '@/components/calculadora/HonorariosAdvocaticios';
 import CalculosSalvos from '@/components/calculadora/CalculosSalvos';
 import { DadosContrato, Adicionais } from '@/types/calculadora';
 
@@ -17,7 +18,7 @@ interface DesktopLayoutProps {
   hasCalculos: boolean;
   totalGeral: number;
   handleDadosContratoChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleCheckboxChange: (field: string, checked: boolean) => void; // Added missing property
+  handleCheckboxChange: (field: string, checked: boolean) => void;
   handleTipoRescisaoChange: (value: string) => void;
   handleAdicionaisChange: (name: string, value: string | boolean) => void;
   handleCalcularClick: () => void;
@@ -34,7 +35,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   hasCalculos,
   totalGeral,
   handleDadosContratoChange,
-  handleCheckboxChange, // Added missing property
+  handleCheckboxChange,
   handleTipoRescisaoChange,
   handleAdicionaisChange,
   handleCalcularClick,
@@ -42,6 +43,15 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   setShowCorrecaoMonetaria,
   aplicarCorrecaoMonetaria
 }) => {
+  const [showHonorariosAdvocaticios, setShowHonorariosAdvocaticios] = useState(false);
+  
+  // Handler para aplicar honorários advocatícios
+  const aplicarHonorariosAdvocaticios = (valorHonorarios: number) => {
+    // Atualiza o estado para incluir honorários (usar handleAdicionaisChange)
+    handleAdicionaisChange("calcularHonorariosAdvocaticios", true);
+    handleAdicionaisChange("percentualHonorariosAdvocaticios", (valorHonorarios / totalGeral * 100).toString());
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Column 1 - Form */}
@@ -58,7 +68,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
               dadosContrato={dadosContrato}
               onChange={handleDadosContratoChange}
               onTipoRescisaoChange={handleTipoRescisaoChange}
-              onCheckboxChange={handleCheckboxChange} // Added missing property
+              onCheckboxChange={handleCheckboxChange}
             />
           </TabsContent>
 
@@ -81,9 +91,10 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
           </Button>
         </div>
         
-        {/* Mostrar módulo de correção monetária quando os cálculos estiverem prontos */}
+        {/* Mostrar opções pós-cálculo quando os cálculos estiverem prontos */}
         {hasCalculos && (
-          <div className="mt-6">
+          <div className="mt-6 space-y-4">
+            {/* Opção de correção monetária */}
             {showCorrecaoMonetaria ? (
               <>
                 <CorrecaoMonetaria 
@@ -106,6 +117,31 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
                 onClick={() => setShowCorrecaoMonetaria(true)}
               >
                 Aplicar Correção Monetária
+              </Button>
+            )}
+            
+            {/* Opção de honorários advocatícios */}
+            {showHonorariosAdvocaticios ? (
+              <>
+                <HonorariosAdvocaticios 
+                  totalGeral={totalGeral}
+                  onAplicarHonorarios={aplicarHonorariosAdvocaticios} 
+                />
+                <Button 
+                  variant="outline"
+                  className="w-full border-juriscalc-navy text-juriscalc-navy"
+                  onClick={() => setShowHonorariosAdvocaticios(false)}
+                >
+                  Ocultar Honorários Advocatícios
+                </Button>
+              </>
+            ) : (
+              <Button 
+                variant="outline"
+                className="w-full border-juriscalc-navy text-juriscalc-navy"
+                onClick={() => setShowHonorariosAdvocaticios(true)}
+              >
+                Aplicar Honorários Advocatícios
               </Button>
             )}
           </div>

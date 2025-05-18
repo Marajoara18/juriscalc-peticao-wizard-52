@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card } from '@/components/ui/card';
@@ -32,14 +33,22 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
   );
   
   const adicionaisAMostrar = Object.entries(adicionaisResultado).filter(([key, value]) => 
-    typeof value === 'number' && value > 0 && key !== 'total'
+    typeof value === 'number' && value > 0 && key !== 'total' && key !== 'honorariosAdvocaticios'
   );
+  
+  // Verificar se tem honorários para mostrar
+  const temHonorarios = typeof adicionaisResultado.honorariosAdvocaticios === 'number' && 
+    adicionaisResultado.honorariosAdvocaticios > 0;
   
   // Calcular total dos adicionais
   const totalAdicionais = adicionaisAMostrar.reduce((acc, [_, value]) => acc + parseFloat(value as string), 0);
   
   // Verificar se há desconto de aviso prévio a mostrar
   const temDescontoAvisoPrevio = typeof verbas.descontoAvisoPrevio === 'number' && verbas.descontoAvisoPrevio > 0;
+  
+  // Calcular o total geral (considerando honorários e descontos)
+  const subTotal = verbas.total + totalAdicionais - (verbas.descontoAvisoPrevio || 0);
+  const totalGeral = subTotal + (adicionais.incluirTotalGeralHonorarios ? adicionaisResultado.honorariosAdvocaticios || 0 : 0);
 
   return (
     <Card className="p-4 mt-4">
@@ -127,6 +136,22 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
         </Accordion>
       )}
       
+      {/* Mostrar subtotal se houver honorários */}
+      {temDescontoAvisoPrevio && (
+        <div className="flex justify-between mb-2">
+          <span className="font-medium">Subtotal (com desconto aviso prévio)</span>
+          <span className="font-medium">{formatarMoeda(subTotal)}</span>
+        </div>
+      )}
+
+      {/* Mostrar honorários se calculados */}
+      {temHonorarios && (
+        <div className="flex justify-between mb-3">
+          <span className="font-medium">Honorários Advocatícios</span>
+          <span className="font-medium">{formatarMoeda(adicionaisResultado.honorariosAdvocaticios as number)}</span>
+        </div>
+      )}
+      
       {/* Total Geral */}
       <div 
         className={cn(
@@ -137,7 +162,7 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
       >
         <span className="font-bold text-lg">TOTAL GERAL</span>
         <span className="font-bold text-lg">
-          {formatarMoeda(verbas.total + totalAdicionais - (verbas.descontoAvisoPrevio || 0))}
+          {formatarMoeda(totalGeral)}
         </span>
       </div>
     </Card>
