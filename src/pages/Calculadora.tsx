@@ -1,18 +1,14 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { LayoutGrid, Smartphone } from "lucide-react";
-import DadosContratoForm from '@/components/calculadora/DadosContratoForm';
-import AdicionaisForm from '@/components/calculadora/AdicionaisForm';
-import ResultadosCalculos from '@/components/calculadora/ResultadosCalculos';
-import CorrecaoMonetaria from '@/components/calculadora/CorrecaoMonetaria';
 import UserManagement from '@/components/auth/UserManagement';
-import HelpSection from '@/components/peticoes/HelpSection';
-import CalculosSalvos from '@/components/calculadora/CalculosSalvos';
 import useCalculadora from '@/hooks/useCalculadora';
 import { toast } from 'sonner';
+import DesktopLayout from '@/components/calculadora/layout/DesktopLayout';
+import MobileLayout from '@/components/calculadora/layout/MobileLayout';
+import CalculadoraToolbar from '@/components/calculadora/layout/CalculadoraToolbar';
+import HelpSectionContainer from '@/components/calculadora/layout/HelpSectionContainer';
 
 const Calculadora = () => {
   const navigate = useNavigate();
@@ -221,233 +217,51 @@ const Calculadora = () => {
   return (
     <Layout>
       <div className="container mx-auto py-10 px-4">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-serif font-bold text-juriscalc-navy">
-            Calculadora de Verbas Trabalhistas
-          </h1>
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              className="border-juriscalc-navy text-juriscalc-navy"
-              onClick={toggleLayoutMode}
-              title={`Alternar para layout de ${layoutMode === 'desktop' ? 'Smartphone' : 'Computador'}`}
-            >
-              {layoutMode === 'desktop' ? (
-                <Smartphone className="h-5 w-5 mr-2" />
-              ) : (
-                <LayoutGrid className="h-5 w-5 mr-2" />
-              )}
-              {layoutMode === 'desktop' ? 'Smartphone' : 'Computador'}
-            </Button>
-            <Button
-              variant="outline"
-              className="border-juriscalc-navy text-juriscalc-navy"
-              onClick={handleComecaCalcular}
-            >
-              Começar Novo Cálculo
-            </Button>
-            <Button
-              variant={showUserPanel ? "default" : "outline"}
-              className={showUserPanel 
-                ? "bg-juriscalc-navy" 
-                : "border-juriscalc-navy text-juriscalc-navy"}
-              onClick={() => setShowUserPanel(!showUserPanel)}
-            >
-              {showUserPanel ? "Voltar à Calculadora" : "Minha Conta"}
-            </Button>
-          </div>
-        </div>
+        <CalculadoraToolbar 
+          showUserPanel={showUserPanel}
+          layoutMode={layoutMode}
+          toggleLayoutMode={toggleLayoutMode}
+          handleComecaCalcular={handleComecaCalcular}
+          setShowUserPanel={setShowUserPanel}
+        />
 
         {showUserPanel ? (
           <UserManagement />
         ) : (
           <>
             {layoutMode === 'desktop' ? (
-              // Layout for desktop
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Column 1 - Form */}
-                <div className="lg:col-span-2">
-                  <Tabs defaultValue="contrato">
-                    <TabsList className="w-full">
-                      <TabsTrigger value="contrato" className="flex-1">Dados do Contrato</TabsTrigger>
-                      <TabsTrigger value="adicionais" className="flex-1">Adicionais e Multas</TabsTrigger>
-                    </TabsList>
-
-                    {/* Tab de Dados do Contrato */}
-                    <TabsContent value="contrato">
-                      <DadosContratoForm 
-                        dadosContrato={dadosContrato}
-                        onChange={handleDadosContratoChange}
-                        onTipoRescisaoChange={(value) => {
-                          if (value === 'sem_justa_causa' || value === 'pedido_demissao' || 
-                              value === 'justa_causa' || value === 'rescisao_indireta') {
-                            handleAdicionaisChange('tipoRescisao', value);
-                          }
-                        }}
-                      />
-                    </TabsContent>
-
-                    {/* Tab de Adicionais */}
-                    <TabsContent value="adicionais">
-                      <AdicionaisForm 
-                        adicionais={adicionais}
-                        onChange={handleAdicionaisChange}
-                      />
-                    </TabsContent>
-                  </Tabs>
-
-                  <div className="mt-6">
-                    <Button 
-                      onClick={handleCalcularClick}
-                      className="w-full bg-juriscalc-navy text-white hover:bg-opacity-90"
-                      size="lg"
-                    >
-                      Calcular Verbas
-                    </Button>
-                  </div>
-                  
-                  {/* Mostrar módulo de correção monetária quando os cálculos estiverem prontos */}
-                  {hasCalculos && (
-                    <div className="mt-6">
-                      {showCorrecaoMonetaria ? (
-                        <>
-                          <CorrecaoMonetaria 
-                            onAplicarCorrecao={aplicarCorrecaoMonetaria} 
-                            totalGeral={totalGeral}
-                            dataAdmissao={dadosContrato.dataAdmissao} 
-                          />
-                          <Button 
-                            variant="outline"
-                            className="w-full border-juriscalc-navy text-juriscalc-navy"
-                            onClick={() => setShowCorrecaoMonetaria(false)}
-                          >
-                            Ocultar Correção Monetária
-                          </Button>
-                        </>
-                      ) : (
-                        <Button 
-                          variant="outline"
-                          className="w-full border-juriscalc-navy text-juriscalc-navy"
-                          onClick={() => setShowCorrecaoMonetaria(true)}
-                        >
-                          Aplicar Correção Monetária
-                        </Button>
-                      )}
-                    </div>
-                  )}
-                </div>
-                
-                {/* Coluna 2 - Resultados */}
-                <div>
-                  <ResultadosCalculos 
-                    resultados={resultados} 
-                    adicionais={adicionais}
-                    dadosContrato={dadosContrato}
-                    onLoadCalculo={handleLoadCalculo}
-                  />
-                  
-                  <CalculosSalvos 
-                    resultados={resultados}
-                    totalGeral={totalGeral}
-                    dadosContrato={dadosContrato}
-                    onLoadCalculo={handleLoadCalculo}
-                  />
-                </div>
-              </div>
+              <DesktopLayout
+                dadosContrato={dadosContrato}
+                adicionais={adicionais}
+                resultados={resultados}
+                showCorrecaoMonetaria={showCorrecaoMonetaria}
+                hasCalculos={hasCalculos}
+                totalGeral={totalGeral}
+                handleDadosContratoChange={handleDadosContratoChange}
+                handleAdicionaisChange={handleAdicionaisChange}
+                handleCalcularClick={handleCalcularClick}
+                handleLoadCalculo={handleLoadCalculo}
+                setShowCorrecaoMonetaria={setShowCorrecaoMonetaria}
+                aplicarCorrecaoMonetaria={aplicarCorrecaoMonetaria}
+              />
             ) : (
-              // Layout for mobile
-              <div className="space-y-6">
-                {/* Form area */}
-                <Tabs defaultValue="contrato">
-                  <TabsList className="w-full">
-                    <TabsTrigger value="contrato" className="flex-1">Dados do Contrato</TabsTrigger>
-                    <TabsTrigger value="adicionais" className="flex-1">Adicionais e Multas</TabsTrigger>
-                  </TabsList>
-
-                  <TabsContent value="contrato">
-                    <DadosContratoForm 
-                      dadosContrato={dadosContrato}
-                      onChange={handleDadosContratoChange}
-                      onTipoRescisaoChange={(value) => {
-                        if (value === 'sem_justa_causa' || value === 'pedido_demissao' || 
-                            value === 'justa_causa' || value === 'rescisao_indireta') {
-                          handleAdicionaisChange('tipoRescisao', value);
-                        }
-                      }}
-                    />
-                  </TabsContent>
-
-                  <TabsContent value="adicionais">
-                    <AdicionaisForm 
-                      adicionais={adicionais}
-                      onChange={handleAdicionaisChange}
-                    />
-                  </TabsContent>
-                </Tabs>
-
-                <div>
-                  <Button 
-                    onClick={handleCalcularClick}
-                    className="w-full bg-juriscalc-navy text-white hover:bg-opacity-90"
-                    size="lg"
-                  >
-                    Calcular Verbas
-                  </Button>
-                </div>
-
-                {/* Results area */}
-                <div>
-                  <ResultadosCalculos 
-                    resultados={resultados} 
-                    adicionais={adicionais}
-                    dadosContrato={dadosContrato}
-                    onLoadCalculo={handleLoadCalculo}
-                  />
-                  
-                  {/* Mostrar módulo de correção monetária quando os cálculos estiverem prontos */}
-                  {hasCalculos && (
-                    <div className="mt-4">
-                      {showCorrecaoMonetaria ? (
-                        <>
-                          <CorrecaoMonetaria 
-                            onAplicarCorrecao={aplicarCorrecaoMonetaria} 
-                            totalGeral={totalGeral}
-                            dataAdmissao={dadosContrato.dataAdmissao}
-                          />
-                          <Button 
-                            variant="outline"
-                            className="w-full border-juriscalc-navy text-juriscalc-navy mt-2"
-                            onClick={() => setShowCorrecaoMonetaria(false)}
-                          >
-                            Ocultar Correção Monetária
-                          </Button>
-                        </>
-                      ) : (
-                        <Button 
-                          variant="outline"
-                          className="w-full border-juriscalc-navy text-juriscalc-navy"
-                          onClick={() => setShowCorrecaoMonetaria(true)}
-                        >
-                          Aplicar Correção Monetária
-                        </Button>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Calculos Salvos */}
-                  <CalculosSalvos 
-                    resultados={resultados}
-                    totalGeral={totalGeral}
-                    dadosContrato={dadosContrato}
-                    onLoadCalculo={handleLoadCalculo}
-                  />
-                </div>
-              </div>
+              <MobileLayout
+                dadosContrato={dadosContrato}
+                adicionais={adicionais}
+                resultados={resultados}
+                showCorrecaoMonetaria={showCorrecaoMonetaria}
+                hasCalculos={hasCalculos}
+                totalGeral={totalGeral}
+                handleDadosContratoChange={handleDadosContratoChange}
+                handleAdicionaisChange={handleAdicionaisChange}
+                handleCalcularClick={handleCalcularClick}
+                handleLoadCalculo={handleLoadCalculo}
+                setShowCorrecaoMonetaria={setShowCorrecaoMonetaria}
+                aplicarCorrecaoMonetaria={aplicarCorrecaoMonetaria}
+              />
             )}
         
-            <HelpSection 
-              calculosDisponiveis={hasCalculos}
-            />
+            <HelpSectionContainer calculosDisponiveis={hasCalculos} />
           </>
         )}
       </div>
