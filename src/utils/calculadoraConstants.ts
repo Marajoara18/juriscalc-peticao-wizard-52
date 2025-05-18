@@ -1,6 +1,7 @@
 
 import { Resultados } from '@/types/calculadora';
 
+// Valores iniciais para os resultados dos cálculos
 export const resultadosIniciais: Resultados = {
   verbasRescisorias: {
     saldoSalario: 0,
@@ -28,7 +29,8 @@ export const resultadosIniciais: Resultados = {
     diferencasSalariais: 0,
     customCalculo: 0,
     seguroDesemprego: 0,
-  }
+    salarioFamilia: 0,
+  },
 };
 
 export const SALARIO_MINIMO = 1412; // Valor do salário mínimo 2024

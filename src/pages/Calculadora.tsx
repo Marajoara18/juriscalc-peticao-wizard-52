@@ -98,6 +98,8 @@ const Calculadora = () => {
       ultimoSalario: '',
       mesesTrabalhadosUltimoEmprego: '',
       tempoContribuicaoINSS: '',
+      calcularSalarioFamilia: false,
+      quantidadeFilhos: '',
     });
     
     // Reiniciar resultados
@@ -128,6 +130,7 @@ const Calculadora = () => {
         diferencasSalariais: 0,
         customCalculo: 0,
         seguroDesemprego: 0,
+        salarioFamilia: 0,
       }
     });
     
