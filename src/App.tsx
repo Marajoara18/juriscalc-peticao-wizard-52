@@ -11,6 +11,8 @@ import Calculadora from "./pages/Calculadora";
 import Peticoes from "./pages/Peticoes";
 import NotFound from "./pages/NotFound";
 import MasterPasswordReset from "./components/auth/MasterPasswordReset";
+import PasswordResetRequest from "./components/auth/PasswordResetRequest";
+import PasswordReset from "./components/auth/PasswordReset";
 
 const App = () => {
   // Create a client inside the component function
@@ -28,6 +30,9 @@ const App = () => {
               <Route path="/calculadora" element={<Calculadora />} />
               <Route path="/peticoes" element={<Peticoes />} />
               <Route path="/reset-password" element={<MasterPasswordReset />} />
+              {/* Novas rotas para redefinição de senha */}
+              <Route path="/esqueci-senha" element={<PasswordResetRequest />} />
+              <Route path="/reset-senha" element={<PasswordReset />} />
               {/* Redirecionar a página index antiga para o login */}
               <Route path="/index" element={<Navigate to="/" replace />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

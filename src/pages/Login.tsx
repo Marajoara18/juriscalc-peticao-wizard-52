@@ -6,6 +6,7 @@ import LoginForm from '@/components/auth/LoginForm';
 import RegisterForm from '@/components/auth/RegisterForm';
 import { useAuth } from '@/hooks/useAuth';
 import { LoginFormData, RegisterFormData } from '@/types/auth';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
   const [activeTab, setActiveTab] = useState('login');
@@ -33,6 +34,11 @@ const Login = () => {
           
           <TabsContent value="login">
             <LoginForm onSubmit={onLogin} />
+            <div className="text-center mt-4">
+              <Link to="/esqueci-senha" className="text-sm text-juriscalc-navy hover:underline">
+                Esqueceu sua senha?
+              </Link>
+            </div>
           </TabsContent>
           
           <TabsContent value="cadastro">
