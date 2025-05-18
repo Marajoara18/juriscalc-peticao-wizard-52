@@ -3,6 +3,9 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Printer } from "lucide-react";
+import { handlePrint } from '@/utils/peticaoUtils';
+import { toast } from "sonner";
 
 interface SaveCalculoDialogProps {
   open: boolean;
@@ -21,6 +24,11 @@ const SaveCalculoDialog: React.FC<SaveCalculoDialogProps> = ({
   isEditing,
   onSave
 }) => {
+  const handlePrintCalculo = () => {
+    handlePrint();
+    toast.success('Demonstrativo de cálculos enviado para impressão!');
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -42,6 +50,14 @@ const SaveCalculoDialog: React.FC<SaveCalculoDialogProps> = ({
           />
         </div>
         <DialogFooter>
+          <Button 
+            variant="outline" 
+            onClick={handlePrintCalculo}
+            className="mr-auto"
+          >
+            <Printer className="h-4 w-4 mr-2" />
+            Imprimir
+          </Button>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>

@@ -55,9 +55,7 @@ const PreviewCalculoDialog: React.FC<PreviewCalculoDialogProps> = ({
           {calculo && (
             <div id="print-content" className="print:block">
               <div className="border rounded-md p-4 print:border-none">
-                <h3 className="text-lg font-bold mb-4 text-center print:text-xl">
-                  DEMONSTRATIVO DE CÁLCULOS TRABALHISTAS
-                </h3>
+                {/* Removida a primeira ocorrência do título aqui */}
                 <div className="print:break-inside-avoid">
                   <TabelaCalculos
                     calculos={calculo}
