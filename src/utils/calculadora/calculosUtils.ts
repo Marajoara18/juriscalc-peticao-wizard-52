@@ -2,7 +2,7 @@
 // Utility functions for handling calculation data
 
 // Import the necessary functions from verbasRescisoriasUtils
-import { calcularVerbasRescisorias } from './verbasRescisoriasUtils';
+import { calcularVerbasRescisorias } from './verbas/calculadoraVerbas';
 import { 
   calcularAdicionais,
   calcularInsalubridade,
@@ -68,4 +68,3 @@ export const realizarCalculos = (dadosContrato: any, adicionais: any) => {
   
   return resultados;
 };
-
