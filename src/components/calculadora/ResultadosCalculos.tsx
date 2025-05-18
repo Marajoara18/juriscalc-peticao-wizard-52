@@ -60,7 +60,7 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
                     {chave === 'saldoSalario' && 'Saldo de Salário'}
                     {chave === 'avisoPrevia' && 'Aviso Prévio'}
                     {chave === 'decimoTerceiro' && '13º Salário Proporcional'}
-                    {chave === 'ferias' && 'Férias Proporcionais/Vencidas'}
+                    {chave === 'ferias' && 'Férias Proporcionais'}
                     {chave === 'tercoConstitucional' && '1/3 Constitucional'}
                     {chave === 'fgts' && 'FGTS sobre verbas'}
                     {chave === 'multaFgts' && 'Multa FGTS (40%)'}

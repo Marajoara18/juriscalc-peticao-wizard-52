@@ -65,17 +65,21 @@ export const calcularFerias = (salarioBase: number, mesesTrabalhados: number, ti
     return 0;
   }
   
+  // Férias proporcionais ao tempo trabalhado no ano da rescisão
+  // O cálculo é feito sobre 1 ano completo (12 meses)
   return (salarioBase / 12) * mesesTrabalhados;
 };
 
 /**
- * Calculates expired vacation value
+ * Calculates expired vacation value - Moved to adicionaisUtils.ts
+ * This function remains here for backward compatibility but doesn't calculate anymore
  * @param salarioBase Base salary
  * @param feriasVencidas Whether there are expired vacations
- * @returns Expired vacation value
+ * @returns Always returns 0 now
  */
 export const calcularFeriasVencidas = (salarioBase: number, feriasVencidas: boolean): number => {
-  return feriasVencidas ? salarioBase : 0;
+  // This functionality is now handled in the adicionais module
+  return 0;
 };
 
 /**
@@ -119,15 +123,13 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato) => {
   const diasTrabalhados = parseInt(dadosContrato.diasTrabalhados) || 0;
   const mesesTrabalhados = parseInt(dadosContrato.mesesTrabalhados) || 0;
   const avisoPrevioCumprido = dadosContrato.aviso_previo_cumprido || false;
-  const feriasVencidas = dadosContrato.ferias_vencidas || false;
   
   // Cálculo individual das verbas
   const saldoSalario = calcularSaldoSalario(salarioBase, diasTrabalhados);
   const avisoPrevia = calcularAvisoPrevia(salarioBase, dadosContrato.tipoRescisao, avisoPrevioCumprido);
   const decimoTerceiro = calcularDecimoTerceiro(salarioBase, mesesTrabalhados, dadosContrato.tipoRescisao);
   const ferias = calcularFerias(salarioBase, mesesTrabalhados, dadosContrato.tipoRescisao);
-  const feriasVencidasValor = calcularFeriasVencidas(salarioBase, feriasVencidas);
-  const tercoConstitucional = calcularTercoConstitucional(ferias + feriasVencidasValor);
+  const tercoConstitucional = calcularTercoConstitucional(ferias);
   const fgts = calcularFGTS(salarioBase, mesesTrabalhados);
   const multaFgts = calcularMultaFGTS(fgts, dadosContrato.tipoRescisao);
   
@@ -144,14 +146,14 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato) => {
   }
   
   // Cálculo do total (excluindo descontos)
-  const total = saldoSalario + avisoPrevia_ajustado + decimoTerceiro + ferias + feriasVencidasValor + tercoConstitucional + fgts + multaFgts;
+  const total = saldoSalario + avisoPrevia_ajustado + decimoTerceiro + ferias + tercoConstitucional + fgts + multaFgts;
   
   return {
     saldoSalario,
     avisoPrevia: avisoPrevia_ajustado, // Armazena apenas o valor positivo para exibição
     descontoAvisoPrevio, // Novo campo para armazenar o desconto do aviso prévio
     decimoTerceiro,
-    ferias: ferias + feriasVencidasValor, // Soma férias proporcionais e vencidas
+    ferias, // Agora apenas férias proporcionais
     tercoConstitucional,
     fgts,
     multaFgts,
