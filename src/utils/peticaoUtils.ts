@@ -1,5 +1,5 @@
 
-import { criarHTMLCalculosEmbutidos } from '@/utils/textUtils';
+import { criarHTMLCalculosEmbutidos } from '@/utils/html/calculosHTML';
 
 // Função para gerar o HTML dos cálculos para incorporar na petição
 export const gerarHTMLCalculos = (calculosImportados: any) => {
