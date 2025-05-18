@@ -20,7 +20,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
   };
 
   return (
-    <Card>
+    <Card className="bg-white/70 backdrop-blur-sm border-white/20 shadow-lg">
       <CardHeader>
         <CardTitle className="text-center">Acesse sua conta</CardTitle>
         <CardDescription className="text-center">
@@ -40,6 +40,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              className="bg-white/80"
             />
           </div>
           <div className="space-y-2">
@@ -53,6 +54,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               required
+              className="bg-white/80"
             />
           </div>
         </CardContent>

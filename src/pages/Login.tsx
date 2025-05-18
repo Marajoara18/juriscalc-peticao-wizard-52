@@ -20,8 +20,9 @@ const Login = () => {
   };
   
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12">
-      <div className="max-w-md w-full space-y-8">
+    <div className="login-container min-h-screen flex items-center justify-center bg-cover bg-center px-4 py-12" 
+         style={{ backgroundImage: "url('https://images.unsplash.com/photo-1470813740244-df37b8c1edcb')" }}>
+      <div className="max-w-md w-full space-y-8 bg-white/90 backdrop-blur-sm p-8 rounded-xl shadow-xl">
         <AuthLogo />
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
