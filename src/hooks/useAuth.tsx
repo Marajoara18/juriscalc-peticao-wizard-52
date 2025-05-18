@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -164,8 +163,42 @@ export const useAuth = () => {
     navigate('/calculadora');
   };
 
+  const resetMasterPassword = async (email: string, newPassword: string) => {
+    if (email !== 'johnnysantos_177@msn.com' && email !== 'admin@juriscalc.com') {
+      toast.error('Apenas o administrador master pode redefinir a senha master.');
+      return false;
+    }
+    
+    try {
+      // Buscar usuários do localStorage
+      const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+      
+      // Encontrar o usuário do admin master
+      const adminIndex = allUsers.findIndex((u: User) => 
+        u.email === 'johnnysantos_177@msn.com' || u.email === 'admin@juriscalc.com'
+      );
+      
+      if (adminIndex >= 0) {
+        // Atualizar a senha
+        allUsers[adminIndex].senha = newPassword;
+        localStorage.setItem('allUsers', JSON.stringify(allUsers));
+        
+        toast.success('Senha do administrador master redefinida com sucesso!');
+        return true;
+      } else {
+        toast.error('Usuário administrador master não encontrado.');
+        return false;
+      }
+    } catch (error) {
+      console.error('Erro ao redefinir senha:', error);
+      toast.error('Ocorreu um erro ao redefinir a senha do administrador master.');
+      return false;
+    }
+  };
+
   return {
     handleLogin,
-    handleRegister
+    handleRegister,
+    resetMasterPassword
   };
 };
