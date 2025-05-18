@@ -22,7 +22,6 @@ const VerificadorCalculos: React.FC = () => {
     diasTrabalhados: '30',
     mesesTrabalhados: '12',
     aviso_previo_cumprido: false, // Added missing property
-    ferias_vencidas: false, // Added missing property
   };
 
   const adicionaisBasico: Adicionais = {

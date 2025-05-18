@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { toast } from "sonner";
 import { DadosContrato, Adicionais, Resultados, CustomCalculo } from '@/types/calculadora';
@@ -21,7 +20,6 @@ const useCalculadora = () => {
     diasTrabalhados: '',
     mesesTrabalhados: '',
     aviso_previo_cumprido: false,
-    // Removido ferias_vencidas do estado inicial
   });
 
   // Estado para calcular adicionais
