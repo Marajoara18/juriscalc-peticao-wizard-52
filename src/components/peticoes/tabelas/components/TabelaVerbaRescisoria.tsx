@@ -7,6 +7,7 @@ interface TabelaVerbaRescisoriasProps {
   verbasRescisorias: {
     saldoSalario: number;
     avisoPrevia: number;
+    descontoAvisoPrevio?: number; // Added new optional field
     decimoTerceiro: number;
     ferias: number;
     tercoConstitucional: number;
@@ -32,9 +33,15 @@ const TabelaVerbaRescisoria: React.FC<TabelaVerbaRescisoriasProps> = ({
     { descricao: 'Multa FGTS (40%)', valor: verbasRescisorias.multaFgts },
   ].filter(item => item.valor > 0);
 
-  if (itensVerbaRescisoria.length === 0) {
+  // Verificar se há desconto de aviso prévio
+  const temDescontoAvisoPrevio = verbasRescisorias.descontoAvisoPrevio && verbasRescisorias.descontoAvisoPrevio > 0;
+
+  if (itensVerbaRescisoria.length === 0 && !temDescontoAvisoPrevio) {
     return null;
   }
+
+  // Calcular total final considerando possível desconto
+  const totalFinal = verbasRescisorias.total - (verbasRescisorias.descontoAvisoPrevio || 0);
 
   return (
     <div>
@@ -53,9 +60,18 @@ const TabelaVerbaRescisoria: React.FC<TabelaVerbaRescisoriasProps> = ({
               <TableCell className="text-right">{formatarMoeda(item.valor)}</TableCell>
             </TableRow>
           ))}
+          
+          {/* Mostrar desconto do aviso prévio quando aplicável */}
+          {temDescontoAvisoPrevio && (
+            <TableRow className="text-red-600">
+              <TableCell>Desconto Aviso Prévio não cumprido</TableCell>
+              <TableCell className="text-right">- {formatarMoeda(verbasRescisorias.descontoAvisoPrevio || 0)}</TableCell>
+            </TableRow>
+          )}
+          
           <TableRow className="font-bold">
             <TableCell>Total Verbas Rescisórias</TableCell>
-            <TableCell className="text-right">{formatarMoeda(verbasRescisorias.total)}</TableCell>
+            <TableCell className="text-right">{formatarMoeda(totalFinal)}</TableCell>
           </TableRow>
         </TableBody>
       </Table>

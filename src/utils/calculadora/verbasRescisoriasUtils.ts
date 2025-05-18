@@ -131,8 +131,17 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato) => {
   const fgts = calcularFGTS(salarioBase, mesesTrabalhados);
   const multaFgts = calcularMultaFGTS(fgts, dadosContrato.tipoRescisao);
   
+  // Para o cálculo do total e a visualização, tratamos o aviso prévio diferentemente
+  // dependendo do tipo de rescisão
+  let avisoPrevia_ajustado = avisoPrevia;
+  let descontoAvisoPrevio = 0;
+  
   // No caso de pedido de demissão, o aviso prévio é um desconto (valor negativo)
-  const avisoPrevia_ajustado = dadosContrato.tipoRescisao === 'pedido_demissao' ? 0 : Math.max(0, avisoPrevia);
+  // se não for cumprido, mas precisamos armazenar isso separadamente
+  if (dadosContrato.tipoRescisao === 'pedido_demissao' && !avisoPrevioCumprido) {
+    avisoPrevia_ajustado = 0; // Não aparece como verba positiva
+    descontoAvisoPrevio = Math.abs(avisoPrevia); // Armazena como desconto
+  }
   
   // Cálculo do total (excluindo descontos)
   const total = saldoSalario + avisoPrevia_ajustado + decimoTerceiro + ferias + feriasVencidasValor + tercoConstitucional + fgts + multaFgts;
@@ -140,6 +149,7 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato) => {
   return {
     saldoSalario,
     avisoPrevia: avisoPrevia_ajustado, // Armazena apenas o valor positivo para exibição
+    descontoAvisoPrevio, // Novo campo para armazenar o desconto do aviso prévio
     decimoTerceiro,
     ferias: ferias + feriasVencidasValor, // Soma férias proporcionais e vencidas
     tercoConstitucional,

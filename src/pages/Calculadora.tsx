@@ -206,7 +206,9 @@ const Calculadora = () => {
     resultados.adicionais.seguroDesemprego +
     resultados.adicionais.salarioFamilia;
 
-  const totalGeral = resultados.verbasRescisorias.total + totalAdicionais;
+  // Considerar o desconto do aviso prévio no cálculo do total geral
+  const totalGeral = resultados.verbasRescisorias.total + totalAdicionais - 
+                    (resultados.verbasRescisorias.descontoAvisoPrevio || 0);
   
   // Verificar se há cálculos para mostrar opção de salvar
   const hasCalculos = totalGeral > 0;

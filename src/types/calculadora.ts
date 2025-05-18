@@ -2,6 +2,7 @@
 export type RescisionValues = {
   saldoSalario: number;
   avisoPrevia: number;
+  descontoAvisoPrevio: number; // Added for tracking prior notice deduction
   decimoTerceiro: number;
   ferias: number;
   tercoConstitucional: number;
