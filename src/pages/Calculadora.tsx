@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -314,7 +313,8 @@ const Calculadora = () => {
                         <>
                           <CorrecaoMonetaria 
                             onAplicarCorrecao={aplicarCorrecaoMonetaria} 
-                            totalGeral={totalGeral} 
+                            totalGeral={totalGeral}
+                            dataAdmissao={dadosContrato.dataAdmissao} 
                           />
                           <Button 
                             variant="outline"
@@ -342,7 +342,7 @@ const Calculadora = () => {
                   <ResultadosCalculos 
                     resultados={resultados} 
                     adicionais={adicionais}
-                    dadosContrato={dadosContrato} // Pass dadosContrato here
+                    dadosContrato={dadosContrato}
                     onLoadCalculo={handleLoadCalculo}
                   />
                   
@@ -400,7 +400,7 @@ const Calculadora = () => {
                   <ResultadosCalculos 
                     resultados={resultados} 
                     adicionais={adicionais}
-                    dadosContrato={dadosContrato} // Pass dadosContrato here
+                    dadosContrato={dadosContrato}
                     onLoadCalculo={handleLoadCalculo}
                   />
                   
@@ -412,6 +412,7 @@ const Calculadora = () => {
                           <CorrecaoMonetaria 
                             onAplicarCorrecao={aplicarCorrecaoMonetaria} 
                             totalGeral={totalGeral}
+                            dataAdmissao={dadosContrato.dataAdmissao}
                           />
                           <Button 
                             variant="outline"

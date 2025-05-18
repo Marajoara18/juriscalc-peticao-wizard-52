@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 interface CorrecaoMonetariaProps {
   onAplicarCorrecao: (valorCorrigido: number) => void;
   totalGeral?: number;
+  dataAdmissao?: string; // Added the admission date prop
 }
 
 // Dados fictícios de índices de correção (em situação real, viriam de API)
@@ -60,13 +61,18 @@ const INDICES = {
   ]
 };
 
-const CorrecaoMonetaria: React.FC<CorrecaoMonetariaProps> = ({ onAplicarCorrecao, totalGeral = 0 }) => {
+const CorrecaoMonetaria: React.FC<CorrecaoMonetariaProps> = ({ 
+  onAplicarCorrecao, 
+  totalGeral = 0,
+  dataAdmissao = ''  // Default to empty string if not provided
+}) => {
   const [indiceCorrecao, setIndiceCorrecao] = useState<"IPCA-E" | "INPC" | "TR">("IPCA-E");
   const [dataInicio, setDataInicio] = useState<string>("");
   const [valor, setValor] = useState<string>("");
   const [tipoCalculo, setTipoCalculo] = useState<string>("");
   const [valorCorrigido, setValorCorrigido] = useState<number | null>(null);
   const [usarTotalGeral, setUsarTotalGeral] = useState<boolean>(false);
+  const [usarDataAdmissao, setUsarDataAdmissao] = useState<boolean>(false);
 
   // Função para calcular a correção monetária baseada nos índices selecionados
   const calcularCorrecaoMonetaria = () => {
@@ -186,6 +192,22 @@ const CorrecaoMonetaria: React.FC<CorrecaoMonetariaProps> = ({ onAplicarCorrecao
     }
   };
 
+  // Handle checkbox change for using the admission date
+  const handleUsarDataAdmissaoChange = (checked: boolean) => {
+    setUsarDataAdmissao(checked);
+    if (checked && dataAdmissao) {
+      // Format the date from yyyy-MM-dd to dd/MM/yyyy for display
+      const parts = dataAdmissao.split('-');
+      if (parts.length === 3) {
+        setDataInicio(`${parts[2]}/${parts[1]}/${parts[0]}`);
+      } else {
+        setDataInicio(dataAdmissao);
+      }
+    } else if (!checked) {
+      setDataInicio("");
+    }
+  };
+
   return (
     <Card className="mb-6">
       <CardHeader>
@@ -225,15 +247,30 @@ const CorrecaoMonetaria: React.FC<CorrecaoMonetariaProps> = ({ onAplicarCorrecao
           </div>
 
           <div>
-            <Label htmlFor="dataInicio" className="text-base font-medium">
-              Data de início do cálculo
-            </Label>
+            <div className="flex justify-between items-center">
+              <Label htmlFor="dataInicio" className="text-base font-medium">
+                Data de início do cálculo
+              </Label>
+              {dataAdmissao && (
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="usarDataAdmissao" 
+                    checked={usarDataAdmissao} 
+                    onCheckedChange={handleUsarDataAdmissaoChange}
+                  />
+                  <Label htmlFor="usarDataAdmissao" className="text-sm cursor-pointer">
+                    Usar data de admissão
+                  </Label>
+                </div>
+              )}
+            </div>
             <Input
               id="dataInicio"
               placeholder="dd/mm/aaaa"
               value={dataInicio}
               onChange={(e) => setDataInicio(e.target.value)}
               className="mt-2"
+              disabled={usarDataAdmissao}
             />
           </div>
 
