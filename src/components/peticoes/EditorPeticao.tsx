@@ -80,6 +80,9 @@ const EditorPeticao: React.FC<PeticaoProps> = ({
     toast.success('Petição enviada para impressão!');
   };
 
+  // Verifica se o título da petição é "Intimação"
+  const isIntimacao = formData.titulo.toLowerCase().includes('intimação');
+
   return (
     <div>
       <PeticaoHeader 
@@ -109,12 +112,15 @@ const EditorPeticao: React.FC<PeticaoProps> = ({
             
             <PeticaoPrintView formData={formData} />
 
-            <CalculosAdicionais 
-              formData={formData}
-              onCheckboxChange={handleCheckboxChange}
-              onCustomCalcChange={handleCustomCalcChange}
-              toggleCustomCalc={toggleCustomCalc}
-            />
+            {/* Renderiza CalculosAdicionais apenas se não for uma Intimação */}
+            {!isIntimacao && (
+              <CalculosAdicionais 
+                formData={formData}
+                onCheckboxChange={handleCheckboxChange}
+                onCustomCalcChange={handleCustomCalcChange}
+                toggleCustomCalc={toggleCustomCalc}
+              />
+            )}
             
             <PeticaoActions 
               onSaveRascunho={handleSaveRascunho}
