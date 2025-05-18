@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -54,27 +53,24 @@ const UserManagementPanel = ({ allUsers, updateUsers, isMasterAdmin }: UserManag
       return;
     }
     
-    // Criar novo usuário
-    const newUser: UserData = {
+    // Criar novo usuário com todas as propriedades necessárias
+    const newUser = {
       id: `user-${Date.now()}`,
       nome: data.nome,
       email: data.email,
+      senha: data.senha, // Incluir senha aqui
       isAdmin: !!data.isAdmin,
       canViewPanels: !!data.canViewPanels,
       isPremium: !!data.isPremium
     };
     
-    // Adicionar usuário à lista
+    // Atualizar o array de usuários diretamente no localStorage
+    // em vez de separar o estado dos usuários e o localStorage
     const updatedUsers = [...allUsers, newUser];
-    updateUsers(updatedUsers);
+    localStorage.setItem('allUsers', JSON.stringify(updatedUsers));
     
-    // Também salvar a senha em localStorage (como estamos simulando um banco de dados)
-    const usersWithPasswords = JSON.parse(localStorage.getItem('allUsers') || '[]');
-    usersWithPasswords.push({
-      ...newUser,
-      senha: data.senha
-    });
-    localStorage.setItem('allUsers', JSON.stringify(usersWithPasswords));
+    // Atualizar o estado também
+    updateUsers(updatedUsers);
     
     toast.success(`Usuário ${data.nome} criado com sucesso!`);
     setShowAddUserDialog(false);

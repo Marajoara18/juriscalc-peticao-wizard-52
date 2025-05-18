@@ -136,7 +136,7 @@ export const useAuth = () => {
     }
     
     // Verificar se é o e-mail do administrador mestre
-    const isMasterAdmin = data.email === 'admin@juriscalc.com';
+    const isMasterAdmin = data.email === 'admin@juriscalc.com' || data.email === 'johnnysantos_177@msn.com';
     
     // Criar novo usuário
     const newUser: User = {
