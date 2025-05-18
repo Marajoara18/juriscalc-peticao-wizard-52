@@ -2,7 +2,7 @@
 /**
  * Main utilities module for additional values calculation
  */
-import { Adicionais } from "@/types/calculadora";
+import { Adicionais, CustomCalculo } from "@/types/calculadora";
 import { calcularInsalubridade, calcularPericulosidade } from './adicionais/adicionalBasicoUtils';
 import { calcularMulta467, calcularMulta477 } from './adicionais/multasUtils';
 import { 
@@ -117,8 +117,19 @@ export const calcularAdicionais = (
   const diferencasSalariais = adicionais.calcularDiferencasSalariais ? 
     parseFloat(adicionais.valorDiferencasSalariais) || 0 : 0;
     
-  const customCalculo = adicionais.calcularCustom ? 
-    parseFloat(adicionais.valorCustom) || 0 : 0;
+  // Cálculo dos valores personalizados
+  let customCalculo = 0;
+  if (adicionais.calcularCustom) {
+    // Se temos múltiplos cálculos personalizados
+    if (adicionais.calculosCustom && adicionais.calculosCustom.length > 0) {
+      customCalculo = adicionais.calculosCustom.reduce((total, calc) => {
+        return total + (parseFloat(calc.valor) || 0);
+      }, 0);
+    } else {
+      // Compatibilidade com o sistema antigo
+      customCalculo = parseFloat(adicionais.valorCustom) || 0;
+    }
+  }
 
   // Cálculo do seguro desemprego e salário família
   const seguroDesemprego = calcularSeguroDesemprego(

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -87,6 +86,7 @@ const Calculadora = () => {
       calcularDiferencasSalariais: false,
       valorDiferencasSalariais: '',
       calcularCustom: false,
+      calculosCustom: [],
       descricaoCustom: '',
       valorCustom: '',
       calcularSeguroDesemprego: false,
@@ -173,7 +173,9 @@ const Calculadora = () => {
       calcularDescontosIndevidos: calculo.adicionais?.descontosIndevidos > 0,
       calcularDiferencasSalariais: calculo.adicionais?.diferencasSalariais > 0,
       calcularCustom: calculo.adicionais?.customCalculo > 0,
+      calculosCustom: calculo.calculosCustom || [],
       calcularSeguroDesemprego: calculo.adicionais?.seguroDesemprego > 0,
+      calcularSalarioFamilia: calculo.adicionais?.salarioFamilia > 0,
     });
     
     toast.success('Cálculo carregado com sucesso!');

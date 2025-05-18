@@ -2,7 +2,7 @@
 /**
  * Utility functions for calculation operations
  */
-import { DadosContrato, Adicionais, Resultados } from '@/types/calculadora';
+import { DadosContrato, Adicionais, Resultados, CustomCalculo } from '@/types/calculadora';
 import { calcularVerbasRescisorias } from '@/utils/calculadora/verbasRescisoriasUtils';
 import { calcularAdicionais } from '@/utils/calculadora/adicionaisUtils';
 import { resultadosIniciais } from '@/utils/calculadoraConstants';

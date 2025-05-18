@@ -38,6 +38,12 @@ export type DadosContrato = {
   mesesTrabalhados: string;
 };
 
+export type CustomCalculo = {
+  id: string;
+  descricao: string;
+  valor: string;
+};
+
 export type Adicionais = {
   calcularInsalubridade: boolean;
   grauInsalubridade: 'minimo' | 'medio' | 'maximo';
@@ -70,6 +76,7 @@ export type Adicionais = {
   calcularDiferencasSalariais: boolean;
   valorDiferencasSalariais: string;
   calcularCustom: boolean;
+  calculosCustom: CustomCalculo[];
   descricaoCustom: string;
   valorCustom: string;
   calcularSeguroDesemprego: boolean;

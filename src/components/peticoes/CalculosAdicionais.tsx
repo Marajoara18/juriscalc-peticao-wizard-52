@@ -1,20 +1,26 @@
 
 import React from 'react';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { PeticaoFormData } from '@/types/peticao';
+import { Plus, Trash } from 'lucide-react';
 
 interface CalculosAdicionaisProps {
   formData: PeticaoFormData;
   onCheckboxChange: (field: string) => void;
-  onCustomCalcChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onCustomCalcChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index?: number) => void;
   toggleCustomCalc: () => void;
+  addCustomCalc?: () => void;
+  removeCustomCalc?: (index: number) => void;
 }
 
 const CalculosAdicionais: React.FC<CalculosAdicionaisProps> = ({ 
   formData, 
   onCheckboxChange, 
   onCustomCalcChange, 
-  toggleCustomCalc 
+  toggleCustomCalc,
+  addCustomCalc,
+  removeCustomCalc
 }) => {
   return (
     <div className="pt-4 border-t border-gray-200 print:hidden">
@@ -111,7 +117,7 @@ const CalculosAdicionais: React.FC<CalculosAdicionaisProps> = ({
 
       <div className="mt-4">
         <div className="flex items-center space-x-3 mb-3">
-          <h4 className="font-medium">Cálculo Adicional Personalizado</h4>
+          <h4 className="font-medium">Cálculos Adicionais Personalizados</h4>
           <div className="flex items-center space-x-2">
             <input 
               type="checkbox" 
@@ -120,34 +126,66 @@ const CalculosAdicionais: React.FC<CalculosAdicionaisProps> = ({
               onChange={toggleCustomCalc}
               className="rounded border-gray-300 text-juriscalc-navy focus:ring-juriscalc-navy"
             />
-            <label htmlFor="customCalc" className="text-sm">Adicionar cálculo personalizado</label>
+            <label htmlFor="customCalc" className="text-sm">Adicionar cálculos personalizados</label>
           </div>
         </div>
         
         {formData.calculosAdicionais.custom.enabled && (
-          <div className="space-y-3 pl-4 border-l-2 border-gray-200">
-            <div>
-              <label htmlFor="descricao" className="block text-sm font-medium mb-1">Descrição do Cálculo</label>
-              <Input
-                id="descricao"
-                name="descricao"
-                type="text"
-                className="w-full"
-                value={formData.calculosAdicionais.custom.descricao}
-                onChange={onCustomCalcChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="formula" className="block text-sm font-medium mb-1">Valor ou Fórmula</label>
-              <Input
-                id="formula"
-                name="formula"
-                type="text"
-                className="w-full"
-                value={formData.calculosAdicionais.custom.formula}
-                onChange={onCustomCalcChange}
-              />
-            </div>
+          <div className="space-y-4 pl-4 border-l-2 border-gray-200">
+            {formData.calculosAdicionais.custom.items.map((item, index) => (
+              <div key={index} className="space-y-3 border-b border-gray-200 pb-3 last:border-0">
+                <div className="flex justify-between items-center">
+                  <h5 className="text-sm font-medium">Cálculo Personalizado {index + 1}</h5>
+                  {removeCustomCalc && (
+                    <Button 
+                      type="button"
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => removeCustomCalc(index)}
+                      className="text-red-500 hover:text-red-700 p-1 h-auto"
+                    >
+                      <Trash size={16} />
+                    </Button>
+                  )}
+                </div>
+                
+                <div>
+                  <label htmlFor={`descricao-${index}`} className="block text-sm font-medium mb-1">Descrição do Cálculo</label>
+                  <Input
+                    id={`descricao-${index}`}
+                    name="descricao"
+                    type="text"
+                    className="w-full"
+                    value={item.descricao}
+                    onChange={(e) => onCustomCalcChange(e, index)}
+                  />
+                </div>
+                <div>
+                  <label htmlFor={`formula-${index}`} className="block text-sm font-medium mb-1">Valor ou Fórmula</label>
+                  <Input
+                    id={`formula-${index}`}
+                    name="formula"
+                    type="text"
+                    className="w-full"
+                    value={item.formula}
+                    onChange={(e) => onCustomCalcChange(e, index)}
+                  />
+                </div>
+              </div>
+            ))}
+            
+            {addCustomCalc && (
+              <Button 
+                type="button"
+                variant="outline" 
+                size="sm" 
+                onClick={addCustomCalc}
+                className="w-full flex items-center justify-center gap-1 mt-2"
+              >
+                <Plus size={16} />
+                Adicionar Novo Cálculo
+              </Button>
+            )}
           </div>
         )}
       </div>

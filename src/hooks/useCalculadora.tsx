@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from "sonner";
-import { DadosContrato, Adicionais, Resultados } from '@/types/calculadora';
+import { DadosContrato, Adicionais, Resultados, CustomCalculo } from '@/types/calculadora';
 import { resultadosIniciais } from '@/utils/calculadoraConstants';
 import { useDadosContrato } from './calculadora/useDadosContrato';
 import { useAdicionais } from './calculadora/useAdicionais';
@@ -55,6 +55,7 @@ const useCalculadora = () => {
     calcularDiferencasSalariais: false,
     valorDiferencasSalariais: '',
     calcularCustom: false,
+    calculosCustom: [],
     descricaoCustom: '',
     valorCustom: '',
     calcularSeguroDesemprego: false,
