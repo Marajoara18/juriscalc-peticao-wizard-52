@@ -14,6 +14,37 @@ export const CalculoPersonalizado: React.FC<CalculoPersonalizadoProps> = ({ adic
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
+        <Label htmlFor="calcularSalarioFamilia" className="font-bold">
+          Adicionar Salário-Família
+        </Label>
+        <Switch 
+          id="calcularSalarioFamilia"
+          checked={adicionais.calcularSalarioFamilia || false}
+          onCheckedChange={(checked) => onChange("calcularSalarioFamilia", checked)}
+        />
+      </div>
+      
+      {adicionais.calcularSalarioFamilia && (
+        <div className="pl-4 border-l-2 border-gray-200 space-y-3">
+          <div>
+            <Label htmlFor="quantidadeFilhos" className="juriscalc-label">Quantidade de Filhos (até 14 anos)</Label>
+            <Input 
+              id="quantidadeFilhos" 
+              value={adicionais.quantidadeFilhos || ''}
+              onChange={(e) => onChange("quantidadeFilhos", e.target.value)}
+              className="juriscalc-input" 
+              type="number"
+              min="0"
+              placeholder="Informe a quantidade de filhos menores de 14 anos"
+            />
+          </div>
+          <div className="text-xs text-gray-500">
+            O valor do Salário-Família é calculado de acordo com a legislação vigente e varia conforme a faixa salarial do trabalhador.
+          </div>
+        </div>
+      )}
+
+      <div className="flex items-center justify-between mt-4">
         <Label htmlFor="calcularCustom" className="font-bold">
           Adicionar Cálculo Personalizado
         </Label>

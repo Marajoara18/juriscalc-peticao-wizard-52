@@ -58,6 +58,8 @@ const useCalculadora = () => {
     ultimoSalario: '',
     mesesTrabalhadosUltimoEmprego: '',
     tempoContribuicaoINSS: '',
+    calcularSalarioFamilia: false,
+    quantidadeFilhos: '',
   });
 
   // Estado para os resultados

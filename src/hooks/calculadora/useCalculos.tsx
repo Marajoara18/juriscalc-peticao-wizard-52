@@ -3,6 +3,10 @@ import { DadosContrato, Adicionais, Resultados } from '@/types/calculadora';
 import { toast } from "@/components/ui/use-toast";
 import { SALARIO_MINIMO, VALOR_MAXIMO_SEGURO_DESEMPREGO, FAIXA_1_SEGURO_DESEMPREGO, FAIXA_2_SEGURO_DESEMPREGO } from '@/utils/calculadoraConstants';
 
+// Constantes para o cálculo do Salário-Família (valores atualizados para 2024)
+const VALOR_SALARIO_FAMILIA = 59.82; // Valor por filho em 2024
+const LIMITE_SALARIO_FAMILIA = 1754.18; // Limite salarial para ter direito ao benefício em 2024
+
 export const useCalculos = (
   dadosContrato: DadosContrato,
   adicionais: Adicionais,
@@ -129,6 +133,7 @@ export const useCalculos = (
     let diferencasSalariais = 0;
     let customCalculo = 0;
     let seguroDesemprego = 0;
+    let salarioFamilia = 0;
 
     // Cálculo de insalubridade
     if (adicionais.calcularInsalubridade) {
@@ -241,6 +246,14 @@ export const useCalculos = (
         parseFloat(adicionais.tempoContribuicaoINSS) || 0
       );
     }
+    
+    // Salário Família
+    if (adicionais.calcularSalarioFamilia) {
+      salarioFamilia = calcularSalarioFamilia(
+        salarioBase,
+        parseInt(adicionais.quantidadeFilhos || '0')
+      );
+    }
 
     return {
       adicionalInsalubridade,
@@ -258,6 +271,7 @@ export const useCalculos = (
       diferencasSalariais,
       customCalculo,
       seguroDesemprego,
+      salarioFamilia,
     };
   };
 
@@ -303,6 +317,20 @@ export const useCalculos = (
     
     // Valor total do seguro-desemprego
     return valorParcela * parcelas;
+  };
+  
+  // Função auxiliar para calcular o salário-família
+  const calcularSalarioFamilia = (
+    salarioBase: number,
+    quantidadeFilhos: number
+  ) => {
+    // Verifica se tem direito ao benefício (salário abaixo do limite)
+    if (salarioBase > LIMITE_SALARIO_FAMILIA || quantidadeFilhos <= 0) {
+      return 0;
+    }
+    
+    // Cálculo do valor do salário-família
+    return VALOR_SALARIO_FAMILIA * quantidadeFilhos;
   };
 
   return { calcularResultados };

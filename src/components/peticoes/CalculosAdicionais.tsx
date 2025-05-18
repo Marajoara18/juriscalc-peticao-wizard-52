@@ -96,6 +96,17 @@ const CalculosAdicionais: React.FC<CalculosAdicionaisProps> = ({
           />
           <label htmlFor="diferencasSalariais" className="text-sm">Diferenças salariais</label>
         </div>
+        
+        <div className="flex items-center space-x-2">
+          <input 
+            type="checkbox" 
+            id="salarioFamilia" 
+            checked={formData.calculosAdicionais.salarioFamilia || false}
+            onChange={() => onCheckboxChange('salarioFamilia')}
+            className="rounded border-gray-300 text-juriscalc-navy focus:ring-juriscalc-navy"
+          />
+          <label htmlFor="salarioFamilia" className="text-sm">Salário-Família</label>
+        </div>
       </div>
 
       <div className="mt-4">

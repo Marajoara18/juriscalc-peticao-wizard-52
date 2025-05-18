@@ -26,6 +26,7 @@ export type AdditionalValues = {
   diferencasSalariais: number;
   customCalculo: number;
   seguroDesemprego: number;
+  salarioFamilia: number;
 };
 
 export type DadosContrato = {
@@ -75,9 +76,7 @@ export type Adicionais = {
   ultimoSalario: string;
   mesesTrabalhadosUltimoEmprego: string;
   tempoContribuicaoINSS: string;
+  calcularSalarioFamilia: boolean;
+  quantidadeFilhos: string;
 };
 
-export type Resultados = {
-  verbasRescisorias: RescisionValues;
-  adicionais: AdditionalValues;
-};
