@@ -9,6 +9,7 @@ import { calcularDecimoTerceiro } from "./verbas/decimoTerceiroUtils";
 import { calcularFerias, calcularFeriasVencidas, calcularTercoConstitucional } from "./verbas/feriasUtils";
 import { calcularFGTS, calcularMultaFGTS } from "./verbas/fgtsUtils";
 import { calcularVerbasRescisorias } from "./verbas/calculadoraVerbas";
+import { calcularHonorariosAdvocaticios } from "./adicionaisUtils";
 
 // Re-export everything from the individual modules for backward compatibility
 export {
@@ -20,5 +21,6 @@ export {
   calcularTercoConstitucional,
   calcularFGTS,
   calcularMultaFGTS,
-  calcularVerbasRescisorias
+  calcularVerbasRescisorias,
+  calcularHonorariosAdvocaticios
 };

@@ -28,6 +28,7 @@ export type AdditionalValues = {
   customCalculo: number;
   seguroDesemprego: number;
   salarioFamilia: number;
+  honorariosAdvocaticios: number;
 };
 
 export type DadosContrato = {
@@ -88,6 +89,9 @@ export type Adicionais = {
   tempoContribuicaoINSS: string;
   calcularSalarioFamilia: boolean;
   quantidadeFilhos: string;
+  calcularHonorariosAdvocaticios: boolean;
+  percentualHonorariosAdvocaticios: string;
+  incluirTotalGeralHonorarios: boolean;
 };
 
 export type Resultados = {

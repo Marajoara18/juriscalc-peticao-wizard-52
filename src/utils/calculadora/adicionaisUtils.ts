@@ -16,6 +16,23 @@ import { calcularValeTransporte, calcularValeAlimentacao } from './adicionais/be
 import { calcularSeguroDesemprego, calcularSalarioFamilia } from './adicionais/beneficiosSociaisUtils';
 
 /**
+ * Calcular honorários advocatícios com base no percentual definido
+ */
+export const calcularHonorariosAdvocaticios = (
+  calcular: boolean,
+  percentual: string,
+  totalRescisorias: number,
+  totalAdicionais: number
+): number => {
+  if (!calcular) return 0;
+  
+  const percentualHonorarios = parseFloat(percentual) || 20;
+  const baseCalculo = totalRescisorias + totalAdicionais;
+  
+  return (baseCalculo * percentualHonorarios) / 100;
+};
+
+/**
  * Calculates all additional values based on contract and additional data
  */
 export const calcularAdicionais = (
@@ -146,6 +163,36 @@ export const calcularAdicionais = (
     parseInt(adicionais.quantidadeFilhos || '0')
   );
 
+  // Calcular o total dos adicionais antes de calcular os honorários
+  const totalAdicionais = 
+    adicionalInsalubridade +
+    adicionalPericulosidade +
+    multa467 +
+    multa477 +
+    adicionalNoturno +
+    horasExtras +
+    feriasVencidas +
+    indenizacaoDemissao +
+    valeTransporte +
+    valeAlimentacao +
+    adicionalTransferencia +
+    descontosIndevidos +
+    diferencasSalariais +
+    customCalculo +
+    seguroDesemprego +
+    salarioFamilia;
+  
+  // Total das verbas rescisórias (estimativa para base de cálculo)
+  const totalRescisorias = saldoSalario + avisoPrevia + decimoTerceiro + ferias + tercoConstitucional;
+  
+  // Cálculo dos honorários advocatícios
+  const honorariosAdvocaticios = calcularHonorariosAdvocaticios(
+    adicionais.calcularHonorariosAdvocaticios,
+    adicionais.percentualHonorariosAdvocaticios,
+    totalRescisorias,
+    totalAdicionais
+  );
+
   return {
     adicionalInsalubridade,
     adicionalPericulosidade,
@@ -163,6 +210,7 @@ export const calcularAdicionais = (
     customCalculo,
     seguroDesemprego,
     salarioFamilia,
+    honorariosAdvocaticios
   };
 };
 
@@ -180,5 +228,6 @@ export {
   calcularValeAlimentacao,
   calcularAdicionalTransferencia,
   calcularSeguroDesemprego,
-  calcularSalarioFamilia
+  calcularSalarioFamilia,
+  calcularHonorariosAdvocaticios
 };

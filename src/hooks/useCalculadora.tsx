@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { toast } from "sonner";
 import { DadosContrato, Adicionais, Resultados, CustomCalculo } from '@/types/calculadora';
@@ -64,6 +65,9 @@ const useCalculadora = () => {
     tempoContribuicaoINSS: '',
     calcularSalarioFamilia: false,
     quantidadeFilhos: '',
+    calcularHonorariosAdvocaticios: false,
+    percentualHonorariosAdvocaticios: '20',
+    incluirTotalGeralHonorarios: false,
   });
 
   // Estado para os resultados

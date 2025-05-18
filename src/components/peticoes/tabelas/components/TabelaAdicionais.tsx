@@ -45,7 +45,8 @@ const TabelaAdicionais: React.FC<TabelaAdicionaisProps> = ({
     adicionais.descontosIndevidos +
     adicionais.diferencasSalariais +
     adicionais.customCalculo +
-    adicionais.seguroDesemprego;
+    adicionais.seguroDesemprego +
+    adicionais.salarioFamilia;
 
   const itensAdicionais = [
     { descricao: 'Adicional de Insalubridade', valor: adicionais.adicionalInsalubridade },
@@ -62,6 +63,7 @@ const TabelaAdicionais: React.FC<TabelaAdicionaisProps> = ({
     { descricao: 'Descontos Indevidos', valor: adicionais.descontosIndevidos },
     { descricao: 'Diferenças Salariais', valor: adicionais.diferencasSalariais },
     { descricao: 'Seguro Desemprego', valor: adicionais.seguroDesemprego },
+    { descricao: 'Salário Família', valor: adicionais.salarioFamilia || 0 },
   ].filter(item => item.valor > 0);
 
   // Add custom calculation with proper description
@@ -71,10 +73,21 @@ const TabelaAdicionais: React.FC<TabelaAdicionaisProps> = ({
       valor: adicionais.customCalculo
     });
   }
+  
+  // Adicionar honorários advocatícios, se existirem
+  if (adicionais.honorariosAdvocaticios > 0) {
+    itensAdicionais.push({
+      descricao: 'Honorários Advocatícios',
+      valor: adicionais.honorariosAdvocaticios
+    });
+  }
 
   if (itensAdicionais.length === 0) {
     return null;
   }
+  
+  // Total incluindo honorários
+  const totalComHonorarios = totalAdicionais + (adicionais.honorariosAdvocaticios || 0);
 
   return (
     <div>
@@ -95,7 +108,7 @@ const TabelaAdicionais: React.FC<TabelaAdicionaisProps> = ({
           ))}
           <TableRow className="font-bold">
             <TableCell>Total Adicionais</TableCell>
-            <TableCell className="text-right">{formatarMoeda(totalAdicionais)}</TableCell>
+            <TableCell className="text-right">{formatarMoeda(adicionais.honorariosAdvocaticios > 0 ? totalComHonorarios : totalAdicionais)}</TableCell>
           </TableRow>
         </TableBody>
       </Table>
