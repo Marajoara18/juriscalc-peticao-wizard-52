@@ -35,26 +35,52 @@ export const calcularAvisoPrevia = (salarioBase: number, tipoRescisao: string, a
 };
 
 /**
- * Calculates the thirteenth salary proportional value
+ * Calculates the thirteenth salary proportional value based on months worked in the current year
  * @param salarioBase Base salary
- * @param mesesTrabalhados Months worked
+ * @param dataAdmissao Admission date
+ * @param dataDemissao Termination date
  * @param tipoRescisao Contract termination type
  * @returns Thirteenth salary value
  */
-export const calcularDecimoTerceiro = (salarioBase: number, mesesTrabalhados: number, tipoRescisao: string): number => {
-  // Não tem direito em caso de justa causa, a menos que tenha trabalhado mais de 12 meses
-  if (tipoRescisao === 'justa_causa' && mesesTrabalhados <= 12) {
+export const calcularDecimoTerceiro = (
+  salarioBase: number, 
+  dataAdmissao: string, 
+  dataDemissao: string, 
+  tipoRescisao: string
+): number => {
+  // Não tem direito em caso de justa causa
+  if (tipoRescisao === 'justa_causa') {
     return 0;
   }
-  // Se trabalhou mais de 15 dias no último mês, considera um mês completo
-  const diasTrabalhados = parseInt(mesesTrabalhados.toString().split('.')[1] || '0');
-  const mesesEfetivos = Math.floor(mesesTrabalhados) + (diasTrabalhados > 15 ? 1 : 0);
   
-  return (salarioBase / 12) * mesesEfetivos;
+  // Obtém o ano atual da demissão
+  const anoAtual = new Date(dataDemissao).getFullYear();
+  
+  // Data de início do período aquisitivo do 13º (1º de janeiro do ano atual)
+  const inicioAno = new Date(anoAtual, 0, 1); // Janeiro é 0
+  
+  // Se foi admitido depois do início do ano, usa a data de admissão como início
+  let dataInicio = new Date(dataAdmissao) > inicioAno ? new Date(dataAdmissao) : inicioAno;
+  
+  // Calcula os meses trabalhados no ano atual até a demissão
+  const dataFim = new Date(dataDemissao);
+  
+  // Calcular a diferença de meses
+  let meses = (dataFim.getFullYear() - dataInicio.getFullYear()) * 12;
+  meses += dataFim.getMonth() - dataInicio.getMonth();
+  
+  // Se trabalhou mais de 15 dias no último mês, considera um mês completo
+  const diasNoUltimoMes = dataFim.getDate() - (dataInicio.getDate() > dataFim.getDate() ? 0 : dataInicio.getDate());
+  if (diasNoUltimoMes > 15) {
+    meses += 1;
+  }
+  
+  // Valor do 13º proporcional (1/12 do salário para cada mês trabalhado)
+  return (salarioBase / 12) * meses;
 };
 
 /**
- * Calculates the proportional vacation value based on time worked in the current vacation period
+ * Calculates the proportional vacation value based on time worked since the last vacation period
  * @param salarioBase Base salary
  * @param dataAdmissao Admission date
  * @param dataDemissao Termination date
@@ -62,41 +88,41 @@ export const calcularDecimoTerceiro = (salarioBase: number, mesesTrabalhados: nu
  * @returns Vacation value
  */
 export const calcularFerias = (salarioBase: number, dataAdmissao: string, dataDemissao: string, tipoRescisao: string): number => {
-  // Não tem direito a férias proporcionais em caso de justa causa, a menos que tenha trabalhado mais de 12 meses
+  // Não tem direito a férias proporcionais em caso de justa causa com menos de 12 meses trabalhados
   if (tipoRescisao === 'justa_causa') {
     return 0;
   }
   
-  // Determinar o início do período aquisitivo atual
   const dataAdmissaoObj = new Date(dataAdmissao);
   const dataDemissaoObj = new Date(dataDemissao);
   
-  // Calcula o último período completo de férias
-  const anoAtual = dataDemissaoObj.getFullYear();
-  const mesAdmissao = dataAdmissaoObj.getMonth();
-  const diaAdmissao = dataAdmissaoObj.getDate();
-  
-  // Obtém a data do último período completo de férias (mesmo dia e mês da admissão, porém no ano atual ou anterior)
-  let ultimoPeriodoFerias = new Date(anoAtual, mesAdmissao, diaAdmissao);
+  // Determinar o último período aquisitivo completo (último aniversário de admissão)
+  const ultimoPeriodoAquisitivo = new Date(dataAdmissaoObj);
+  ultimoPeriodoAquisitivo.setFullYear(dataDemissaoObj.getFullYear());
   
   // Se a data de demissão é anterior ao aniversário de admissão no ano atual,
-  // então o período de férias começa no ano anterior
-  if (dataDemissaoObj < ultimoPeriodoFerias) {
-    ultimoPeriodoFerias.setFullYear(anoAtual - 1);
+  // então o período aquisitivo completo terminou no ano anterior
+  if (dataDemissaoObj < ultimoPeriodoAquisitivo) {
+    ultimoPeriodoAquisitivo.setFullYear(ultimoPeriodoAquisitivo.getFullYear() - 1);
   }
   
-  // Calcula os meses trabalhados desde o início do período aquisitivo atual até a demissão
-  const diasTrabalhados = calcularDiasEntreDatas(ultimoPeriodoFerias.toISOString().split('T')[0], dataDemissao);
-  const mesesTrabalhadosNoPeriodo = diasTrabalhados / 30; // Aproximação de meses
+  // Calcula os dias trabalhados desde o último período aquisitivo até a demissão
+  const diasTrabalhados = calcularDiasEntreDatas(
+    ultimoPeriodoAquisitivo.toISOString().split('T')[0], 
+    dataDemissao
+  );
   
-  // Para fins de cálculo de férias proporcionais, arredondamos para o número inteiro de meses
-  // Se trabalhou mais de 15 dias em um mês, considera-se como mês completo
-  const mesesCompletos = Math.floor(mesesTrabalhadosNoPeriodo);
-  const diasRestantes = diasTrabalhados - (mesesCompletos * 30);
-  const mesesEfetivos = mesesCompletos + (diasRestantes > 15 ? 1 : 0);
+  // Calcular meses trabalhados (considerando que 30 dias = 1 mês)
+  const mesesTrabalhados = diasTrabalhados / 30;
   
-  // O valor das férias proporcionais é calculado com base nos meses efetivos trabalhados neste período
-  return (salarioBase / 12) * mesesEfetivos;
+  // Para férias, a proporção é de 1/12 do salário por mês trabalhado (2,5 dias por mês)
+  // Total de dias de férias = meses trabalhados * 2,5 dias
+  const diasDeFeriasProporcionais = mesesTrabalhados * 2.5;
+  
+  // Valor das férias proporcionais = dias de férias * (salário / 30)
+  const valorFeriasProporcionais = diasDeFeriasProporcionais * (salarioBase / 30);
+  
+  return valorFeriasProporcionais;
 };
 
 /**
@@ -156,10 +182,22 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato) => {
   // Cálculo individual das verbas
   const saldoSalario = calcularSaldoSalario(salarioBase, diasTrabalhados);
   const avisoPrevia = calcularAvisoPrevia(salarioBase, dadosContrato.tipoRescisao, avisoPrevioCumprido);
-  const decimoTerceiro = calcularDecimoTerceiro(salarioBase, mesesTrabalhados, dadosContrato.tipoRescisao);
   
-  // Usamos a nova função de férias que considera apenas o período atual
-  const ferias = calcularFerias(salarioBase, dadosContrato.dataAdmissao, dadosContrato.dataDemissao, dadosContrato.tipoRescisao);
+  // Usando nova implementação do décimo terceiro baseada nos meses trabalhados no ano corrente
+  const decimoTerceiro = calcularDecimoTerceiro(
+    salarioBase, 
+    dadosContrato.dataAdmissao, 
+    dadosContrato.dataDemissao, 
+    dadosContrato.tipoRescisao
+  );
+  
+  // Usamos a nova função de férias que considera o período desde o último período aquisitivo
+  const ferias = calcularFerias(
+    salarioBase, 
+    dadosContrato.dataAdmissao, 
+    dadosContrato.dataDemissao, 
+    dadosContrato.tipoRescisao
+  );
   
   const tercoConstitucional = calcularTercoConstitucional(ferias);
   const fgts = calcularFGTS(salarioBase, mesesTrabalhados);
@@ -185,7 +223,7 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato) => {
     avisoPrevia: avisoPrevia_ajustado, // Armazena apenas o valor positivo para exibição
     descontoAvisoPrevio, // Novo campo para armazenar o desconto do aviso prévio
     decimoTerceiro,
-    ferias, // Agora apenas férias proporcionais
+    ferias, // Agora férias proporcionais baseadas no último período aquisitivo
     tercoConstitucional,
     fgts,
     multaFgts,
