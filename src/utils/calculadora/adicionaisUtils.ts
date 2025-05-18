@@ -17,7 +17,7 @@ import { calcularSeguroDesemprego, calcularSalarioFamilia } from './adicionais/b
 
 /**
  * Calcular honorários advocatícios com base no percentual definido
- * O cálculo é feito sobre o valor total das verbas rescisórias e adicionais
+ * O cálculo é feito sobre o valor subtotal (verbas rescisórias + adicionais - descontos)
  */
 export const calcularHonorariosAdvocaticios = (
   calcular: boolean,
@@ -29,6 +29,7 @@ export const calcularHonorariosAdvocaticios = (
   
   const percentualHonorarios = parseFloat(percentual) || 20;
   // Calcula sobre a soma das verbas rescisórias e adicionais (sem incluir os próprios honorários)
+  // Esta soma representa o subtotal
   const baseCalculo = totalRescisorias + totalAdicionais;
   
   return (baseCalculo * percentualHonorarios) / 100;

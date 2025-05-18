@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card } from '@/components/ui/card';
@@ -45,7 +46,7 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
   // Verificar se há desconto de aviso prévio a mostrar
   const temDescontoAvisoPrevio = typeof verbas.descontoAvisoPrevio === 'number' && verbas.descontoAvisoPrevio > 0;
   
-  // Calcular o subtotal (sem considerar honorários)
+  // Calcular o subtotal (sem considerar honorários) - BASE PARA CÁLCULO DOS HONORÁRIOS
   const subTotal = verbas.total + totalAdicionais - (verbas.descontoAvisoPrevio || 0);
   
   // Calcular o total geral (considerando honorários apenas se incluirTotalGeralHonorarios for true)
@@ -137,13 +138,14 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
         </Accordion>
       )}
       
-      {/* Mostrar subtotal se houver honorários ou desconto de aviso prévio */}
-      {(temDescontoAvisoPrevio || temHonorarios) && (
-        <div className="flex justify-between mb-2">
-          <span className="font-medium">Subtotal {temDescontoAvisoPrevio ? "(com desconto aviso prévio)" : ""}</span>
-          <span className="font-medium">{formatarMoeda(subTotal)}</span>
-        </div>
-      )}
+      {/* Mostrar subtotal sempre, pois é a base de cálculo dos honorários */}
+      <div className="flex justify-between mb-2">
+        <span className="font-medium">
+          Subtotal {temDescontoAvisoPrevio ? "(com desconto aviso prévio)" : ""} 
+          {temHonorarios && " (base para honorários)"}
+        </span>
+        <span className="font-medium">{formatarMoeda(subTotal)}</span>
+      </div>
 
       {/* Mostrar honorários se calculados */}
       {temHonorarios && (
