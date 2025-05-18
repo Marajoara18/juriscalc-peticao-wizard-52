@@ -1,4 +1,3 @@
-
 /**
  * Converts a numeric value to its text representation in Portuguese
  */
@@ -98,7 +97,7 @@ export const criarHTMLCalculosEmbutidos = (calculos: any) => {
 
   // Importar dados necessários
   const logoUrl = localStorage.getItem('userLogoUrl');
-  const nomeEscritorio = calculos?.nomeEscritorio || localStorage.getItem('userName') || 'IusCalc Trabalhista';
+  const nomeEscritorio = calculos?.nomeEscritorio || localStorage.getItem('userName') || 'IusCalc';
   const dataCalculo = calculos.timestamp ? 
     new Date(calculos.timestamp).toLocaleDateString('pt-BR') : 
     new Date().toLocaleDateString('pt-BR');
@@ -151,7 +150,6 @@ export const criarHTMLCalculosEmbutidos = (calculos: any) => {
       <div style="text-align: center; margin-bottom: 1rem;">
         ${logoUrl ? `<img src="${logoUrl}" alt="Logo" style="height: 3rem; margin: 0.5rem auto;" />` : ''}
         <h3 style="font-size: 1.25rem; font-weight: bold; border-bottom: 2px solid navy; padding-bottom: 0.5rem;">DEMONSTRATIVO DE CÁLCULOS TRABALHISTAS</h3>
-        ${nomeCalculo ? `<p style="font-weight: 500; font-size: 0.875rem;">${nomeCalculo}</p>` : ''}
         <p style="font-size: 0.75rem; color: #666; margin-bottom: 0.5rem;">Gerado em: ${dataCalculo}</p>
       </div>
       
@@ -169,10 +167,8 @@ export const criarHTMLCalculosEmbutidos = (calculos: any) => {
         <div style="text-align: center; font-size: 0.75rem; color: #6b7280; border-top: 1px solid #e5e7eb; margin-top: 0.5rem; padding-top: 0.25rem;">
           <p>Cálculos: <span style="font-weight: 500;">${nomeEscritorio}</span></p>
           <div style="display: flex; justify-content: center; align-items: center; margin-top: 0.25rem;">
-            <div style="background-color: #fbbf24; padding: 0.125rem; border-radius: 0.125rem; margin-right: 0.25rem;">
-              <span style="color: #0f172a; font-weight: bold; font-size: 0.625rem;">Ius</span>
-            </div>
-            <span style="font-weight: bold; font-size: 0.75rem; color: #0f172a; font-family: serif;">IusCalc Trabalhista</span>
+            <img src="/lovable-uploads/caf683c7-0cb3-4ef4-8e5f-5de22f996b8a.png" alt="Logo IusCalc" style="height: 20px; margin-right: 5px;" />
+            <span style="font-weight: bold; font-size: 0.75rem; color: #0f172a; font-family: serif;">IusCalc</span>
           </div>
         </div>
       </div>

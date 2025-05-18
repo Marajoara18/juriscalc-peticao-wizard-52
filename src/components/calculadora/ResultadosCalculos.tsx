@@ -82,7 +82,7 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
     
     // Obter o logo e o nome do escritório
     const logoUrl = localStorage.getItem('userLogoUrl');
-    const nomeEscritorio = localStorage.getItem('userName') || 'JurisCalc Trabalhista';
+    const nomeEscritorio = localStorage.getItem('userName') || 'IusCalc';
     
     const htmlContent = `
       <!DOCTYPE html>
@@ -148,6 +148,12 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
               border-top: 1px solid #ddd;
               padding-top: 20px;
             }
+            .iuscalc-logo {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              margin-top: 10px;
+            }
           </style>
         </head>
         <body>
@@ -201,7 +207,10 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
           
           <div class="footer">
             <p>Cálculos realizados por: <strong>${nomeEscritorio}</strong></p>
-            <p>JurisCalc Trabalhista &copy; ${new Date().getFullYear()}</p>
+            <div class="iuscalc-logo">
+              <img src="/lovable-uploads/caf683c7-0cb3-4ef4-8e5f-5de22f996b8a.png" alt="Logo IusCalc" style="height: 20px; margin-right: 5px;" />
+              <span style="font-weight: bold; color: #0f172a; font-family: serif;">IusCalc</span>
+            </div>
           </div>
         </body>
       </html>
@@ -239,7 +248,7 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
     }
     
     // Obter o nome do escritório
-    const nomeEscritorio = localStorage.getItem('userName') || 'JurisCalc Trabalhista';
+    const nomeEscritorio = localStorage.getItem('userName') || 'IusCalc';
     
     // Salvando os cálculos no localStorage para usar na página de petições
     const calculosParaPeticao = {
