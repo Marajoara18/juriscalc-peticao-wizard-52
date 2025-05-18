@@ -21,11 +21,7 @@ const Login = () => {
   
   return (
     <div className="login-container min-h-screen flex items-center justify-center bg-cover bg-center px-4 py-12" 
-         style={{ 
-           backgroundImage: "url('/lovable-uploads/6ca45eaa-5e64-4059-919a-249b086b29ae.png')",
-           backgroundSize: "100%",
-           backgroundPosition: "center"
-         }}>
+         style={{ backgroundImage: "url('/lovable-uploads/6ca45eaa-5e64-4059-919a-249b086b29ae.png')" }}>
       <div className="max-w-md w-full space-y-8 bg-white/90 backdrop-blur-sm p-8 rounded-xl shadow-xl">
         <AuthLogo />
         
