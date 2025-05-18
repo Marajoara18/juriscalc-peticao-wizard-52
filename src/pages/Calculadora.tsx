@@ -106,6 +106,7 @@ const Calculadora = () => {
       verbasRescisorias: {
         saldoSalario: 0,
         avisoPrevia: 0,
+        descontoAvisoPrevio: 0,
         decimoTerceiro: 0,
         ferias: 0,
         tercoConstitucional: 0,

@@ -36,3 +36,12 @@ export const resultadosIniciais: Resultados = {
 
 // Valor do salário mínimo atual (atualizado em 2024)
 export const SALARIO_MINIMO = 1412;
+
+// Constantes para o cálculo do seguro-desemprego
+export const VALOR_MAXIMO_SEGURO_DESEMPREGO = 2230.97; // Valor máximo da parcela em 2024
+export const FAIXA_1_SEGURO_DESEMPREGO = 2045.73; // Primeira faixa salarial
+export const FAIXA_2_SEGURO_DESEMPREGO = 3409.00; // Segunda faixa salarial
+
+// Constantes para o cálculo do salário-família
+export const VALOR_SALARIO_FAMILIA = 59.82; // Valor do salário-família por dependente em 2024
+export const LIMITE_SALARIO_FAMILIA = 1754.18; // Limite salarial para ter direito ao salário-família

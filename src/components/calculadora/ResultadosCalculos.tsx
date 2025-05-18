@@ -29,18 +29,18 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
   const adicionaisResultado = resultados.adicionais || {};
   
   const verbasAMostrar = Object.entries(verbas).filter(([key, value]) => 
-    value > 0 && key !== 'total' && key !== 'descontoAvisoPrevio'
+    typeof value === 'number' && value > 0 && key !== 'total' && key !== 'descontoAvisoPrevio'
   );
   
   const adicionaisAMostrar = Object.entries(adicionaisResultado).filter(([key, value]) => 
-    value > 0 && key !== 'total'
+    typeof value === 'number' && value > 0 && key !== 'total'
   );
   
   // Calcular total dos adicionais
   const totalAdicionais = adicionaisAMostrar.reduce((acc, [_, value]) => acc + parseFloat(value as string), 0);
   
   // Verificar se há desconto de aviso prévio a mostrar
-  const temDescontoAvisoPrevio = verbas.descontoAvisoPrevio > 0;
+  const temDescontoAvisoPrevio = typeof verbas.descontoAvisoPrevio === 'number' && verbas.descontoAvisoPrevio > 0;
 
   return (
     <Card className="p-4 mt-4">
