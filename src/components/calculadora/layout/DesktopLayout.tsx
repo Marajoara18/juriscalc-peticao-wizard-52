@@ -99,7 +99,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
         {/* Mostrar opções pós-cálculo quando os cálculos estiverem prontos */}
         {hasCalculos && (
           <div className="mt-6 space-y-4">
-            {/* Opção de correção monetária */}
+            {/* Opção de correção monetária - DEVE SER MOSTRADA PRIMEIRO */}
             {showCorrecaoMonetaria ? (
               <>
                 <CorrecaoMonetaria 
@@ -125,11 +125,11 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
               </Button>
             )}
             
-            {/* Opção de honorários advocatícios */}
+            {/* Opção de honorários advocatícios - AGORA APÓS CORREÇÃO MONETÁRIA */}
             {showHonorariosAdvocaticios ? (
               <>
                 <HonorariosAdvocaticios 
-                  totalGeral={totalGeral}
+                  totalGeral={totalGeral} {/* Usa o totalGeral que já inclui correção monetária se aplicada */}
                   onAplicarHonorarios={aplicarHonorariosAdvocaticios} 
                 />
                 <Button 

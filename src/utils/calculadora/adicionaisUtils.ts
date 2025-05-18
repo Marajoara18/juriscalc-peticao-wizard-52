@@ -1,4 +1,3 @@
-
 /**
  * Main utilities module for additional values calculation
  */
