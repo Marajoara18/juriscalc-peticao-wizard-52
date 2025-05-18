@@ -1,3 +1,4 @@
+
 import { DadosContrato, Adicionais, Resultados } from '@/types/calculadora';
 import { resultadosIniciais } from '@/utils/calculadoraConstants';
 
@@ -61,6 +62,9 @@ const useCalculadoraState = {
       tempoContribuicaoINSS: '',
       calcularSalarioFamilia: false,
       quantidadeFilhos: '',
+      calcularHonorariosAdvocaticios: false,
+      percentualHonorariosAdvocaticios: '20',
+      incluirTotalGeralHonorarios: false,
     });
     
     // Reiniciar resultados
@@ -117,11 +121,14 @@ const useCalculadoraState = {
       calculosCustom: calculo.calculosCustom || [],
       calcularSeguroDesemprego: calculo.adicionais?.seguroDesemprego > 0,
       calcularSalarioFamilia: calculo.adicionais?.salarioFamilia > 0,
+      calcularHonorariosAdvocaticios: calculo.adicionais?.honorariosAdvocaticios > 0,
+      percentualHonorariosAdvocaticios: '20',
+      incluirTotalGeralHonorarios: false,
     });
   },
   
   // Calcular totais para exibição e verificações
-  calcularTotais: (resultados: Resultados) => {
+  calcularTotais: (resultados: Resultados, adicionais: Adicionais) => {
     // Calcular o total dos adicionais
     const totalAdicionais = 
       resultados.adicionais.adicionalInsalubridade +
@@ -142,8 +149,13 @@ const useCalculadoraState = {
       resultados.adicionais.salarioFamilia;
 
     // Considerar o desconto do aviso prévio no cálculo do total geral
-    const totalGeral = resultados.verbasRescisorias.total + totalAdicionais - 
+    let totalGeral = resultados.verbasRescisorias.total + totalAdicionais - 
                       (resultados.verbasRescisorias.descontoAvisoPrevio || 0);
+    
+    // Adicionar os honorários advocatícios ao total geral se configurado
+    if (adicionais.calcularHonorariosAdvocaticios && adicionais.incluirTotalGeralHonorarios) {
+      totalGeral += resultados.adicionais.honorariosAdvocaticios;
+    }
     
     // Verificar se há cálculos para mostrar opção de salvar
     const hasCalculos = totalGeral > 0;

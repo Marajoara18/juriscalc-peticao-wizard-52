@@ -1,12 +1,13 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from "sonner";
-import { DadosContrato, Adicionais, Resultados, CustomCalculo } from '@/types/calculadora';
+import { DadosContrato, Adicionais, Resultados } from '@/types/calculadora';
 import { resultadosIniciais } from '@/utils/calculadoraConstants';
 import { useDadosContrato } from './calculadora/useDadosContrato';
 import { useAdicionais } from './calculadora/useAdicionais';
 import { useCalculos } from './calculadora/useCalculos';
 import { useCorrecaoMonetaria } from './calculadora/useCorrecaoMonetaria';
+import useCalculadoraState from './calculadora/useCalculadoraState';
 
 const LIMITE_CALCULOS_GRATUITOS = 3;
 const KEY_CONTADOR_CALCULOS = 'calculosRealizados';
@@ -78,6 +79,9 @@ const useCalculadora = () => {
   
   // Estado para controlar a modal de assinatura
   const [showSubscriptionModal, setShowSubscriptionModal] = useState<boolean>(false);
+  
+  // Estado para controlar a exibição da correção monetária
+  const [showCorrecaoMonetaria, setShowCorrecaoMonetaria] = useState<boolean>(false);
 
   // Verificar número de cálculos realizados pelo usuário
   useEffect(() => {
@@ -110,6 +114,14 @@ const useCalculadora = () => {
   // Wrap the original calcularResultados to check for calculation limits
   const { calcularResultados: originalCalcular } = useCalculos(dadosContrato, adicionais, setResultados);
   const { aplicarCorrecaoMonetaria } = useCorrecaoMonetaria(resultados, setResultados);
+  
+  // Calcular totais para uso nas visualizações
+  const { totalAdicionais, totalGeral, hasCalculos } = useCalculadoraState.calcularTotais(resultados, adicionais);
+  
+  // Função para carregar um cálculo salvo
+  const handleLoadCalculo = (calculo: any) => {
+    useCalculadoraState.carregarCalculo(calculo, setDadosContrato, setAdicionais, setResultados, adicionais, resultados);
+  };
   
   // Função modificada para verificar limites antes de calcular
   const calcularResultados = () => {
@@ -165,7 +177,13 @@ const useCalculadora = () => {
     aplicarCorrecaoMonetaria,
     podeCalcular,
     showSubscriptionModal,
-    setShowSubscriptionModal
+    setShowSubscriptionModal,
+    showCorrecaoMonetaria,
+    setShowCorrecaoMonetaria,
+    totalAdicionais,
+    totalGeral,
+    hasCalculos,
+    handleLoadCalculo
   };
 };
 

@@ -31,6 +31,7 @@ export const resultadosIniciais: Resultados = {
     customCalculo: 0,
     seguroDesemprego: 0,
     salarioFamilia: 0,
+    honorariosAdvocaticios: 0,
   }
 };
 

@@ -214,7 +214,7 @@ export const calcularAdicionais = (
   };
 };
 
-// Re-export all utility functions for external use
+// Re-export utility functions for external use
 export {
   calcularInsalubridade,
   calcularPericulosidade,
@@ -228,6 +228,6 @@ export {
   calcularValeAlimentacao,
   calcularAdicionalTransferencia,
   calcularSeguroDesemprego,
-  calcularSalarioFamilia,
-  calcularHonorariosAdvocaticios
+  calcularSalarioFamilia
+  // Removed duplicate export of calcularHonorariosAdvocaticios
 };
