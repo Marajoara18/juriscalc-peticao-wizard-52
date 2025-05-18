@@ -163,10 +163,11 @@ const TabelaCalculosEmbutida: React.FC<TabelaCalculosEmbutidaProps> = ({
           </div>
         )}
 
-        <div className="bg-juriscalc-navy p-2 rounded-md text-white mt-2">
+        {/* Valor total da reclamação com maior destaque */}
+        <div className="bg-juriscalc-navy p-3 rounded-md text-white mt-4 print:mt-6 print:border-2 print:border-black">
           <div className="text-center">
-            <p className="text-xs font-medium">VALOR TOTAL DA RECLAMAÇÃO</p>
-            <p className="text-base font-bold">
+            <p className="text-sm font-bold mb-1 print:text-base">VALOR TOTAL DA RECLAMAÇÃO</p>
+            <p className="text-2xl font-bold print:text-2xl">
               {formatarMoeda(totalGeral)}
             </p>
           </div>

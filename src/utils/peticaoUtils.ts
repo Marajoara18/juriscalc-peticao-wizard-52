@@ -17,5 +17,8 @@ export const gerarHTMLCalculos = (calculosImportados: any) => {
 
 // Função para lidar com a impressão da petição ou cálculos
 export const handlePrint = () => {
-  window.print();
+  // Usar um pequeno timeout para garantir que quaisquer alterações no DOM sejam aplicadas
+  setTimeout(() => {
+    window.print();
+  }, 100);
 };

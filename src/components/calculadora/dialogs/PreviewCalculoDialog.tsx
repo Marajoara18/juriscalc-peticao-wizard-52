@@ -38,14 +38,17 @@ const PreviewCalculoDialog: React.FC<PreviewCalculoDialogProps> = ({
   calculo
 }) => {
   const handlePrintCalculo = () => {
-    handlePrint();
-    toast.success('Demonstrativo de cálculos enviado para impressão!');
+    // Configuramos um timeout breve para garantir que o conteúdo esteja renderizado
+    setTimeout(() => {
+      window.print();
+      toast.success('Demonstrativo de cálculos enviado para impressão!');
+    }, 100);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl">
-        <DialogHeader>
+        <DialogHeader className="print:hidden">
           <DialogTitle>Demonstrativo de Cálculos</DialogTitle>
           <DialogDescription>
             Visualize e imprima o demonstrativo de cálculos
@@ -53,7 +56,7 @@ const PreviewCalculoDialog: React.FC<PreviewCalculoDialogProps> = ({
         </DialogHeader>
         <div className="py-4 print:py-0">
           {calculo && (
-            <div className="print:block">
+            <div id="print-content" className="print:block">
               <div className="border rounded-md p-4 print:border-none">
                 <h3 className="text-lg font-bold mb-4 text-center print:text-xl">
                   {calculo.nome} - Demonstrativo de Cálculos Trabalhistas
@@ -69,7 +72,7 @@ const PreviewCalculoDialog: React.FC<PreviewCalculoDialogProps> = ({
             </div>
           )}
         </div>
-        <DialogFooter>
+        <DialogFooter className="print:hidden">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Fechar
           </Button>

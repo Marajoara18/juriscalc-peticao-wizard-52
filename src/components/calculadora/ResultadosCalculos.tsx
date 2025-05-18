@@ -128,12 +128,13 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
             }
             .grand-total {
               margin-top: 30px;
-              padding: 15px;
+              padding: 20px;
               background-color: #1e3a8a;
               color: white;
-              font-size: 1.2em;
+              font-size: 1.4em;
               font-weight: bold;
               text-align: center;
+              border: 3px solid #000;
             }
             .logo {
               max-width: 200px;
@@ -220,6 +221,7 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
     printWindow.document.write(htmlContent);
     printWindow.document.close();
     
+    // Importante: adicionar um pequeno delay para garantir que o conteúdo seja carregado antes de imprimir
     setTimeout(() => {
       printWindow.print();
     }, 500);
