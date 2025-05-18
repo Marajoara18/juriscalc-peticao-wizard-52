@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,9 +6,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
 import { formatarMoeda } from '@/utils/formatters';
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface CorrecaoMonetariaProps {
   onAplicarCorrecao: (valorCorrigido: number) => void;
+  totalGeral?: number;
 }
 
 // Dados fictícios de índices de correção (em situação real, viriam de API)
@@ -59,16 +60,20 @@ const INDICES = {
   ]
 };
 
-const CorrecaoMonetaria: React.FC<CorrecaoMonetariaProps> = ({ onAplicarCorrecao }) => {
+const CorrecaoMonetaria: React.FC<CorrecaoMonetariaProps> = ({ onAplicarCorrecao, totalGeral = 0 }) => {
   const [indiceCorrecao, setIndiceCorrecao] = useState<"IPCA-E" | "INPC" | "TR">("IPCA-E");
   const [dataInicio, setDataInicio] = useState<string>("");
   const [valor, setValor] = useState<string>("");
   const [tipoCalculo, setTipoCalculo] = useState<string>("");
   const [valorCorrigido, setValorCorrigido] = useState<number | null>(null);
+  const [usarTotalGeral, setUsarTotalGeral] = useState<boolean>(false);
 
   // Função para calcular a correção monetária baseada nos índices selecionados
   const calcularCorrecaoMonetaria = () => {
-    const valorNumerico = parseFloat(valor.replace(/\./g, '').replace(',', '.'));
+    // Se o usuário escolheu usar o Total Geral
+    const valorNumerico = usarTotalGeral 
+      ? totalGeral 
+      : parseFloat(valor.replace(/\./g, '').replace(',', '.'));
     
     if (isNaN(valorNumerico) || valorNumerico <= 0) {
       toast({
@@ -173,6 +178,14 @@ const CorrecaoMonetaria: React.FC<CorrecaoMonetariaProps> = ({ onAplicarCorrecao
     setValor(formatarValorInput(e.target.value));
   };
 
+  // Handle checkbox change for using Total Geral
+  const handleUsarTotalGeralChange = (checked: boolean) => {
+    setUsarTotalGeral(checked);
+    if (checked && totalGeral > 0) {
+      setValor(formatarMoeda(totalGeral));
+    }
+  };
+
   return (
     <Card className="mb-6">
       <CardHeader>
@@ -225,15 +238,30 @@ const CorrecaoMonetaria: React.FC<CorrecaoMonetariaProps> = ({ onAplicarCorrecao
           </div>
 
           <div>
-            <Label htmlFor="valor" className="text-base font-medium">
-              Valor a ser atualizado
-            </Label>
+            <div className="flex justify-between items-center">
+              <Label htmlFor="valor" className="text-base font-medium">
+                Valor a ser atualizado
+              </Label>
+              {totalGeral > 0 && (
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="usarTotalGeral" 
+                    checked={usarTotalGeral} 
+                    onCheckedChange={handleUsarTotalGeralChange}
+                  />
+                  <Label htmlFor="usarTotalGeral" className="text-sm cursor-pointer">
+                    Usar Total Geral ({formatarMoeda(totalGeral)})
+                  </Label>
+                </div>
+              )}
+            </div>
             <Input
               id="valor"
               placeholder="R$ 0,00"
-              value={valor}
+              value={usarTotalGeral && totalGeral > 0 ? formatarMoeda(totalGeral) : valor}
               onChange={handleValorChange}
               className="mt-2"
+              disabled={usarTotalGeral}
             />
           </div>
 
@@ -265,7 +293,9 @@ const CorrecaoMonetaria: React.FC<CorrecaoMonetariaProps> = ({ onAplicarCorrecao
                 <h3 className="font-medium text-lg mb-2">Resultado:</h3>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <span>Valor original:</span>
-                  <span className="font-medium text-right">{valor}</span>
+                  <span className="font-medium text-right">
+                    {usarTotalGeral && totalGeral > 0 ? formatarMoeda(totalGeral) : valor}
+                  </span>
                   
                   <span>Índice aplicado:</span>
                   <span className="font-medium text-right">{indiceCorrecao}</span>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -196,7 +197,8 @@ const Calculadora = () => {
     resultados.adicionais.descontosIndevidos +
     resultados.adicionais.diferencasSalariais +
     resultados.adicionais.customCalculo +
-    resultados.adicionais.seguroDesemprego;
+    resultados.adicionais.seguroDesemprego +
+    resultados.adicionais.salarioFamilia;
 
   const totalGeral = resultados.verbasRescisorias.total + totalAdicionais;
   
@@ -307,7 +309,10 @@ const Calculadora = () => {
                     <div className="mt-6">
                       {showCorrecaoMonetaria ? (
                         <>
-                          <CorrecaoMonetaria onAplicarCorrecao={aplicarCorrecaoMonetaria} />
+                          <CorrecaoMonetaria 
+                            onAplicarCorrecao={aplicarCorrecaoMonetaria} 
+                            totalGeral={totalGeral} 
+                          />
                           <Button 
                             variant="outline"
                             className="w-full border-juriscalc-navy text-juriscalc-navy"
@@ -401,7 +406,10 @@ const Calculadora = () => {
                     <div className="mt-4">
                       {showCorrecaoMonetaria ? (
                         <>
-                          <CorrecaoMonetaria onAplicarCorrecao={aplicarCorrecaoMonetaria} />
+                          <CorrecaoMonetaria 
+                            onAplicarCorrecao={aplicarCorrecaoMonetaria} 
+                            totalGeral={totalGeral}
+                          />
                           <Button 
                             variant="outline"
                             className="w-full border-juriscalc-navy text-juriscalc-navy mt-2"

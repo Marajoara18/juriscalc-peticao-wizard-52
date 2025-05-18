@@ -80,3 +80,7 @@ export type Adicionais = {
   quantidadeFilhos: string;
 };
 
+export type Resultados = {
+  verbasRescisorias: RescisionValues;
+  adicionais: AdditionalValues;
+};
