@@ -135,7 +135,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
             {showHonorariosAdvocaticios ? (
               <>
                 <HonorariosAdvocaticios 
-                  totalGeral={totalGeral} {/* Usa o totalGeral que já inclui correção monetária se aplicada */}
+                  totalGeral={totalGeral}
                   onAplicarHonorarios={aplicarHonorariosAdvocaticios} 
                 />
                 <Button 

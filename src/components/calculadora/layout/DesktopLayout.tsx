@@ -129,7 +129,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
             {showHonorariosAdvocaticios ? (
               <>
                 <HonorariosAdvocaticios 
-                  totalGeral={totalGeral} {/* Usa o totalGeral que já inclui correção monetária se aplicada */}
+                  totalGeral={totalGeral} 
                   onAplicarHonorarios={aplicarHonorariosAdvocaticios} 
                 />
                 <Button 
