@@ -36,6 +36,8 @@ export type DadosContrato = {
   tipoRescisao: 'sem_justa_causa' | 'pedido_demissao' | 'justa_causa' | 'rescisao_indireta';
   diasTrabalhados: string;
   mesesTrabalhados: string;
+  aviso_previo_cumprido: boolean; // New field to indicate if notice period was fulfilled
+  ferias_vencidas: boolean; // New field to indicate if there are expired vacation days
 };
 
 export type CustomCalculo = {

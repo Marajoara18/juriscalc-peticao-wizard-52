@@ -19,6 +19,8 @@ const Calculadora = () => {
     setAdicionais,
     setResultados,
     handleDadosContratoChange, 
+    handleCheckboxChange,
+    handleTipoRescisaoChange,
     handleAdicionaisChange, 
     calcularResultados,
     aplicarCorrecaoMonetaria
@@ -51,6 +53,8 @@ const Calculadora = () => {
       tipoRescisao: 'sem_justa_causa',
       diasTrabalhados: '',
       mesesTrabalhados: '',
+      aviso_previo_cumprido: false,
+      ferias_vencidas: false,
     });
     
     // Reiniciar campos de adicionais
@@ -145,6 +149,8 @@ const Calculadora = () => {
         tipoRescisao: calculo.dadosContrato.tipoRescisao || 'sem_justa_causa',
         diasTrabalhados: calculo.dadosContrato.diasTrabalhados || '',
         mesesTrabalhados: calculo.dadosContrato.mesesTrabalhados || '',
+        aviso_previo_cumprido: calculo.dadosContrato.aviso_previo_cumprido || false,
+        ferias_vencidas: calculo.dadosContrato.ferias_vencidas || false,
       });
     }
     
@@ -240,6 +246,8 @@ const Calculadora = () => {
                 hasCalculos={hasCalculos}
                 totalGeral={totalGeral}
                 handleDadosContratoChange={handleDadosContratoChange}
+                handleCheckboxChange={handleCheckboxChange}
+                handleTipoRescisaoChange={handleTipoRescisaoChange}
                 handleAdicionaisChange={handleAdicionaisChange}
                 handleCalcularClick={handleCalcularClick}
                 handleLoadCalculo={handleLoadCalculo}
@@ -255,6 +263,8 @@ const Calculadora = () => {
                 hasCalculos={hasCalculos}
                 totalGeral={totalGeral}
                 handleDadosContratoChange={handleDadosContratoChange}
+                handleCheckboxChange={handleCheckboxChange}
+                handleTipoRescisaoChange={handleTipoRescisaoChange}
                 handleAdicionaisChange={handleAdicionaisChange}
                 handleCalcularClick={handleCalcularClick}
                 handleLoadCalculo={handleLoadCalculo}

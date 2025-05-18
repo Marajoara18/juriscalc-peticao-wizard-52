@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { toast } from "sonner";
 import { DadosContrato, Adicionais, Resultados, CustomCalculo } from '@/types/calculadora';
@@ -20,6 +19,8 @@ const useCalculadora = () => {
     tipoRescisao: 'sem_justa_causa',
     diasTrabalhados: '',
     mesesTrabalhados: '',
+    aviso_previo_cumprido: false,
+    ferias_vencidas: false,
   });
 
   // Estado para calcular adicionais
@@ -100,7 +101,7 @@ const useCalculadora = () => {
   }, []);
 
   // Hooks específicos
-  const { handleDadosContratoChange } = useDadosContrato(dadosContrato, setDadosContrato);
+  const { handleDadosContratoChange, handleCheckboxChange, handleTipoRescisaoChange } = useDadosContrato(dadosContrato, setDadosContrato);
   const { handleAdicionaisChange } = useAdicionais(adicionais, setAdicionais);
   
   // Wrap the original calcularResultados to check for calculation limits
@@ -154,6 +155,8 @@ const useCalculadora = () => {
     setAdicionais,
     setResultados,
     handleDadosContratoChange,
+    handleCheckboxChange,
+    handleTipoRescisaoChange,
     handleAdicionaisChange,
     calcularResultados,
     aplicarCorrecaoMonetaria,

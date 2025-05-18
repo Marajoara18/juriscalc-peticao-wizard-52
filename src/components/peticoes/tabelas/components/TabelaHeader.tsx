@@ -9,14 +9,32 @@ interface TabelaHeaderProps {
   logoUrl?: string | null;
   nomeCalculo: string;
   dataCalculo: string;
+  tipoRescisao?: string;
 }
 
 const TabelaHeader: React.FC<TabelaHeaderProps> = ({
   onInserirNoPeticao,
   logoUrl,
   nomeCalculo,
-  dataCalculo
+  dataCalculo,
+  tipoRescisao = 'sem_justa_causa'
 }) => {
+  // Obter o texto descritivo do tipo de rescisão
+  const getTipoRescisaoTexto = () => {
+    switch (tipoRescisao) {
+      case 'sem_justa_causa':
+        return "Demissão Sem Justa Causa";
+      case 'pedido_demissao':
+        return "Pedido de Demissão";
+      case 'justa_causa':
+        return "Demissão por Justa Causa";
+      case 'rescisao_indireta':
+        return "Rescisão Indireta";
+      default:
+        return "Rescisão de Contrato";
+    }
+  };
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center">
@@ -27,7 +45,10 @@ const TabelaHeader: React.FC<TabelaHeaderProps> = ({
         />
         <div>
           <CardTitle className="text-xl">Cálculos Trabalhistas</CardTitle>
-          <CardDescription>{nomeCalculo}Gerado em: {dataCalculo}</CardDescription>
+          <CardDescription>
+            {nomeCalculo}
+            {getTipoRescisaoTexto()} - Gerado em: {dataCalculo}
+          </CardDescription>
         </div>
       </div>
       <Button 

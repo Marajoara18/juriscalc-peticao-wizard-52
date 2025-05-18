@@ -4,18 +4,21 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { DadosContrato } from '@/types/calculadora';
 
 interface DadosContratoFormProps {
   dadosContrato: DadosContrato;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onTipoRescisaoChange: (value: string) => void;
+  onCheckboxChange: (field: string, checked: boolean) => void;
 }
 
 const DadosContratoForm: React.FC<DadosContratoFormProps> = ({ 
   dadosContrato, 
   onChange, 
-  onTipoRescisaoChange 
+  onTipoRescisaoChange,
+  onCheckboxChange
 }) => {
   return (
     <Card>
@@ -107,6 +110,35 @@ const DadosContratoForm: React.FC<DadosContratoFormProps> = ({
               onChange={onChange}
               className="juriscalc-input" 
             />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="aviso_previo_cumprido"
+              checked={dadosContrato.aviso_previo_cumprido || false}
+              onCheckedChange={(checked) => onCheckboxChange('aviso_previo_cumprido', checked as boolean)}
+            />
+            <Label 
+              htmlFor="aviso_previo_cumprido" 
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Aviso prévio foi cumprido
+            </Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="ferias_vencidas"
+              checked={dadosContrato.ferias_vencidas || false} 
+              onCheckedChange={(checked) => onCheckboxChange('ferias_vencidas', checked as boolean)}
+            />
+            <Label 
+              htmlFor="ferias_vencidas" 
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Possui férias vencidas (12 meses completos)
+            </Label>
           </div>
         </div>
       </CardContent>

@@ -36,6 +36,26 @@ export const useDadosContrato = (
       [name]: value
     }));
   };
+  
+  // Função para atualizar checkboxes
+  const handleCheckboxChange = (field: string, checked: boolean) => {
+    setDadosContrato(prev => ({
+      ...prev,
+      [field]: checked
+    }));
+  };
+  
+  // Função para atualizar o tipo de rescisão
+  const handleTipoRescisaoChange = (value: string) => {
+    setDadosContrato(prev => ({
+      ...prev,
+      tipoRescisao: value as DadosContrato['tipoRescisao']
+    }));
+  };
 
-  return { handleDadosContratoChange };
+  return { 
+    handleDadosContratoChange,
+    handleCheckboxChange,
+    handleTipoRescisaoChange
+  };
 };
