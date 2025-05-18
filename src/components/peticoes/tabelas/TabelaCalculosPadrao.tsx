@@ -1,10 +1,10 @@
 
 import React from 'react';
-import { formatarMoeda } from '@/utils/formatters';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import TabelaHeader from './components/TabelaHeader';
+import TabelaVerbaRescisoria from './components/TabelaVerbaRescisoria';
+import TabelaAdicionais from './components/TabelaAdicionais';
+import TabelaTotal from './components/TabelaTotal';
 
 interface TabelaCalculosPadraoProps {
   calculos: any;
@@ -52,162 +52,28 @@ const TabelaCalculosPadrao: React.FC<TabelaCalculosPadraoProps> = ({
     customCalculo: 0,
     seguroDesemprego: 0
   };
-  
-  // Calcular o total geral
-  const totalAdicionais = 
-    adicionais.adicionalInsalubridade +
-    adicionais.adicionalPericulosidade +
-    adicionais.multa467 +
-    adicionais.multa477 +
-    adicionais.adicionalNoturno +
-    adicionais.horasExtras +
-    adicionais.feriasVencidas +
-    adicionais.indenizacaoDemissao +
-    adicionais.valeTransporte +
-    adicionais.valeAlimentacao +
-    adicionais.adicionalTransferencia +
-    adicionais.descontosIndevidos +
-    adicionais.diferencasSalariais +
-    adicionais.customCalculo +
-    adicionais.seguroDesemprego;
-
-  // Preparando os itens para a tabela
-  const itensVerbaRescisoria = [
-    { descricao: 'Saldo de Salário', valor: verbasRescisorias.saldoSalario },
-    { descricao: 'Aviso Prévio', valor: verbasRescisorias.avisoPrevia },
-    { descricao: '13º Salário Proporcional', valor: verbasRescisorias.decimoTerceiro },
-    { descricao: 'Férias Proporcionais', valor: verbasRescisorias.ferias },
-    { descricao: '1/3 Constitucional', valor: verbasRescisorias.tercoConstitucional },
-    { descricao: 'FGTS sobre verbas', valor: verbasRescisorias.fgts },
-    { descricao: 'Multa FGTS (40%)', valor: verbasRescisorias.multaFgts },
-  ].filter(item => item.valor > 0);
-
-  // Get custom calculation description
-  const getCustomCalculoDescription = () => {
-    if (calculos.calculosCustom && calculos.calculosCustom.length > 0) {
-      // If multiple custom calculations, join their names
-      if (calculos.calculosCustom.length > 1) {
-        return "Cálculos Personalizados";
-      } else {
-        // Return the description of the single custom calculation
-        return calculos.calculosCustom[0].descricao || "Cálculo Personalizado";
-      }
-    }
-    // Fallback to old system or if no description is available
-    return calculos.descricaoCustom || "Cálculo Personalizado";
-  };
-
-  const itensAdicionais = [
-    { descricao: 'Adicional de Insalubridade', valor: adicionais.adicionalInsalubridade },
-    { descricao: 'Adicional de Periculosidade', valor: adicionais.adicionalPericulosidade },
-    { descricao: 'Multa Art. 467 da CLT', valor: adicionais.multa467 },
-    { descricao: 'Multa Art. 477 da CLT', valor: adicionais.multa477 },
-    { descricao: 'Adicional Noturno', valor: adicionais.adicionalNoturno },
-    { descricao: 'Horas Extras', valor: adicionais.horasExtras },
-    { descricao: 'Férias Vencidas (+ 1/3)', valor: adicionais.feriasVencidas },
-    { descricao: 'Indenização por Demissão Indevida', valor: adicionais.indenizacaoDemissao },
-    { descricao: 'Vale Transporte Não Pago', valor: adicionais.valeTransporte },
-    { descricao: 'Vale Alimentação Não Pago', valor: adicionais.valeAlimentacao },
-    { descricao: 'Adicional de Transferência', valor: adicionais.adicionalTransferencia },
-    { descricao: 'Descontos Indevidos', valor: adicionais.descontosIndevidos },
-    { descricao: 'Diferenças Salariais', valor: adicionais.diferencasSalariais },
-    { descricao: 'Seguro Desemprego', valor: adicionais.seguroDesemprego },
-  ].filter(item => item.valor > 0);
-
-  // Add custom calculation with proper description
-  if (adicionais.customCalculo > 0) {
-    itensAdicionais.push({
-      descricao: getCustomCalculoDescription(),
-      valor: adicionais.customCalculo
-    });
-  }
 
   return (
     <Card className="mb-6">
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <img 
-              src="/lovable-uploads/caf683c7-0cb3-4ef4-8e5f-5de22f996b8a.png"
-              alt="IusCalc Logo" 
-              className="h-10 mr-3" 
-            />
-            <div>
-              <CardTitle className="text-xl">Cálculos Trabalhistas</CardTitle>
-              <CardDescription>{nomeCalculo}Gerado em: {dataCalculo}</CardDescription>
-            </div>
-          </div>
-          <Button 
-            onClick={onInserirNoPeticao} 
-            className="bg-juriscalc-gold text-juriscalc-navy hover:bg-opacity-90"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Inserir na Petição
-          </Button>
-        </div>
+        <TabelaHeader 
+          onInserirNoPeticao={onInserirNoPeticao}
+          logoUrl={logoUrl}
+          nomeCalculo={nomeCalculo}
+          dataCalculo={dataCalculo}
+        />
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {itensVerbaRescisoria.length > 0 && (
-            <div>
-              <h3 className="text-lg font-medium mb-2">Verbas Rescisórias</h3>
-              <Table className="print:w-full print:border-collapse keep-together">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-2/3">Descrição</TableHead>
-                    <TableHead className="text-right w-1/3">Valor</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {itensVerbaRescisoria.map((item, index) => (
-                    <TableRow key={`verbas-${index}`}>
-                      <TableCell>{item.descricao}</TableCell>
-                      <TableCell className="text-right">{formatarMoeda(item.valor)}</TableCell>
-                    </TableRow>
-                  ))}
-                  <TableRow className="font-bold">
-                    <TableCell>Total Verbas Rescisórias</TableCell>
-                    <TableCell className="text-right">{formatarMoeda(calculos.verbasRescisorias.total)}</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </div>
-          )}
-
-          {itensAdicionais.length > 0 && (
-            <div>
-              <h3 className="text-lg font-medium mb-2">Adicionais e Multas</h3>
-              <Table className="print:w-full print:border-collapse keep-together">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-2/3">Descrição</TableHead>
-                    <TableHead className="text-right w-1/3">Valor</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {itensAdicionais.map((item, index) => (
-                    <TableRow key={`adicionais-${index}`}>
-                      <TableCell>{item.descricao}</TableCell>
-                      <TableCell className="text-right">{formatarMoeda(item.valor)}</TableCell>
-                    </TableRow>
-                  ))}
-                  <TableRow className="font-bold">
-                    <TableCell>Total Adicionais</TableCell>
-                    <TableCell className="text-right">{formatarMoeda(totalAdicionais)}</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </div>
-          )}
-
-          <div className="bg-juriscalc-navy p-4 rounded-md text-white">
-            <div className="text-center">
-              <p className="text-sm font-medium mb-2">Valor Total da Reclamação</p>
-              <p className="text-2xl font-bold">
-                {formatarMoeda(calculos.totalGeral)}
-              </p>
-            </div>
-          </div>
+          <TabelaVerbaRescisoria verbasRescisorias={verbasRescisorias} />
+          
+          <TabelaAdicionais 
+            adicionais={adicionais} 
+            calculosCustom={calculos.calculosCustom}
+            descricaoCustom={calculos.descricaoCustom}
+          />
+          
+          <TabelaTotal totalGeral={calculos.totalGeral} />
         </div>
       </CardContent>
       <CardFooter className="text-center text-sm text-gray-500 pt-2 border-t">
