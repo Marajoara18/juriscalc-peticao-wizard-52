@@ -1,4 +1,3 @@
-
 /**
  * Converts a numeric value to its text representation in Portuguese
  */
@@ -119,7 +118,6 @@ export const criarHTMLCalculosEmbutidos = (calculos: any) => {
   const dataCalculo = calculos.timestamp ? 
     new Date(calculos.timestamp).toLocaleDateString('pt-BR') : 
     new Date().toLocaleDateString('pt-BR');
-  const nomeCalculo = calculos.nome ? `${calculos.nome} - ` : '';
   
   // Garantir que os objetos existam para evitar erros
   const verbasRescisorias = calculos.verbasRescisorias || {
