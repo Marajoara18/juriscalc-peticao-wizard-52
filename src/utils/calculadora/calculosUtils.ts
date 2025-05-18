@@ -48,4 +48,3 @@ export const realizarCalculos = (
     return resultadosIniciais;
   }
 };
-
