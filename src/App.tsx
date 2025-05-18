@@ -12,30 +12,32 @@ import Peticoes from "./pages/Peticoes";
 import NotFound from "./pages/NotFound";
 import MasterPasswordReset from "./components/auth/MasterPasswordReset";
 
-// Create a client
-const queryClient = new QueryClient();
-
-const App = () => (
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/calculadora" element={<Calculadora />} />
-            <Route path="/peticoes" element={<Peticoes />} />
-            <Route path="/reset-password" element={<MasterPasswordReset />} />
-            {/* Redirecionar a página index antiga para o login */}
-            <Route path="/index" element={<Navigate to="/" replace />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-  </StrictMode>
-);
+const App = () => {
+  // Create a client inside the component function
+  const queryClient = new QueryClient();
+  
+  return (
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route path="/calculadora" element={<Calculadora />} />
+              <Route path="/peticoes" element={<Peticoes />} />
+              <Route path="/reset-password" element={<MasterPasswordReset />} />
+              {/* Redirecionar a página index antiga para o login */}
+              <Route path="/index" element={<Navigate to="/" replace />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </StrictMode>
+  );
+};
 
 export default App;
