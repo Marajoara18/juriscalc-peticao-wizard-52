@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -22,6 +21,8 @@ const VerificadorCalculos: React.FC = () => {
     tipoRescisao: 'sem_justa_causa',
     diasTrabalhados: '30',
     mesesTrabalhados: '12',
+    aviso_previo_cumprido: false, // Added missing property
+    ferias_vencidas: false, // Added missing property
   };
 
   const adicionaisBasico: Adicionais = {

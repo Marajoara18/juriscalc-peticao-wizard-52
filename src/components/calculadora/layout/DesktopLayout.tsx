@@ -17,6 +17,8 @@ interface DesktopLayoutProps {
   hasCalculos: boolean;
   totalGeral: number;
   handleDadosContratoChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleCheckboxChange: (field: string, checked: boolean) => void; // Added missing property
+  handleTipoRescisaoChange: (value: string) => void;
   handleAdicionaisChange: (name: string, value: string | boolean) => void;
   handleCalcularClick: () => void;
   handleLoadCalculo: (calculo: any) => void;
@@ -32,6 +34,8 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   hasCalculos,
   totalGeral,
   handleDadosContratoChange,
+  handleCheckboxChange, // Added missing property
+  handleTipoRescisaoChange,
   handleAdicionaisChange,
   handleCalcularClick,
   handleLoadCalculo,
@@ -53,12 +57,8 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
             <DadosContratoForm 
               dadosContrato={dadosContrato}
               onChange={handleDadosContratoChange}
-              onTipoRescisaoChange={(value) => {
-                if (value === 'sem_justa_causa' || value === 'pedido_demissao' || 
-                    value === 'justa_causa' || value === 'rescisao_indireta') {
-                  handleAdicionaisChange('tipoRescisao', value);
-                }
-              }}
+              onTipoRescisaoChange={handleTipoRescisaoChange}
+              onCheckboxChange={handleCheckboxChange} // Added missing property
             />
           </TabsContent>
 

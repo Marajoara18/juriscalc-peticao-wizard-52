@@ -17,6 +17,8 @@ interface MobileLayoutProps {
   hasCalculos: boolean;
   totalGeral: number;
   handleDadosContratoChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleCheckboxChange: (field: string, checked: boolean) => void; // Added missing property
+  handleTipoRescisaoChange: (value: string) => void;
   handleAdicionaisChange: (name: string, value: string | boolean) => void;
   handleCalcularClick: () => void;
   handleLoadCalculo: (calculo: any) => void;
@@ -32,6 +34,8 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   hasCalculos,
   totalGeral,
   handleDadosContratoChange,
+  handleCheckboxChange, // Added missing property
+  handleTipoRescisaoChange,
   handleAdicionaisChange,
   handleCalcularClick,
   handleLoadCalculo,
@@ -51,12 +55,8 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
           <DadosContratoForm 
             dadosContrato={dadosContrato}
             onChange={handleDadosContratoChange}
-            onTipoRescisaoChange={(value) => {
-              if (value === 'sem_justa_causa' || value === 'pedido_demissao' || 
-                  value === 'justa_causa' || value === 'rescisao_indireta') {
-                handleAdicionaisChange('tipoRescisao', value);
-              }
-            }}
+            onCheckboxChange={handleCheckboxChange} // Added missing property
+            onTipoRescisaoChange={handleTipoRescisaoChange}
           />
         </TabsContent>
 
