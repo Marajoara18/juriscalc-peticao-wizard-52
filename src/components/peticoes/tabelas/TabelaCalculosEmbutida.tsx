@@ -180,7 +180,7 @@ const TabelaCalculosEmbutida: React.FC<TabelaCalculosEmbutidaProps> = ({
               alt="Logo" 
               className="h-5 mr-1" 
             />
-            <p className="font-serif font-bold text-xs text-juriscalc-navy">IusCalc Trabalhista</p>
+            <p className="font-serif font-bold text-xs text-juriscalc-navy">IusCalc</p>
           </div>
         </div>
       </div>
