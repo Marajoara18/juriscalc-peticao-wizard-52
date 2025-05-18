@@ -1,23 +1,59 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import SubscriptionManager from './SubscriptionManager';
+import { AlertCircle } from 'lucide-react';
+
+const LIMITE_CALCULOS_GRATUITOS = 3;
+const KEY_CONTADOR_CALCULOS = 'calculosRealizados';
 
 const PremiumAlert = () => {
   const [showSubscription, setShowSubscription] = useState(false);
+  const [calculosRestantes, setCalculosRestantes] = useState<number>(LIMITE_CALCULOS_GRATUITOS);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  
+  useEffect(() => {
+    const userId = localStorage.getItem('userId');
+    const userEmail = localStorage.getItem('userEmail');
+    const adminStatus = localStorage.getItem('userIsAdmin') === 'true';
+    setIsAdmin(adminStatus);
+    
+    // Se for admin ou for o e-mail específico do admin mestre, não exibir alerta
+    if (adminStatus || userEmail === 'johnnysantos_177@msn.com' || userEmail === 'admin@juriscalc.com') {
+      return;
+    }
+    
+    // Calcular cálculos restantes
+    const calculosKey = `${KEY_CONTADOR_CALCULOS}_${userId}`;
+    const calculosRealizados = localStorage.getItem(calculosKey) 
+      ? parseInt(localStorage.getItem(calculosKey) || '0', 10) 
+      : 0;
+    
+    const restantes = Math.max(0, LIMITE_CALCULOS_GRATUITOS - calculosRealizados);
+    setCalculosRestantes(restantes);
+  }, []);
+  
+  // Se for admin, não exibir alerta
+  if (isAdmin) return null;
   
   return (
     <>
       <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
         <div className="flex">
           <div className="flex-shrink-0">
-            <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
+            <AlertCircle className="h-5 w-5 text-yellow-400" />
           </div>
           <div className="ml-3">
             <p className="text-sm text-yellow-700">
-              Você está utilizando a versão gratuita. Limite de 3 petições. 
+              {calculosRestantes > 0 ? (
+                <>
+                  Você está utilizando a versão gratuita. Restam <strong>{calculosRestantes}</strong> de {LIMITE_CALCULOS_GRATUITOS} cálculos disponíveis.
+                </>
+              ) : (
+                <>
+                  Você atingiu o limite de <strong>{LIMITE_CALCULOS_GRATUITOS}</strong> cálculos da versão gratuita.
+                </>
+              )}
               <Button 
                 variant="link" 
                 className="ml-1 p-0 text-yellow-700 font-medium underline"

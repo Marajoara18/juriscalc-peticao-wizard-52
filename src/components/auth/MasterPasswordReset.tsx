@@ -7,6 +7,9 @@ import { toast } from 'sonner';
 const MasterPasswordReset: React.FC = () => {
   const [loading, setLoading] = useState(false);
   
+  // Email do administrador mestre
+  const masterEmail = "johnnysantos_177@msn.com";
+  
   const handleSendResetLink = async () => {
     setLoading(true);
     
@@ -14,9 +17,6 @@ const MasterPasswordReset: React.FC = () => {
       // Simulação do envio de email
       // Em uma aplicação real, isso chamaria uma API para enviar o email
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Email para o qual o link será enviado
-      const masterEmail = "johnnysantos_177@msn.com";
       
       // Notificar o usuário que o email foi enviado
       toast.success(`Link para redefinição de senha enviado para ${masterEmail}`);
@@ -49,7 +49,7 @@ const MasterPasswordReset: React.FC = () => {
       <CardContent>
         <div className="flex flex-col space-y-4">
           <p className="text-sm text-gray-500">
-            Um link seguro será enviado para o email johnnysantos_177@msn.com para redefinir a senha de administrador master.
+            Um link seguro será enviado para o email {masterEmail} para redefinir a senha de administrador master.
           </p>
         </div>
       </CardContent>

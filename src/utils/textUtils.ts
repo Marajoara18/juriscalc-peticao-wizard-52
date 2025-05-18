@@ -1,3 +1,4 @@
+
 /**
  * Converts a numeric value to its text representation in Portuguese
  */
@@ -159,8 +160,8 @@ export const criarHTMLCalculosEmbutidos = (calculos: any) => {
         
         <div style="background-color: #0f172a; padding: 0.5rem; border-radius: 0.375rem; color: white; margin-top: 0.5rem;">
           <div style="text-align: center;">
-            <p style="font-size: 0.75rem; font-weight: 500;">VALOR TOTAL DA RECLAMAÇÃO</p>
-            <p style="font-size: 1rem; font-weight: 700;">${formatarValor(totalGeral)}</p>
+            <p style="font-size: 0.7rem; font-weight: 500;">VALOR TOTAL DA RECLAMAÇÃO</p>
+            <p style="font-size: 0.95rem; font-weight: 700;">${formatarValor(totalGeral)}</p>
           </div>
         </div>
         

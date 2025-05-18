@@ -38,11 +38,8 @@ const PreviewCalculoDialog: React.FC<PreviewCalculoDialogProps> = ({
   calculo
 }) => {
   const handlePrintCalculo = () => {
-    // Configuramos um timeout breve para garantir que o conteúdo esteja renderizado
-    setTimeout(() => {
-      window.print();
-      toast.success('Demonstrativo de cálculos enviado para impressão!');
-    }, 100);
+    handlePrint();
+    toast.success('Demonstrativo de cálculos enviado para impressão!');
   };
 
   return (

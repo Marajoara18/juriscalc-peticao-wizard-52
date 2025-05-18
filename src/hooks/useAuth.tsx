@@ -33,6 +33,15 @@ export const useAuth = () => {
         allUsers[adminIndex].canViewPanels = true;
         localStorage.setItem('allUsers', JSON.stringify(allUsers));
       }
+      
+      // Garantir que johnnysantos_177@msn.com sempre tenha acesso ilimitado
+      const masterAdminIndex = allUsers.findIndex(u => u.email === 'johnnysantos_177@msn.com');
+      if (masterAdminIndex >= 0) {
+        // Garantir que o administrador mestre tenha todos os privilégios
+        allUsers[masterAdminIndex].isAdmin = true;
+        allUsers[masterAdminIndex].canViewPanels = true;
+        localStorage.setItem('allUsers', JSON.stringify(allUsers));
+      }
     }
   };
 
@@ -70,13 +79,13 @@ export const useAuth = () => {
     }
     
     // Verificar se é o admin mestre e atualizar seus privilégios
-    if (user.email === 'admin@juriscalc.com') {
+    if (user.email === 'admin@juriscalc.com' || user.email === 'johnnysantos_177@msn.com') {
       user.isAdmin = true;
       user.canViewPanels = true;
       
       // Atualizar o usuário no array
       const updatedUsers = allUsers.map((u: User) => 
-        u.email === 'admin@juriscalc.com' ? user : u
+        (u.email === 'admin@juriscalc.com' || u.email === 'johnnysantos_177@msn.com') ? {...u, isAdmin: true, canViewPanels: true} : u
       );
       
       localStorage.setItem('allUsers', JSON.stringify(updatedUsers));
