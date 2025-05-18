@@ -1,50 +1,67 @@
+// Utility functions for handling calculation data
+
+// Import the necessary functions from verbasRescisoriasUtils
+import { calcularVerbasRescisorias } from './verbasRescisoriasUtils';
+import { 
+  calcularAdicionaisBasicos, 
+  calcularMultas, 
+  calcularJornada,
+  calcularVerbasFeriasVencidas, 
+  calcularBeneficios, 
+  calcularDescontos,
+  calcularBeneficiosSociais,
+  calcularCustom
+} from './adicionaisUtils';
 
 /**
- * Utility functions for calculation operations
+ * Performs all calculations based on contract data and additional values.
+ * @param dadosContrato Contract data
+ * @param adicionais Additional values to calculate
+ * @returns Object with all calculated values
  */
-import { DadosContrato, Adicionais, Resultados, CustomCalculo } from '@/types/calculadora';
-import { calcularVerbasRescisorias } from '@/utils/calculadora/verbasRescisoriasUtils';
-import { calcularAdicionais } from '@/utils/calculadora/adicionaisUtils';
-import { resultadosIniciais } from '@/utils/calculadoraConstants';
+export const realizarCalculos = (dadosContrato: any, adicionais: any) => {
+  console.info("Calculando com:", {
+    salarioBase: parseFloat(dadosContrato.salarioBase),
+    diasTrabalhados: parseInt(dadosContrato.diasTrabalhados),
+    mesesTrabalhados: parseInt(dadosContrato.mesesTrabalhados)
+  });
+  
+  // Calculate rescission values
+  const verbasRescisorias = calcularVerbasRescisorias(dadosContrato);
+  
+  // Calculate additional values
+  const salarioBase = parseFloat(dadosContrato.salarioBase) || 0;
+  
+  // Separate calculations for different types of additionals
+  const adicionaisBasicos = calcularAdicionaisBasicos(salarioBase, adicionais);
+  const multas = calcularMultas(verbasRescisorias.total, adicionais);
+  const jornada = calcularJornada(salarioBase, adicionais);
+  const feriasVencidas = calcularVerbasFeriasVencidas(salarioBase, adicionais);
+  const beneficios = calcularBeneficios(adicionais);
+  const descontos = calcularDescontos(adicionais);
+  const beneficiosSociais = calcularBeneficiosSociais(adicionais);
+  const custom = calcularCustom(adicionais);
+  
+  // Combine all additionals
+  const adicionaisValues = {
+    ...adicionaisBasicos,
+    ...multas,
+    ...jornada,
+    ...feriasVencidas,
+    ...beneficios,
+    ...descontos,
+    ...beneficiosSociais,
+    ...custom
+  };
+  
+  // Return the final result
+  const resultados = {
+    verbasRescisorias,
+    adicionais: adicionaisValues
+  };
 
-/**
- * Performs all calculation operations and returns the results
- * @param dadosContrato Contract data for calculations
- * @param adicionais Additional values for calculations
- * @returns Calculated results
- */
-export const realizarCalculos = (
-  dadosContrato: DadosContrato,
-  adicionais: Adicionais
-): Resultados => {
-  try {
-    // Extrair valores numéricos
-    const salarioBase = parseFloat(dadosContrato.salarioBase) || 0;
-    const diasTrabalhados = parseInt(dadosContrato.diasTrabalhados) || 0;
-    const mesesTrabalhados = parseInt(dadosContrato.mesesTrabalhados) || 0;
-    
-    console.log("Calculando com:", { salarioBase, diasTrabalhados, mesesTrabalhados });
-
-    // Cálculo das verbas rescisórias
-    const verbasRescisorias = calcularVerbasRescisorias(dadosContrato);
-    
-    // Cálculo dos adicionais
-    const adicionaisCalculados = calcularAdicionais(
-      salarioBase, 
-      adicionais, 
-      verbasRescisorias.saldoSalario, 
-      verbasRescisorias.avisoPrevia, 
-      verbasRescisorias.decimoTerceiro, 
-      verbasRescisorias.ferias, 
-      verbasRescisorias.tercoConstitucional
-    );
-
-    return {
-      verbasRescisorias,
-      adicionais: adicionaisCalculados
-    };
-  } catch (error) {
-    console.error("Erro ao realizar cálculos:", error);
-    return resultadosIniciais;
-  }
+  // Log for debugging
+  console.info("Cálculos realizados:", resultados);
+  
+  return resultados;
 };
