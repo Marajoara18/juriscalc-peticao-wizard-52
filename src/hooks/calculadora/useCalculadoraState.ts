@@ -128,7 +128,7 @@ const useCalculadoraState = {
   },
   
   // Calcular totais para exibição e verificações
-  calcularTotais: (resultados: Resultados, adicionais: Adicionais) => {
+  calcularTotais: (resultados: Resultados, adicionais?: Adicionais) => {
     // Calcular o total dos adicionais
     const totalAdicionais = 
       resultados.adicionais.adicionalInsalubridade +
@@ -153,7 +153,7 @@ const useCalculadoraState = {
                       (resultados.verbasRescisorias.descontoAvisoPrevio || 0);
     
     // Adicionar os honorários advocatícios ao total geral se configurado
-    if (adicionais.calcularHonorariosAdvocaticios && adicionais.incluirTotalGeralHonorarios) {
+    if (adicionais && adicionais.calcularHonorariosAdvocaticios && adicionais.incluirTotalGeralHonorarios) {
       totalGeral += resultados.adicionais.honorariosAdvocaticios;
     }
     

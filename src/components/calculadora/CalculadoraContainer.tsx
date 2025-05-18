@@ -54,7 +54,7 @@ const CalculadoraContainer = () => {
   };
   
   // Calcular o total geral para o botão de salvar cálculos
-  const { totalGeral, hasCalculos } = useCalculadoraState.calcularTotais(resultados);
+  const { totalGeral, hasCalculos } = useCalculadoraState.calcularTotais(resultados, adicionais);
   
   const handleCalcularClick = () => {
     calcularResultados();
