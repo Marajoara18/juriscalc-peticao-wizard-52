@@ -1,16 +1,23 @@
+
 // Utility functions for handling calculation data
 
 // Import the necessary functions from verbasRescisoriasUtils
 import { calcularVerbasRescisorias } from './verbasRescisoriasUtils';
 import { 
-  calcularAdicionaisBasicos, 
-  calcularMultas, 
-  calcularJornada,
-  calcularVerbasFeriasVencidas, 
-  calcularBeneficios, 
-  calcularDescontos,
-  calcularBeneficiosSociais,
-  calcularCustom
+  calcularAdicionais,
+  calcularInsalubridade,
+  calcularPericulosidade,
+  calcularMulta467, 
+  calcularMulta477,
+  calcularAdicionalNoturno,
+  calcularHorasExtras,
+  calcularFeriasVencidas,
+  calcularIndenizacaoDemissao,
+  calcularValeTransporte,
+  calcularValeAlimentacao,
+  calcularAdicionalTransferencia,
+  calcularSeguroDesemprego,
+  calcularSalarioFamilia
 } from './adicionaisUtils';
 
 /**
@@ -29,30 +36,26 @@ export const realizarCalculos = (dadosContrato: any, adicionais: any) => {
   // Calculate rescission values
   const verbasRescisorias = calcularVerbasRescisorias(dadosContrato);
   
-  // Calculate additional values
+  // Calculate additional values based on the main salary
   const salarioBase = parseFloat(dadosContrato.salarioBase) || 0;
   
-  // Separate calculations for different types of additionals
-  const adicionaisBasicos = calcularAdicionaisBasicos(salarioBase, adicionais);
-  const multas = calcularMultas(verbasRescisorias.total, adicionais);
-  const jornada = calcularJornada(salarioBase, adicionais);
-  const feriasVencidas = calcularVerbasFeriasVencidas(salarioBase, adicionais);
-  const beneficios = calcularBeneficios(adicionais);
-  const descontos = calcularDescontos(adicionais);
-  const beneficiosSociais = calcularBeneficiosSociais(adicionais);
-  const custom = calcularCustom(adicionais);
+  // Get all values from verbasRescisorias to pass to calcularAdicionais
+  const saldoSalario = verbasRescisorias.saldoSalario || 0;
+  const avisoPrevia = verbasRescisorias.avisoPrevia || 0;
+  const decimoTerceiro = verbasRescisorias.decimoTerceiro || 0;
+  const ferias = verbasRescisorias.ferias || 0;
+  const tercoConstitucional = verbasRescisorias.tercoConstitucional || 0;
   
-  // Combine all additionals
-  const adicionaisValues = {
-    ...adicionaisBasicos,
-    ...multas,
-    ...jornada,
-    ...feriasVencidas,
-    ...beneficios,
-    ...descontos,
-    ...beneficiosSociais,
-    ...custom
-  };
+  // Calculate all additionals using the main function
+  const adicionaisValues = calcularAdicionais(
+    salarioBase, 
+    adicionais,
+    saldoSalario,
+    avisoPrevia,
+    decimoTerceiro,
+    ferias,
+    tercoConstitucional
+  );
   
   // Return the final result
   const resultados = {
@@ -65,3 +68,4 @@ export const realizarCalculos = (dadosContrato: any, adicionais: any) => {
   
   return resultados;
 };
+
