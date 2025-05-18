@@ -116,7 +116,7 @@ const useCalculadora = () => {
   const { aplicarCorrecaoMonetaria } = useCorrecaoMonetaria(resultados, setResultados);
   
   // Calcular totais para uso nas visualizações
-  const { totalAdicionais, totalGeral, hasCalculos } = useCalculadoraState.calcularTotais(resultados, adicionais);
+  const { totalAdicionais, totalGeral, hasCalculos } = useCalculadoraState.calcularTotais(resultados);
   
   // Função para carregar um cálculo salvo
   const handleLoadCalculo = (calculo: any) => {
