@@ -15,6 +15,7 @@ export interface PeticaoFormData {
     adicionalTransferencia: boolean;
     descontosIndevidos: boolean;
     diferencasSalariais: boolean;
+    salarioFamilia: boolean;
     custom: {
       enabled: boolean;
       descricao: string;

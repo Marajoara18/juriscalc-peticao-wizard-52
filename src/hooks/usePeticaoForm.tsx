@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { PeticaoFormData } from '@/types/peticao';
 import { toast } from "sonner";
@@ -20,6 +21,7 @@ export const usePeticaoForm = (peticao: any, modelo: any) => {
       adicionalTransferencia: false,
       descontosIndevidos: false,
       diferencasSalariais: false,
+      salarioFamilia: false,
       custom: {
         enabled: false,
         descricao: '',
