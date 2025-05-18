@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { formatarMoeda } from '@/utils/formatters';
 
@@ -106,7 +105,6 @@ const TabelaCalculosEmbutida: React.FC<TabelaCalculosEmbutidaProps> = ({
           />
         )}
         <h3 className="text-xl font-bold border-b-2 border-juriscalc-navy pb-2">DEMONSTRATIVO DE CÁLCULOS TRABALHISTAS</h3>
-        {/* Removed the calculation name from print view */}
         <p className="text-xs text-gray-600 mb-2">Gerado em: {dataCalculo}</p>
       </div>
       
@@ -163,11 +161,11 @@ const TabelaCalculosEmbutida: React.FC<TabelaCalculosEmbutidaProps> = ({
           </div>
         )}
 
-        {/* Valor total da reclamação com maior destaque */}
-        <div className="bg-juriscalc-navy p-3 rounded-md text-white mt-4 print:mt-6 print:border-2 print:border-black">
+        {/* Valor total da reclamação com tamanho reduzido para impressão */}
+        <div className="bg-juriscalc-navy p-2 rounded-md text-white mt-4 print:mt-4 print:border print:border-black">
           <div className="text-center">
-            <p className="text-sm font-bold mb-1 print:text-base">VALOR TOTAL DA RECLAMAÇÃO</p>
-            <p className="text-2xl font-bold print:text-2xl">
+            <p className="text-xs font-medium mb-1 print:text-xs">VALOR TOTAL DA RECLAMAÇÃO</p>
+            <p className="text-lg font-bold print:text-base">
               {formatarMoeda(totalGeral)}
             </p>
           </div>
