@@ -106,23 +106,21 @@ export const calcularFerias = (salarioBase: number, dataAdmissao: string, dataDe
     ultimoPeriodoAquisitivo.setFullYear(ultimoPeriodoAquisitivo.getFullYear() - 1);
   }
   
-  // Calcula os dias trabalhados desde o último período aquisitivo até a demissão
-  const diasTrabalhados = calcularDiasEntreDatas(
-    ultimoPeriodoAquisitivo.toISOString().split('T')[0], 
-    dataDemissao
-  );
+  // Calcula os meses trabalhados desde o último período aquisitivo até a demissão
+  let mesesTrabalhados = (dataDemissaoObj.getFullYear() - ultimoPeriodoAquisitivo.getFullYear()) * 12;
+  mesesTrabalhados += dataDemissaoObj.getMonth() - ultimoPeriodoAquisitivo.getMonth();
   
-  // Calcular meses trabalhados (considerando que 30 dias = 1 mês)
-  const mesesTrabalhados = diasTrabalhados / 30;
+  // Se trabalhou mais de 15 dias no último mês, considera um mês completo
+  const diasNoUltimoMes = dataDemissaoObj.getDate() - ultimoPeriodoAquisitivo.getDate();
+  if (diasNoUltimoMes > 15) {
+    mesesTrabalhados += 1;
+  }
   
-  // Para férias, a proporção é de 1/12 do salário por mês trabalhado (2,5 dias por mês)
-  // Total de dias de férias = meses trabalhados * 2,5 dias
-  const diasDeFeriasProporcionais = mesesTrabalhados * 2.5;
+  // Cada mês trabalhado dá direito a 1/12 de 30 dias de férias
+  const diasDeFerias = (mesesTrabalhados * 30) / 12;
   
   // Valor das férias proporcionais = dias de férias * (salário / 30)
-  const valorFeriasProporcionais = diasDeFeriasProporcionais * (salarioBase / 30);
-  
-  return valorFeriasProporcionais;
+  return diasDeFerias * (salarioBase / 30);
 };
 
 /**
