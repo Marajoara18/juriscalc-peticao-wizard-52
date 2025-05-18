@@ -47,9 +47,10 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   
   // Handler para aplicar honorários advocatícios
   const aplicarHonorariosAdvocaticios = (valorHonorarios: number) => {
-    // Atualiza o estado para incluir honorários (usar handleAdicionaisChange)
+    // Atualiza o estado para incluir honorários
     handleAdicionaisChange("calcularHonorariosAdvocaticios", true);
     handleAdicionaisChange("percentualHonorariosAdvocaticios", (valorHonorarios / totalGeral * 100).toString());
+    handleAdicionaisChange("incluirTotalGeralHonorarios", true);
   };
 
   return (

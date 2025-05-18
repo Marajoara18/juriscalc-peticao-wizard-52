@@ -146,7 +146,7 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
 
       {/* Mostrar honorários se calculados */}
       {temHonorarios && (
-        <div className="flex justify-between mb-3">
+        <div className="flex justify-between mb-3 p-2 bg-gray-50 rounded-md border">
           <span className="font-medium">Honorários Advocatícios</span>
           <span className="font-medium">{formatarMoeda(adicionaisResultado.honorariosAdvocaticios as number)}</span>
         </div>

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -18,11 +18,17 @@ const HonorariosAdvocaticios: React.FC<HonorariosAdvocaticiosProps> = ({
 }) => {
   const [percentualHonorarios, setPercentualHonorarios] = useState('20');
   const [incluirNoTotalGeral, setIncluirNoTotalGeral] = useState(false);
+  const [valorCalculado, setValorCalculado] = useState(0);
+  
+  // Atualizar o valor calculado quando o percentual ou total mudar
+  useEffect(() => {
+    const percentual = parseFloat(percentualHonorarios) || 20;
+    const valor = totalGeral * (percentual / 100);
+    setValorCalculado(valor);
+  }, [percentualHonorarios, totalGeral]);
   
   const calcularHonorarios = () => {
-    const percentual = parseFloat(percentualHonorarios) || 20;
-    const valorHonorarios = totalGeral * (percentual / 100);
-    onAplicarHonorarios(valorHonorarios);
+    onAplicarHonorarios(valorCalculado);
   };
 
   return (
@@ -55,14 +61,18 @@ const HonorariosAdvocaticios: React.FC<HonorariosAdvocaticiosProps> = ({
             <Switch 
               id="incluirNoTotalGeral"
               checked={incluirNoTotalGeral}
-              onCheckedChange={setIncluirNoTotalGeral}
+              onCheckedChange={(checked) => {
+                setIncluirNoTotalGeral(checked);
+              }}
             />
           </div>
           
           <div className="pt-2">
-            <p className="text-sm text-gray-500 mb-2">
-              Valor calculado dos honorários: {formatarMoeda(totalGeral * (parseFloat(percentualHonorarios) / 100))}
-            </p>
+            <div className="bg-gray-50 p-3 rounded-md border mb-3">
+              <p className="text-sm font-medium text-gray-700">
+                Valor calculado dos honorários: {formatarMoeda(valorCalculado)}
+              </p>
+            </div>
             
             <Button 
               onClick={calcularHonorarios}
