@@ -52,6 +52,7 @@ const adicionaisTeste: Adicionais = {
   quantidadeFilhos: "",
   calcularHonorariosAdvocaticios: false,
   percentualHonorariosAdvocaticios: "20",
+  valorHonorariosAdvocaticios: "", // Adicionado campo faltante
   incluirTotalGeralHonorarios: false,
 };
 

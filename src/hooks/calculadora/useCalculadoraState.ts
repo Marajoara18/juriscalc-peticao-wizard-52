@@ -64,6 +64,7 @@ const useCalculadoraState = {
       quantidadeFilhos: '',
       calcularHonorariosAdvocaticios: false,
       percentualHonorariosAdvocaticios: '20',
+      valorHonorariosAdvocaticios: '', // Adicionado campo faltante
       incluirTotalGeralHonorarios: false,
     });
     
@@ -123,6 +124,7 @@ const useCalculadoraState = {
       calcularSalarioFamilia: calculo.adicionais?.salarioFamilia > 0,
       calcularHonorariosAdvocaticios: calculo.adicionais?.honorariosAdvocaticios > 0,
       percentualHonorariosAdvocaticios: '20',
+      valorHonorariosAdvocaticios: calculo.adicionais?.honorariosAdvocaticios?.toString() || '', // Valor atual dos honorários
       incluirTotalGeralHonorarios: false,
     });
   },

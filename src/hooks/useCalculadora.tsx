@@ -68,6 +68,7 @@ const useCalculadora = () => {
     quantidadeFilhos: '',
     calcularHonorariosAdvocaticios: false,
     percentualHonorariosAdvocaticios: '20',
+    valorHonorariosAdvocaticios: '', // Adicionado campo faltante
     incluirTotalGeralHonorarios: false,
   });
 
