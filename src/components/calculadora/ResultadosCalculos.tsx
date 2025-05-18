@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { formatarMoeda } from '@/utils/formatters';
 import { DadosContrato, Adicionais } from '@/types/calculadora';
 import { cn } from '@/lib/utils';
+import PrintResultButton from './PrintResultButton';
 
 interface ResultadosCalculosProps {
   resultados: any; 
@@ -50,7 +51,10 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
 
   return (
     <Card className="p-4 mt-4">
-      <h2 className="text-xl font-bold mb-2">Resultados do Cálculo</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold">Resultados do Cálculo</h2>
+        <PrintResultButton />
+      </div>
       
       {/* Verbas Rescisórias */}
       <Accordion type="single" collapsible className="mb-4" defaultValue="verbas">
@@ -154,6 +158,10 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
         <span className="font-bold text-lg">
           {formatarMoeda(totalGeral)}
         </span>
+      </div>
+      
+      <div className="mt-4 flex justify-end print:hidden">
+        <PrintResultButton />
       </div>
     </Card>
   );
