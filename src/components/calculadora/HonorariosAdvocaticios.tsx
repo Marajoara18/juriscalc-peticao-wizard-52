@@ -24,14 +24,12 @@ const HonorariosAdvocaticios: React.FC<HonorariosAdvocaticiosProps> = ({
   useEffect(() => {
     const percentual = parseFloat(percentualHonorarios) || 20;
     // Cálculo do valor baseado no percentual escolhido sobre o subtotal (totalGeral)
-    // Nota: O totalGeral aqui na verdade é o subtotal antes dos honorários
     const valor = totalGeral * (percentual / 100);
     setValorCalculado(valor);
   }, [percentualHonorarios, totalGeral]);
   
   const calcularHonorarios = () => {
-    // Passamos diretamente o valorCalculado para a função de callback
-    // sem fazer nenhum cálculo adicional
+    // Passamos o valorCalculado diretamente para a função de callback
     onAplicarHonorarios(valorCalculado);
   };
 
@@ -72,7 +70,7 @@ const HonorariosAdvocaticios: React.FC<HonorariosAdvocaticiosProps> = ({
           </div>
           
           <div className="pt-2">
-            <div className="bg-gray-50 p-3 rounded-md border mb-3">
+            <div className="bg-gray-100 p-3 rounded-md border mb-3">
               <p className="text-sm font-medium text-gray-700">
                 Valor calculado dos honorários: {formatarMoeda(valorCalculado)}
               </p>

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -48,9 +49,12 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   const aplicarHonorariosAdvocaticios = (valorHonorarios: number) => {
     // Atualiza o estado para incluir honorários
     handleAdicionaisChange("calcularHonorariosAdvocaticios", true);
-    // Define o valor dos honorários diretamente, sem recalcular
+    // Define o valor exato dos honorários calculados
     handleAdicionaisChange("valorHonorariosAdvocaticios", valorHonorarios.toString());
+    // Define se os honorários devem ser incluídos no total geral
     handleAdicionaisChange("incluirTotalGeralHonorarios", true);
+    // Recalcular os resultados para atualizar o valor dos honorários
+    handleCalcularClick();
   };
 
   return (

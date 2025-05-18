@@ -16,20 +16,26 @@ import { calcularValeTransporte, calcularValeAlimentacao } from './adicionais/be
 import { calcularSeguroDesemprego, calcularSalarioFamilia } from './adicionais/beneficiosSociaisUtils';
 
 /**
- * Calcular honorários advocatícios com base no percentual definido
- * O cálculo é feito sobre o valor subtotal (verbas rescisórias + adicionais - descontos)
+ * Calcular honorários advocatícios com base no valor definido diretamente
+ * Caso não tenha valor definido, calcula com base no percentual
  */
 export const calcularHonorariosAdvocaticios = (
   calcular: boolean,
   percentual: string,
+  valorDefinido: string,
   totalRescisorias: number,
   totalAdicionais: number
 ): number => {
   if (!calcular) return 0;
   
+  // Verificar se já temos um valor definido
+  const valorExistente = parseFloat(valorDefinido);
+  if (valorDefinido && !isNaN(valorExistente)) {
+    return valorExistente;
+  }
+  
+  // Caso contrário, calcular baseado no percentual
   const percentualHonorarios = parseFloat(percentual) || 20;
-  // Calcula sobre a soma das verbas rescisórias e adicionais (sem incluir os próprios honorários)
-  // Esta soma representa o subtotal
   const baseCalculo = totalRescisorias + totalAdicionais;
   
   return (baseCalculo * percentualHonorarios) / 100;
@@ -188,10 +194,11 @@ export const calcularAdicionais = (
   // Total das verbas rescisórias (estimativa para base de cálculo)
   const totalRescisorias = saldoSalario + avisoPrevia + decimoTerceiro + ferias + tercoConstitucional;
   
-  // Cálculo dos honorários advocatícios
+  // Cálculo dos honorários advocatícios (agora usando também o valorHonorariosAdvocaticios)
   const honorariosAdvocaticios = calcularHonorariosAdvocaticios(
     adicionais.calcularHonorariosAdvocaticios,
     adicionais.percentualHonorariosAdvocaticios,
+    adicionais.valorHonorariosAdvocaticios,
     totalRescisorias,
     totalAdicionais
   );
@@ -232,5 +239,4 @@ export {
   calcularAdicionalTransferencia,
   calcularSeguroDesemprego,
   calcularSalarioFamilia
-  // Removed duplicate export of calcularHonorariosAdvocaticios
 };
