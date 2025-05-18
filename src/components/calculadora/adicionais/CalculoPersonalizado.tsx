@@ -9,14 +9,14 @@ import { Plus, Trash } from 'lucide-react';
 
 interface CalculoPersonalizadoProps {
   adicionais: Adicionais;
-  onChange: (name: string, value: string | boolean) => void;
+  onChange: (name: string, value: string | boolean | CustomCalculo[]) => void;
 }
 
 export const CalculoPersonalizado: React.FC<CalculoPersonalizadoProps> = ({ adicionais, onChange }) => {
   // Initialize calculosCustom if it doesn't exist
   React.useEffect(() => {
     if (!adicionais.calculosCustom) {
-      onChange('calculosCustom', []);
+      onChange('calculosCustom', [] as CustomCalculo[]);
     }
   }, [adicionais, onChange]);
 
@@ -102,7 +102,7 @@ export const CalculoPersonalizado: React.FC<CalculoPersonalizadoProps> = ({ adic
                 id: `calculo-${Date.now()}`,
                 descricao: '',
                 valor: ''
-              }]);
+              }] as CustomCalculo[]);
             }
           }}
         />

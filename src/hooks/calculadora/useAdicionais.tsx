@@ -1,12 +1,12 @@
 
-import { Adicionais } from '@/types/calculadora';
+import { Adicionais, CustomCalculo } from '@/types/calculadora';
 
 export const useAdicionais = (
   adicionais: Adicionais, 
   setAdicionais: React.Dispatch<React.SetStateAction<Adicionais>>
 ) => {
   // Função para atualizar os dados dos adicionais
-  const handleAdicionaisChange = (name: string, value: string | boolean) => {
+  const handleAdicionaisChange = (name: string, value: string | boolean | CustomCalculo[]) => {
     setAdicionais(prev => ({
       ...prev,
       [name]: value

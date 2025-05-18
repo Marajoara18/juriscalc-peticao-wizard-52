@@ -20,6 +20,10 @@ export interface PeticaoFormData {
       enabled: boolean;
       descricao: string;
       formula: string;
+      items: Array<{
+        descricao: string;
+        formula: string;
+      }>;
     };
   };
   calculosTabela?: any;

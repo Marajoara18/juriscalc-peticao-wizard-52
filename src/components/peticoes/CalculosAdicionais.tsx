@@ -132,7 +132,7 @@ const CalculosAdicionais: React.FC<CalculosAdicionaisProps> = ({
         
         {formData.calculosAdicionais.custom.enabled && (
           <div className="space-y-4 pl-4 border-l-2 border-gray-200">
-            {formData.calculosAdicionais.custom.items.map((item, index) => (
+            {formData.calculosAdicionais.custom.items && formData.calculosAdicionais.custom.items.map((item, index) => (
               <div key={index} className="space-y-3 border-b border-gray-200 pb-3 last:border-0">
                 <div className="flex justify-between items-center">
                   <h5 className="text-sm font-medium">Cálculo Personalizado {index + 1}</h5>

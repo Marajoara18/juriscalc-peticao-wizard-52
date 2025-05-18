@@ -56,6 +56,7 @@ const VerificadorCalculos: React.FC = () => {
     calcularDiferencasSalariais: false,
     valorDiferencasSalariais: '',
     calcularCustom: false,
+    calculosCustom: [],
     descricaoCustom: '',
     valorCustom: '',
     calcularSeguroDesemprego: true,
