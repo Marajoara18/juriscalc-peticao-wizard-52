@@ -203,12 +203,28 @@ export const exportToExcel = (data: ExportData, fileName?: string) => {
     const exportData = [
       ...verbasRows,
       ...adicionaisRows,
-      { 
+    ];
+    
+    // Add the total value at the end
+    if (data.totalGeral) {
+      exportData.push({ 
         "Tipo": "Total", 
         "Descrição": "VALOR TOTAL DA RECLAMAÇÃO", 
-        "Valor": data.totalGeral || 0 
-      }
-    ];
+        "Valor": data.totalGeral 
+      });
+    } else {
+      // Calculate total from verbas and adicionais if totalGeral is not provided
+      const totalVerbas = verbas.total || 0;
+      const totalAdicionais = Object.values(adicionais).reduce((sum: number, val) => 
+        sum + (typeof val === 'number' ? val : 0), 0);
+      const calculatedTotal = totalVerbas + totalAdicionais - (verbas.descontoAvisoPrevio || 0);
+      
+      exportData.push({ 
+        "Tipo": "Total", 
+        "Descrição": "VALOR TOTAL DA RECLAMAÇÃO", 
+        "Valor": calculatedTotal 
+      });
+    }
 
     // Create workbook and worksheet
     const ws = XLSX.utils.json_to_sheet(exportData);
@@ -246,8 +262,13 @@ export const exportToExcel = (data: ExportData, fileName?: string) => {
       { s: {r: 2, c: 0}, e: {r: 2, c: 2} }  // Merge third row
     );
     
-    // Shift the existing data down to make room for the header
-    const rowOffset = 4; // Number of header rows
+    // Add the IusCalc logo in Excel (as text, since adding real images requires more complex operations)
+    XLSX.utils.sheet_add_aoa(ws, [
+      ['Gerado por IusCalc - https://iuscalc.com']
+    ], { origin: { r: exportData.length + 5, c: 0 } });
+    
+    // Merge the logo row
+    ws['!merges'].push({ s: {r: exportData.length + 5, c: 0}, e: {r: exportData.length + 5, c: 2} });
     
     // Export to file
     XLSX.writeFile(wb, fileName || defaultFileName);
