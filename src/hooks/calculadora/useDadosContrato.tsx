@@ -15,7 +15,7 @@ export const useDadosContrato = (
         
         // Obter a data de demissão para configurar os dias trabalhados
         const dataDemissao = new Date(dadosContrato.dataDemissao);
-        // Agora, sempre usamos o dia do mês da data de demissão como dias trabalhados
+        // Usar o dia do mês da data de demissão exatamente como está
         const dias = dataDemissao.getDate();
         
         setDadosContrato(prev => ({
@@ -27,7 +27,7 @@ export const useDadosContrato = (
         console.error("Erro ao calcular período:", error);
       }
     }
-  }, [dadosContrato.dataAdmissao, dadosContrato.dataDemissao]);
+  }, [dadosContrato.dataAdmissao, dadosContrato.dataDemissao, setDadosContrato]);
 
   // Função para atualizar os dados do contrato
   const handleDadosContratoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
