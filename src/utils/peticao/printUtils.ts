@@ -117,6 +117,13 @@ export const handlePrint = () => {
         color: #ffffff !important;
         background-color: #0f172a !important;
       }
+      /* Esconder o logo IusCalc e informações do footer */
+      .iuscalc-logo, 
+      .calculadora-footer,
+      .iuscalc-container {
+        display: none !important;
+        visibility: hidden !important;
+      }
     }
   `;
   

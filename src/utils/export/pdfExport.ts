@@ -100,14 +100,8 @@ export const exportToPDF = () => {
           flex-direction: column;
           align-items: center;
         }
-        .iuscalc-logo {
-          height: 20px;
-          margin-right: 5px;
-        }
-        .iuscalc-container {
-          display: flex;
-          align-items: center;
-          justify-content: center;
+        .iuscalc-logo, .iuscalc-container {
+          display: none !important;
         }
       </style>
     </head>
@@ -119,13 +113,17 @@ export const exportToPDF = () => {
       ${calculosDiv.innerHTML}
       <div class="footer">
         <p>Cálculos: ${nomeEscritorio}</p>
-        <div class="iuscalc-container">
-          <img src="/lovable-uploads/caf683c7-0cb3-4ef4-8e5f-5de22f996b8a.png" alt="Logo IusCalc" class="iuscalc-logo" />
-          <span style="font-weight: bold; font-size: 0.75rem; color: #0f172a; font-family: serif;">IusCalc</span>
-        </div>
       </div>
       <script>
         setTimeout(() => {
+          // Remove any IusCalc logo elements before printing
+          const logoElements = document.querySelectorAll('.iuscalc-logo, .iuscalc-container');
+          logoElements.forEach(el => {
+            if (el && el.parentNode) {
+              el.parentNode.removeChild(el);
+            }
+          });
+          
           window.print();
           setTimeout(() => window.close(), 500);
         }, 500);

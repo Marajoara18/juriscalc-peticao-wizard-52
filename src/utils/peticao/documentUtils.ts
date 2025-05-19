@@ -127,7 +127,8 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
             }
             /* Esconder o logo IusCalc e informações do footer */
             .iuscalc-logo, 
-            .calculadora-footer {
+            .calculadora-footer,
+            .iuscalc-container {
               display: none !important;
               visibility: hidden !important;
             }
@@ -139,7 +140,7 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
             // Auto-print e fechar
             setTimeout(() => {
               // Remover elementos com classe iuscalc-logo e calculadora-footer
-              const elementsToRemove = document.querySelectorAll('.iuscalc-logo, .calculadora-footer');
+              const elementsToRemove = document.querySelectorAll('.iuscalc-logo, .calculadora-footer, .iuscalc-container');
               elementsToRemove.forEach(element => {
                 if (element && element.parentNode) {
                   element.parentNode.removeChild(element);
