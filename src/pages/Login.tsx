@@ -7,6 +7,10 @@ import RegisterForm from '@/components/auth/RegisterForm';
 import { useAuth } from '@/hooks/useAuth';
 import { LoginFormData, RegisterFormData } from '@/types/auth';
 import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { BookOpen } from 'lucide-react';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import ManualRapido from '@/components/calculadora/ManualRapido';
 
 const Login = () => {
   const [activeTab, setActiveTab] = useState('login');
@@ -45,6 +49,24 @@ const Login = () => {
             <RegisterForm onSubmit={onRegister} />
           </TabsContent>
         </Tabs>
+        
+        {/* Manual Rápido Button */}
+        <div className="flex justify-center mt-6">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button 
+                variant="outline"
+                className="border-juriscalc-navy text-juriscalc-navy hover:bg-gray-100"
+              >
+                <BookOpen className="mr-2 h-4 w-4" />
+                Manual Rápido IusCalc
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+              <ManualRapido />
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
     </div>
   );
