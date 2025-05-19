@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import DadosContratoForm from '@/components/calculadora/DadosContratoForm';
 import AdicionaisForm from '@/components/calculadora/AdicionaisForm';
 import ResultadosCalculos from '@/components/calculadora/ResultadosCalculos';
@@ -41,6 +41,11 @@ const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
   setShowCorrecaoMonetaria,
   aplicarCorrecaoMonetaria
 }) => {
+  // Forçar atualização dos cálculos salvos quando o componente for montado
+  useEffect(() => {
+    window.dispatchEvent(new Event('calculosSalvosUpdated'));
+  }, []);
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       <div>
@@ -85,23 +90,23 @@ const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
                 totalGeral={totalGeral}
               />
             </div>
-
-            {/* Cálculos Salvos agora visíveis abaixo dos resultados do cálculo */}
-            <CalculosSalvos
-              totalGeral={totalGeral}
-              dadosContrato={dadosContrato} 
-              resultados={resultados}
-              onLoadCalculo={handleLoadCalculo}
-            />
-
-            {showCorrecaoMonetaria && (
-              <CorrecaoMonetaria
-                onAplicarCorrecao={aplicarCorrecaoMonetaria}
-                totalGeral={totalGeral}
-                dataAdmissao={dadosContrato.dataAdmissao}
-              />
-            )}
           </>
+        )}
+
+        {/* Cálculos Salvos agora SEMPRE visíveis, independente de hasCalculos */}
+        <CalculosSalvos
+          totalGeral={totalGeral}
+          dadosContrato={dadosContrato} 
+          resultados={resultados}
+          onLoadCalculo={handleLoadCalculo}
+        />
+
+        {hasCalculos && showCorrecaoMonetaria && (
+          <CorrecaoMonetaria
+            onAplicarCorrecao={aplicarCorrecaoMonetaria}
+            totalGeral={totalGeral}
+            dataAdmissao={dadosContrato.dataAdmissao}
+          />
         )}
 
         {!hasCalculos && (

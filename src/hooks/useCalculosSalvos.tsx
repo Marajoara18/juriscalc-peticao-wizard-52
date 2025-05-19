@@ -24,23 +24,35 @@ export const useCalculosSalvos = (
 
   // Função para carregar cálculos salvos do localStorage
   const carregarCalculosSalvos = () => {
+    console.log('Carregando cálculos salvos do localStorage');
     const salvos = localStorage.getItem('calculosSalvos');
     if (salvos) {
       try {
-        setCalculosSalvos(JSON.parse(salvos));
+        const parsedSalvos = JSON.parse(salvos);
+        console.log('Cálculos carregados:', parsedSalvos.length);
+        setCalculosSalvos(parsedSalvos);
       } catch (error) {
         console.error('Erro ao carregar cálculos salvos:', error);
       }
+    } else {
+      console.log('Nenhum cálculo salvo encontrado no localStorage');
     }
+  };
+
+  // Função para exportar que permite recarregar os cálculos sob demanda
+  const recarregarCalculosSalvos = () => {
+    carregarCalculosSalvos();
   };
 
   // Carregar cálculos salvos quando o componente é montado
   useEffect(() => {
+    console.log('useCalculosSalvos - Efeito de montagem');
     carregarCalculosSalvos();
     
     // Adicionar um event listener para atualizar os cálculos salvos quando o localStorage mudar
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'calculosSalvos') {
+        console.log('Evento storage: calculosSalvos alterado');
         carregarCalculosSalvos();
       }
     };
@@ -60,6 +72,7 @@ export const useCalculosSalvos = (
   // Adicionar um efeito para detectar eventos personalizados de atualização
   useEffect(() => {
     const handleCustomEvent = () => {
+      console.log('Evento customizado: calculosSalvosUpdated');
       carregarCalculosSalvos();
     };
 
@@ -224,6 +237,7 @@ export const useCalculosSalvos = (
     setConfirmDialogOpen,
     setPreviewDialogOpen,
     setVerifyDialogOpen,
+    recarregarCalculosSalvos, // Exportando a função para recarregar cálculos
   };
 };
 

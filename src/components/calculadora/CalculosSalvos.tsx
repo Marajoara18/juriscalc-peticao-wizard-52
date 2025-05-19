@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
@@ -45,7 +45,14 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
     setConfirmDialogOpen,
     setPreviewDialogOpen,
     setVerifyDialogOpen,
+    recarregarCalculosSalvos
   } = useCalculosSalvos(resultados, totalGeral, dadosContrato, onLoadCalculo);
+
+  // Forçar a recarga de cálculos salvos quando o componente montar
+  useEffect(() => {
+    console.log('CalculosSalvos montado - carregando cálculos salvos');
+    recarregarCalculosSalvos();
+  }, []);
 
   return (
     <>

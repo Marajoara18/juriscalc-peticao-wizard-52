@@ -5,6 +5,7 @@ import Layout from '@/components/Layout';
 import CalculadoraContainer from '@/components/calculadora/CalculadoraContainer';
 import PrintVersionCalculadora from '@/components/calculadora/PrintVersionCalculadora';
 import useCalculadora from '@/hooks/useCalculadora';
+import { toast } from "sonner";
 
 const Calculadora = () => {
   const navigate = useNavigate();
@@ -26,15 +27,18 @@ const Calculadora = () => {
     }
   };
 
-  // Forçar atualização da lista de cálculos salvos periodicamente
+  // Forçar atualização da lista de cálculos salvos ao montar o componente e periodicamente
   useEffect(() => {
-    // Disparar evento de atualização de cálculos ao montar o componente
+    // Carregar cálculos salvos imediatamente ao montar o componente
     window.dispatchEvent(new Event('calculosSalvosUpdated'));
+    
+    // Log para debug
+    console.log('Disparando evento calculosSalvosUpdated');
     
     // Configurar intervalo para verificar se há novos cálculos
     const intervalId = setInterval(() => {
       window.dispatchEvent(new Event('calculosSalvosUpdated'));
-    }, 3000);
+    }, 2000);
     
     return () => clearInterval(intervalId);
   }, []);

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DadosContratoForm from '@/components/calculadora/DadosContratoForm';
@@ -44,6 +44,11 @@ const MobileLayout: React.FC<CalculadoraLayoutProps> = ({
   aplicarCorrecaoMonetaria
 }) => {
   const [activeTab, setActiveTab] = useState<'dados' | 'adicionais' | 'resultados'>('dados');
+  
+  // Forçar atualização dos cálculos salvos quando o componente for montado
+  useEffect(() => {
+    window.dispatchEvent(new Event('calculosSalvosUpdated'));
+  }, []);
   
   return (
     <div className="space-y-4">
@@ -112,24 +117,26 @@ const MobileLayout: React.FC<CalculadoraLayoutProps> = ({
                 isMobile={true}
               />
             </div>
-            
-            {/* Cálculos Salvos agora visíveis abaixo dos resultados do cálculo */}
-            <CalculosSalvos 
-              resultados={resultados}
-              totalGeral={totalGeral}
-              dadosContrato={dadosContrato}
-              onLoadCalculo={handleLoadCalculo}
-            />
-            
-            {/* Correção Monetária */}
-            {showCorrecaoMonetaria && (
-              <CorrecaoMonetaria 
-                onAplicarCorrecao={aplicarCorrecaoMonetaria} 
-                totalGeral={totalGeral}
-                dataAdmissao={dadosContrato.dataAdmissao}
-              />
-            )}
           </div>
+        )}
+        
+        {/* Cálculos Salvos SEMPRE visíveis, independente de hasCalculos */}
+        <div className="mt-4">
+          <CalculosSalvos 
+            resultados={resultados}
+            totalGeral={totalGeral}
+            dadosContrato={dadosContrato}
+            onLoadCalculo={handleLoadCalculo}
+          />
+        </div>
+        
+        {/* Correção Monetária */}
+        {hasCalculos && showCorrecaoMonetaria && (
+          <CorrecaoMonetaria 
+            onAplicarCorrecao={aplicarCorrecaoMonetaria} 
+            totalGeral={totalGeral}
+            dataAdmissao={dadosContrato.dataAdmissao}
+          />
         )}
       </div>
     </div>
