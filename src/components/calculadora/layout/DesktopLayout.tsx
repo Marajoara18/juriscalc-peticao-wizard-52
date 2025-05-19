@@ -1,9 +1,10 @@
+
 import React from 'react';
 import DadosContratoForm from '@/components/calculadora/DadosContratoForm';
 import AdicionaisForm from '@/components/calculadora/AdicionaisForm';
-import ResultadosSection from '@/components/calculadora/ResultadosSection';
+import ResultadosCalculos from '@/components/calculadora/ResultadosCalculos';
 import CorrecaoMonetaria from '@/components/calculadora/CorrecaoMonetaria';
-import SalvarCalculoModal from '@/components/calculadora/SalvarCalculoModal';
+import CalculosSalvos from '@/components/calculadora/CalculosSalvos';
 
 interface CalculadoraLayoutProps {
   dadosContrato: any;
@@ -19,7 +20,7 @@ interface CalculadoraLayoutProps {
   handleCalcularClick: () => void;
   handleLoadCalculo: (calculo: any) => void;
   setShowCorrecaoMonetaria: (show: boolean) => void;
-  aplicarCorrecaoMonetaria: () => void;
+  aplicarCorrecaoMonetaria: (valorCorrigido: number) => void;
 }
 
 const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
@@ -58,7 +59,7 @@ const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
         </div>
       </div>
       <div>
-        <ResultadosSection resultados={resultados} />
+        <ResultadosCalculos resultados={resultados} />
 
         {hasCalculos && (
           <>
@@ -70,13 +71,20 @@ const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
                 {showCorrecaoMonetaria ? 'Ocultar Correção Monetária' : 'Aplicar Correção Monetária'}
               </button>
 
-              <SalvarCalculoModal totalGeral={totalGeral} dadosContrato={dadosContrato} adicionais={adicionais} resultados={resultados} />
+              <CalculosSalvos
+                totalGeral={totalGeral}
+                dadosContrato={dadosContrato} 
+                adicionais={adicionais} 
+                resultados={resultados}
+                onLoadCalculo={handleLoadCalculo}
+              />
             </div>
 
             {showCorrecaoMonetaria && (
               <CorrecaoMonetaria
-                resultados={resultados}
-                aplicarCorrecaoMonetaria={aplicarCorrecaoMonetaria}
+                onAplicarCorrecao={aplicarCorrecaoMonetaria}
+                totalGeral={totalGeral}
+                dataAdmissao={dadosContrato.dataAdmissao}
               />
             )}
           </>

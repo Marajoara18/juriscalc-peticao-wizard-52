@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,7 +19,7 @@ interface CalculadoraLayoutProps {
   handleDadosContratoChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleCheckboxChange: (field: string, checked: boolean) => void;
   handleTipoRescisaoChange: (value: string) => void;
-  handleAdicionaisChange: (name: string, value: string | boolean) => void;
+  handleAdicionaisChange: (name: string, value: string | boolean | any) => void;
   handleCalcularClick: () => void;
   handleLoadCalculo: (calculo: any) => void;
   setShowCorrecaoMonetaria: React.Dispatch<React.SetStateAction<boolean>>;
@@ -65,6 +66,7 @@ const MobileLayout: React.FC<CalculadoraLayoutProps> = ({
           <TabsContent value="adicionais">
             <AdicionaisForm 
               adicionais={adicionais}
+              dadosContrato={dadosContrato}
               onChange={handleAdicionaisChange}
             />
           </TabsContent>
