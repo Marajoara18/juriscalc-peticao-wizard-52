@@ -10,16 +10,18 @@ const KEY_CONTADOR_CALCULOS = 'calculosRealizados';
 const PremiumAlert = () => {
   const [showSubscription, setShowSubscription] = useState(false);
   const [calculosRestantes, setCalculosRestantes] = useState<number>(LIMITE_CALCULOS_GRATUITOS);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [isPremium, setIsPremium] = useState<boolean>(false);
   
   useEffect(() => {
     const userId = localStorage.getItem('userId');
-    const userEmail = localStorage.getItem('userEmail');
-    const adminStatus = localStorage.getItem('userIsAdmin') === 'true';
-    setIsAdmin(adminStatus);
     
-    // Se for admin ou for o e-mail específico do admin mestre, não exibir alerta
-    if (adminStatus || userEmail === 'johnnysantos_177@msn.com' || userEmail === 'admin@juriscalc.com') {
+    // Verificar acesso premium diretamente do localStorage
+    const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+    const currentUser = allUsers.find((u: any) => u.id === userId);
+    
+    // Se for admin ou tiver marcado como premium, considere-o premium
+    if (currentUser && (currentUser.isAdmin || currentUser.isPremium)) {
+      setIsPremium(true);
       return;
     }
     
@@ -31,10 +33,11 @@ const PremiumAlert = () => {
     
     const restantes = Math.max(0, LIMITE_CALCULOS_GRATUITOS - calculosRealizados);
     setCalculosRestantes(restantes);
+    setIsPremium(false);
   }, []);
   
-  // Se for admin, não exibir alerta
-  if (isAdmin) return null;
+  // Se for premium, não exibir alerta
+  if (isPremium) return null;
   
   return (
     <>

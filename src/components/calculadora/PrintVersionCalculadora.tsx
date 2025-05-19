@@ -12,9 +12,18 @@ const PrintVersionCalculadora: React.FC<PrintVersionCalculadoraProps> = ({ resul
     return null;
   }
 
+  // Calcular o total geral (soma das verbas rescisórias e adicionais)
+  const totalVerbas = resultados.verbasRescisorias?.total || 0;
+  const totalAdicionais = Object.values(resultados.adicionais || {}).reduce(
+    (sum: number, valor: any) => sum + (typeof valor === 'number' ? valor : 0), 
+    0
+  );
+  const totalGeral = totalVerbas + totalAdicionais;
+
   // Dados necessários para o demonstrativo
   const calculos = {
     ...resultados,
+    totalGeral,
     timestamp: new Date().toISOString(),
     nomeEscritorio: localStorage.getItem('userName') || 'IusCalc',
   };

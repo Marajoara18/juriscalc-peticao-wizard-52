@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FileText, Calculator, Crown } from "lucide-react";
@@ -13,18 +12,13 @@ const Header = () => {
   
   useEffect(() => {
     const userId = localStorage.getItem('userId');
-    const userEmail = localStorage.getItem('userEmail');
-    const isAdmin = localStorage.getItem('userIsAdmin') === 'true';
     
     // Verificar acesso premium diretamente do localStorage para garantir atualização em tempo real
     const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
     const currentUser = allUsers.find((u: any) => u.id === userId);
     
-    // Se for admin mestre ou tiver marcado como premium, considere-o premium
-    if (isAdmin || 
-        userEmail === 'johnnysantos_177@msn.com' || 
-        userEmail === 'admin@juriscalc.com' ||
-        (currentUser && currentUser.isPremium)) {
+    // Se for admin ou tiver marcado como premium, considere-o premium
+    if (currentUser && (currentUser.isAdmin || currentUser.isPremium)) {
       setIsPremium(true);
       return;
     }

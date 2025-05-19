@@ -15,13 +15,13 @@ export const ResetSuccessMessage: React.FC<ResetSuccessMessageProps> = ({ onRedi
       </div>
       <h3 className="text-lg font-medium">Senha redefinida com sucesso!</h3>
       <p className="text-sm text-gray-500">
-        Agora você pode fazer login com sua nova senha.
+        Sua senha foi alterada. Agora você pode fazer login com sua nova senha.
       </p>
       <Button 
         onClick={onRedirectToLogin}
-        className="bg-juriscalc-navy hover:bg-opacity-90 mt-4"
+        className="w-full bg-juriscalc-navy hover:bg-opacity-90 mt-4"
       >
-        Ir para o Login
+        Ir para Login
       </Button>
     </div>
   );

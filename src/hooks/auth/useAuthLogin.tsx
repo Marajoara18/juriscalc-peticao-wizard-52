@@ -46,6 +46,9 @@ export const useAuthLogin = () => {
         localStorage.setItem('allUsers', JSON.stringify(allUsers));
       }
     }
+    
+    // Atualizar valores no localStorage
+    localStorage.setItem('isPremiumInitialized', 'true');
   };
 
   const handleLogin = (data: LoginFormData) => {
@@ -70,29 +73,13 @@ export const useAuthLogin = () => {
       return;
     }
     
-    // Verificar se é o admin mestre e atualizar seus privilégios
-    if (user.email === 'admin@juriscalc.com' || user.email === 'johnnysantos_177@msn.com') {
-      user.isAdmin = true;
-      user.canViewPanels = true;
-      user.isPremium = true;
-      
-      // Atualizar o usuário no array
-      const updatedUsers = allUsers.map((u: User) => 
-        (u.email === 'admin@juriscalc.com' || u.email === 'johnnysantos_177@msn.com') 
-          ? {...u, isAdmin: true, canViewPanels: true, isPremium: true} 
-          : u
-      );
-      
-      localStorage.setItem('allUsers', JSON.stringify(updatedUsers));
-    }
-    
     // Login bem-sucedido
     localStorage.setItem('userId', user.id);
     localStorage.setItem('userEmail', user.email);
     localStorage.setItem('userName', user.nome);
     localStorage.setItem('userIsAdmin', String(user.isAdmin));
     localStorage.setItem('canViewPanels', String(!!user.canViewPanels));
-    localStorage.setItem('isPremium', String(!!user.isPremium));
+    localStorage.setItem('isPremium', String(!!user.isPremium || !!user.isAdmin));
     
     if (user.logoUrl) {
       localStorage.setItem('userLogoUrl', user.logoUrl);
