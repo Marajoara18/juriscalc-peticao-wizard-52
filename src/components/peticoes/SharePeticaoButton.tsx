@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
-import { Share2, Mail, WhatsApp } from 'lucide-react';
+import { Share2, Mail, MessageSquare } from 'lucide-react';
 import { toast } from "sonner";
 
 interface SharePeticaoButtonProps {
@@ -80,7 +80,7 @@ Para visualizar a petição completa, acesse o IusCalc com o ID: ${id}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleShareWhatsApp}>
-          <WhatsApp className="mr-2 h-4 w-4" />
+          <MessageSquare className="mr-2 h-4 w-4" />
           Compartilhar via WhatsApp
         </DropdownMenuItem>
       </DropdownMenuContent>

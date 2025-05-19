@@ -9,7 +9,7 @@ import {
   DropdownMenuLabel
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Share2, FileText, Mail, WhatsApp } from "lucide-react";
+import { Share2, FileText, Mail, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { exportToPDF, shareViaWhatsApp, shareViaEmail, generateCalculationText } from '@/utils/exportUtils';
 
@@ -76,7 +76,7 @@ const ShareOptionsButton: React.FC<ShareOptionsButtonProps> = ({
           className="flex-1 bg-green-600 hover:bg-green-700"
           size="sm"
         >
-          <WhatsApp className="mr-2 h-4 w-4" />
+          <MessageSquare className="mr-2 h-4 w-4" />
           WhatsApp
         </Button>
       </div>
@@ -104,7 +104,7 @@ const ShareOptionsButton: React.FC<ShareOptionsButtonProps> = ({
           Compartilhar por E-mail
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleShareWhatsApp}>
-          <WhatsApp className="mr-2 h-4 w-4" />
+          <MessageSquare className="mr-2 h-4 w-4" />
           Compartilhar via WhatsApp
         </DropdownMenuItem>
       </DropdownMenuContent>
