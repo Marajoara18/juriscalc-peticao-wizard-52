@@ -59,7 +59,11 @@ const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
         </div>
       </div>
       <div>
-        <ResultadosCalculos resultados={resultados} />
+        <ResultadosCalculos 
+          resultados={resultados} 
+          adicionais={adicionais}
+          dadosContrato={dadosContrato}
+        />
 
         {hasCalculos && (
           <>
@@ -74,7 +78,6 @@ const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
               <CalculosSalvos
                 totalGeral={totalGeral}
                 dadosContrato={dadosContrato} 
-                adicionais={adicionais} 
                 resultados={resultados}
                 onLoadCalculo={handleLoadCalculo}
               />
