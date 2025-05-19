@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FileText, Calculator, Crown, User } from "lucide-react";
@@ -74,13 +73,6 @@ const Header = () => {
           >
             <Calculator className="mr-2 h-4 w-4" />
             Calculadora
-          </Button>
-          <Button 
-            className="bg-juriscalc-gold text-juriscalc-navy hover:bg-opacity-90"
-            onClick={handleNewPeticao}
-          >
-            <FileText className="mr-2 h-4 w-4" />
-            Nova Petição
           </Button>
           <Button 
             className="bg-white text-juriscalc-navy hover:bg-gray-100"
