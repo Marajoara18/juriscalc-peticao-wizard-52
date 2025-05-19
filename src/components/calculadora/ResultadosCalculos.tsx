@@ -145,12 +145,12 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
         <span className="font-medium">{formatarMoeda(subTotal)}</span>
       </div>
       
-      {/* Total Geral */}
+      {/* Total Geral - com cores invertidas */}
       <div 
         className={cn(
           "flex justify-between p-3 rounded-md", 
-          "bg-juriscalc-navy text-white",
-          "dark:bg-juriscalc-navy dark:text-white"
+          "bg-white text-juriscalc-navy border border-juriscalc-navy",
+          "dark:bg-white dark:text-juriscalc-navy dark:border-juriscalc-navy"
         )}
       >
         <span className="font-bold text-lg">TOTAL GERAL</span>

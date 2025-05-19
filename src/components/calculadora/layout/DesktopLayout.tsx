@@ -86,7 +86,7 @@ const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
               />
             </div>
 
-            {/* Cálculos Salvos */}
+            {/* Cálculos Salvos agora visíveis abaixo dos resultados do cálculo */}
             <CalculosSalvos
               totalGeral={totalGeral}
               dadosContrato={dadosContrato} 

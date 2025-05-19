@@ -62,7 +62,7 @@ export const criarHTMLCalculosEmbutidos = (calculos: any) => {
         ${renderVerbasRescisoriasHTML(verbasRescisorias)}
         ${renderAdicionaisHTML(adicionais, calculos)}
         
-        <div style="background-color: #0f172a; padding: 0.5rem; border-radius: 0.375rem; color: white; margin-top: 0.5rem;">
+        <div style="background-color: white; color: #0f172a; padding: 0.5rem; border-radius: 0.375rem; border: 1px solid #0f172a; margin-top: 0.5rem;">
           <div style="text-align: center;">
             <p style="font-size: 0.7rem; font-weight: 500;">VALOR TOTAL DA RECLAMAÇÃO</p>
             <p style="font-size: 0.85rem; font-weight: 700;">${formatarValor(totalGeral)}</p>

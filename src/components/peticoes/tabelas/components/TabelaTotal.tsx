@@ -12,7 +12,7 @@ const TabelaTotal: React.FC<TabelaTotalProps> = ({
   tipoRescisao = 'sem_justa_causa' 
 }) => {
   return (
-    <div className="bg-juriscalc-navy p-4 rounded-md text-white">
+    <div className="bg-white p-4 rounded-md text-juriscalc-navy border border-juriscalc-navy">
       <div className="text-center">
         <p className="text-sm font-medium mb-2 uppercase">VALOR TOTAL DA RECLAMAÇÃO</p>
         <p className="text-2xl font-bold">

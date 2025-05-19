@@ -90,7 +90,6 @@ const MobileLayout: React.FC<CalculadoraLayoutProps> = ({
           resultados={resultados} 
           adicionais={adicionais}
           dadosContrato={dadosContrato}
-          onLoadCalculo={handleLoadCalculo}
         />
         
         {/* Mostrar opções pós-cálculo quando os cálculos estiverem prontos */}
@@ -114,7 +113,7 @@ const MobileLayout: React.FC<CalculadoraLayoutProps> = ({
               />
             </div>
             
-            {/* Cálculos Salvos */}
+            {/* Cálculos Salvos agora visíveis abaixo dos resultados do cálculo */}
             <CalculosSalvos 
               resultados={resultados}
               totalGeral={totalGeral}
