@@ -7,7 +7,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
-import { Download, FilePdf, FileExcel } from "lucide-react";
+import { Download, FileText, FileSpreadsheet } from "lucide-react";
 import { handlePrint } from '@/utils/peticaoUtils';
 import { toast } from "sonner";
 import * as XLSX from 'xlsx';
@@ -148,11 +148,11 @@ const ExportResultsButton: React.FC<ExportResultsButtonProps> = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={handleExportPDF}>
-          <FilePdf className="h-4 w-4 mr-2" />
+          <FileText className="h-4 w-4 mr-2" />
           <span>Exportar como PDF</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleExportExcel}>
-          <FileExcel className="h-4 w-4 mr-2" />
+          <FileSpreadsheet className="h-4 w-4 mr-2" />
           <span>Exportar como Excel</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

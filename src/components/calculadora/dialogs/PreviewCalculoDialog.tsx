@@ -2,7 +2,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Download, FilePdf, FileExcel } from "lucide-react";
+import { Download, FileText, FileSpreadsheet } from "lucide-react";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -190,11 +190,11 @@ const PreviewCalculoDialog: React.FC<PreviewCalculoDialogProps> = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={handleExportPDF}>
-                <FilePdf className="h-4 w-4 mr-2" />
+                <FileText className="h-4 w-4 mr-2" />
                 <span>Exportar como PDF</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleExportExcel}>
-                <FileExcel className="h-4 w-4 mr-2" />
+                <FileSpreadsheet className="h-4 w-4 mr-2" />
                 <span>Exportar como Excel</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
