@@ -89,11 +89,12 @@ export const handlePrint = () => {
       .whitespace-pre-wrap {
         white-space: pre-wrap !important;
       }
-      /* Estilo para o valor total */
-      .bg-juriscalc-navy, .print\\:bg-gray-200 {
-        background-color: #f2f2f2 !important;
+      /* Estilo para o valor total - atualizado para fundo branco */
+      .print\\:bg-white, .print\\:bg-gray-200 {
+        background-color: #ffffff !important;
         color: #000000 !important;
         font-weight: bold !important;
+        border: 1px solid #ddd !important;
       }
       .print\\:text-black {
         color: #000000 !important;

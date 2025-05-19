@@ -73,7 +73,7 @@ export const exportToPDF = () => {
           margin-bottom: 20px;
         }
         .grand-total {
-          background-color: #f9f9f9;
+          background-color: #ffffff;
           padding: 10px;
           border: 1px solid #ddd;
           font-weight: bold;

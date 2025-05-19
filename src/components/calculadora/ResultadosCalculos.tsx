@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card } from '@/components/ui/card';
@@ -170,8 +169,8 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
       <div 
         className={cn(
           "flex justify-between p-3 rounded-md", 
-          "bg-white text-juriscalc-navy border border-juriscalc-navy",
-          "dark:bg-white dark:text-juriscalc-navy dark:border-juriscalc-navy"
+          "bg-white text-black border border-gray-300",
+          "dark:bg-white dark:text-black dark:border-gray-300"
         )}
       >
         <span className="font-bold text-lg">TOTAL GERAL</span>
