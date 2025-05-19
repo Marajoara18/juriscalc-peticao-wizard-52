@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FileText, Calculator, Crown } from "lucide-react";
+import { FileText, Calculator, Crown, User } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import SubscriptionManager from '@/components/peticoes/SubscriptionManager';
@@ -32,6 +33,11 @@ const Header = () => {
   
   const handleCalculadora = () => {
     navigate('/calculadora');
+  };
+  
+  const handleUserClick = () => {
+    // Navigate to the user account view in peticoes
+    navigate('/peticoes', { state: { initialView: 'user' } });
   };
   
   return (
@@ -75,6 +81,14 @@ const Header = () => {
           >
             <FileText className="mr-2 h-4 w-4" />
             Nova Petição
+          </Button>
+          <Button 
+            variant="outline" 
+            className="border-white text-white hover:bg-juriscalc-navy/20"
+            onClick={handleUserClick}
+          >
+            <User className="mr-2 h-4 w-4" />
+            Minha Conta
           </Button>
         </div>
       </div>

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Plus, User } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface PeticoesHeaderProps {
@@ -19,14 +19,6 @@ const PeticoesHeader = ({ onNewPeticao, onUserClick }: PeticoesHeaderProps) => {
         >
           <Plus className="mr-2 h-4 w-4" />
           Nova Petição
-        </Button>
-        <Button 
-          variant="outline" 
-          className="border-juriscalc-navy text-juriscalc-navy"
-          onClick={onUserClick}
-        >
-          <User className="mr-2 h-4 w-4" />
-          Minha Conta
         </Button>
       </div>
     </div>
