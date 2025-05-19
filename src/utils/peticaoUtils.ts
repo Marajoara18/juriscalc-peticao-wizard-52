@@ -217,6 +217,11 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
               font-size: 0.75rem;
               color: #6b7280;
             }
+            /* Preservar estilos da tabela de cálculos */
+            .bg-juriscalc-navy {
+              background-color: #0f172a !important;
+              color: white !important;
+            }
           </style>
         </head>
         <body>

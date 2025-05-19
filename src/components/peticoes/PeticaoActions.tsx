@@ -18,12 +18,12 @@ const PeticaoActions: React.FC<PeticaoActionsProps> = ({
   isFinalized = false
 }) => {
   const handlePrint = () => {
-    // Usamos o ID específico do elemento de preview da petição
+    // Usar o ID específico do elemento de preview da petição
     printDocument('peticao-preview');
   };
 
   const handleExportPDF = () => {
-    // Usamos o ID específico do elemento de preview da petição para exportar como PDF
+    // Usar o ID específico do elemento de preview da petição para exportar como PDF
     printDocument('peticao-preview', true);
   };
 
