@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card } from '@/components/ui/card';
@@ -10,6 +9,7 @@ import ExportResultsButton from './ExportResultsButton';
 import { Mail, Share2 } from 'lucide-react';
 import { toast } from "sonner";
 import { shareViaWhatsApp, shareViaEmail, generateCalculationText } from '@/utils/exportUtils';
+import ResultadosPrintable from './ResultadosPrintable';
 
 interface ResultadosCalculosProps {
   resultados: any; 
@@ -179,9 +179,8 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
         </span>
       </div>
       
-      {/* Botões de ação abaixo do Total Geral - removido botão de Atualização Monetária */}
+      {/* Botões de ação abaixo do Total Geral */}
       <div className="mt-4 flex flex-wrap gap-2 justify-end print:hidden">
-        {/* Botão de compartilhar via WhatsApp */}
         <Button 
           variant="outline"
           className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
@@ -191,7 +190,6 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
           WhatsApp
         </Button>
         
-        {/* Botão de compartilhar via E-mail */}
         <Button 
           variant="outline"
           className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
@@ -201,9 +199,11 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
           E-mail
         </Button>
         
-        {/* Botão de exportar (existente) */}
         <ExportResultsButton resultados={resultados} />
       </div>
+      
+      {/* Componente para impressão em PDF - invisível na interface */}
+      <ResultadosPrintable resultados={resultados} />
     </Card>
   );
 };

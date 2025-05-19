@@ -2,10 +2,11 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { FileText } from 'lucide-react'; // Changed FilePdf to FileText
+import { FileText } from 'lucide-react';
 import ExportDropdown from '@/components/calculadora/ExportDropdown';
 import PreviewCalculoContent from './PreviewCalculoContent';
 import { exportToPDF } from '@/utils/exportUtils';
+import ResultadosPrintable from '../ResultadosPrintable';
 
 interface CalculoSalvo {
   id: string;
@@ -53,6 +54,7 @@ const PreviewCalculoDialog: React.FC<PreviewCalculoDialogProps> = ({
         </DialogHeader>
         <div className="py-4 print:py-0">
           {calculo && <PreviewCalculoContent calculo={calculo} />}
+          {calculo && <ResultadosPrintable resultados={calculo} />}
         </div>
         <DialogFooter className="print:hidden flex flex-wrap gap-2 justify-end sm:justify-between">
           <Button 
@@ -60,7 +62,7 @@ const PreviewCalculoDialog: React.FC<PreviewCalculoDialogProps> = ({
             onClick={handleExportPDF}
             className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
           >
-            <FileText className="h-4 w-4 mr-2" /> {/* Changed FilePdf to FileText */}
+            <FileText className="h-4 w-4 mr-2" />
             Exportar como PDF
           </Button>
           <div className="flex gap-2">

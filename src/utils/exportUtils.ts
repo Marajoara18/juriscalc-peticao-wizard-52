@@ -1,6 +1,6 @@
+
 import * as XLSX from 'xlsx';
 import { toast } from "sonner";
-import { handlePrint } from './peticaoUtils';
 
 type ExportData = {
   verbasRescisorias?: Record<string, any>;
@@ -8,10 +8,96 @@ type ExportData = {
   totalGeral?: number;
 };
 
-// Modified to properly use print functionality instead of just showing dialog
+// Modified to properly use print functionality with a focused content
 export const exportToPDF = () => {
-  // Use the print handler which correctly formats the document for PDF printing
-  handlePrint();
+  // Create a dedicated print window for just the results
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) {
+    toast.error('Não foi possível abrir a janela de impressão. Verifique se o bloqueador de pop-ups está desativado.');
+    return;
+  }
+
+  // Get calculation results from the hidden print-only div
+  const calculosDiv = document.getElementById('print-results-only');
+  if (!calculosDiv) {
+    toast.error('Não foi possível encontrar os resultados para impressão.');
+    return;
+  }
+
+  // Write the focused content to the print window
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Resultados do Cálculo</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          line-height: 1.6;
+          color: #333;
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 20px;
+        }
+        h1 {
+          font-size: 18px;
+          text-align: center;
+          margin-bottom: 20px;
+          border-bottom: 1px solid #ddd;
+          padding-bottom: 10px;
+        }
+        .result-item {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 8px;
+        }
+        .result-label {
+          font-weight: normal;
+        }
+        .result-value {
+          font-weight: normal;
+        }
+        .total {
+          font-weight: bold;
+          border-top: 1px solid #ddd;
+          padding-top: 8px;
+          margin-top: 8px;
+        }
+        .section {
+          margin-bottom: 20px;
+        }
+        .grand-total {
+          background-color: #f9f9f9;
+          padding: 10px;
+          border: 1px solid #ddd;
+          font-weight: bold;
+          text-align: center;
+          margin-top: 20px;
+        }
+        .footer {
+          margin-top: 30px;
+          font-size: 12px;
+          text-align: center;
+          color: #666;
+        }
+      </style>
+    </head>
+    <body>
+      ${calculosDiv.innerHTML}
+      <div class="footer">
+        <p>Gerado por IusCalc</p>
+      </div>
+      <script>
+        setTimeout(() => {
+          window.print();
+          setTimeout(() => window.close(), 500);
+        }, 500);
+      </script>
+    </body>
+    </html>
+  `);
+
+  printWindow.document.close();
   toast.success('Demonstrativo de cálculos enviado para impressão como PDF!');
 };
 

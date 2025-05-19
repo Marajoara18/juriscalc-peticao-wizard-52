@@ -3,9 +3,7 @@ import React, { useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import CalculadoraContainer from '@/components/calculadora/CalculadoraContainer';
-import PrintVersionCalculadora from '@/components/calculadora/PrintVersionCalculadora';
 import useCalculadora from '@/hooks/useCalculadora';
-import { toast } from "sonner";
 
 const Calculadora = () => {
   const navigate = useNavigate();
@@ -49,13 +47,6 @@ const Calculadora = () => {
         <div ref={calculosSalvosRef}>
           <CalculadoraContainer 
             scrollToCalculosSalvos={scrollToCalculosSalvos}
-          />
-        </div>
-        {/* Versão apenas para impressão - separada da visualização normal */}
-        <div id="print-content" className="print:block hidden">
-          <PrintVersionCalculadora 
-            resultados={resultados} 
-            dadosContrato={dadosContrato}
           />
         </div>
       </div>
