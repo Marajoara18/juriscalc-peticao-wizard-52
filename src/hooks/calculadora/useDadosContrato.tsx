@@ -13,9 +13,9 @@ export const useDadosContrato = (
       try {
         const meses = calcularMesesEntreDatas(dadosContrato.dataAdmissao, dadosContrato.dataDemissao);
         
-        // Obter a data de demissão para configurar os dias trabalhados
+        // Obter o dia exato da data de demissão sem nenhuma alteração
         const dataDemissao = new Date(dadosContrato.dataDemissao);
-        // Usar o dia do mês da data de demissão exatamente como está
+        // Usar o dia do mês da data de demissão exatamente como está, sem qualquer modificação
         const dias = dataDemissao.getDate();
         
         setDadosContrato(prev => ({
