@@ -77,7 +77,7 @@ const ManualRapido: React.FC = () => {
         <ul className="list-disc pl-6">
           <li className="mb-1"><strong>Verifique os cálculos antes de exportar:</strong> É sempre bom revisar os valores, especialmente se houver ajustes nos adicionais e multas.</li>
           <li className="mb-1"><strong>Organize suas petições:</strong> Use a função de Salvar petições com regularidade para garantir que você tenha um histórico organizado de todas as suas solicitações.</li>
-          <li>Se precisar de ajuda adicional, entre em contato com o suporte através do e-mail de contato localizado no canto superior direito da tela.</li>
+          <li>Se precisar de ajuda adicional, entre em contato com o suporte através do e-mail de contato localizado no canto inferior direito da tela.</li>
         </ul>
       </div>
     </div>
