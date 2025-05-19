@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { 
   DropdownMenu, 
@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
-import { Share2, Mail, MessageCircle } from 'lucide-react';
+import { Share2, Mail, WhatsApp } from 'lucide-react';
 import { toast } from "sonner";
 
 interface SharePeticaoButtonProps {
@@ -54,11 +54,11 @@ const SharePeticaoButton: React.FC<SharePeticaoButtonProps> = ({
 
   const handleShareWhatsApp = () => {
     const text = encodeURIComponent(`
-      *Petição: ${titulo}*
-      
-      Criada no IusCalc
-      
-      Para visualizar a petição completa, acesse o IusCalc com o ID: ${id}
+*Petição: ${titulo}*
+
+Criada no IusCalc
+
+Para visualizar a petição completa, acesse o IusCalc com o ID: ${id}
     `);
     
     window.open(`https://wa.me/?text=${text}`);
@@ -80,7 +80,7 @@ const SharePeticaoButton: React.FC<SharePeticaoButtonProps> = ({
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleShareWhatsApp}>
-          <MessageCircle className="mr-2 h-4 w-4" />
+          <WhatsApp className="mr-2 h-4 w-4" />
           Compartilhar via WhatsApp
         </DropdownMenuItem>
       </DropdownMenuContent>

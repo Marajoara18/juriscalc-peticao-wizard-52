@@ -22,8 +22,8 @@ const Calculadora = () => {
     <Layout>
       <div className="container mx-auto py-10 px-4">
         <CalculadoraContainer />
-        {/* Versão apenas para impressão */}
-        <div id="print-content">
+        {/* Versão apenas para impressão - separada da visualização normal */}
+        <div id="print-content" className="print:block hidden">
           <PrintVersionCalculadora resultados={resultados} />
         </div>
       </div>

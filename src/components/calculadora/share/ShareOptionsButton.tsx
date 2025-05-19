@@ -9,9 +9,9 @@ import {
   DropdownMenuLabel
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Share2, FileText, Mail, MessageCircle } from "lucide-react";
+import { Share2, FileText, Mail, WhatsApp } from "lucide-react";
 import { toast } from "sonner";
-import { exportToPDF } from '@/utils/exportUtils';
+import { exportToPDF, shareViaWhatsApp, shareViaEmail, generateCalculationText } from '@/utils/exportUtils';
 
 interface ShareOptionsButtonProps {
   resultados: any;
@@ -37,32 +37,17 @@ const ShareOptionsButton: React.FC<ShareOptionsButtonProps> = ({
 
   const handleShareEmail = () => {
     const subject = encodeURIComponent("Cálculos Trabalhistas - IusCalc");
-    const body = encodeURIComponent(`
-      Olá,
-      
-      Segue o demonstrativo de cálculos trabalhistas gerado pelo IusCalc.
-      
-      Valor total da reclamação: ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalGeral)}
-      
-      Acesse o IusCalc para mais cálculos: https://iuscalc.com
-    `);
+    const body = generateCalculationText(resultados);
     
-    window.open(`mailto:?subject=${subject}&body=${body}`);
+    shareViaEmail(subject, body);
     toast.success("Preparando e-mail com os cálculos");
   };
 
   const handleShareWhatsApp = () => {
-    const text = encodeURIComponent(`
-      *Cálculos Trabalhistas - IusCalc*
-      
-      Demonstrativo de cálculos trabalhistas
-      
-      Valor total da reclamação: ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalGeral)}
-      
-      Acesse o IusCalc para mais cálculos: https://iuscalc.com
-    `);
+    // Use the enhanced text generation function for WhatsApp sharing
+    const text = generateCalculationText(resultados);
     
-    window.open(`https://wa.me/?text=${text}`);
+    shareViaWhatsApp(text);
     toast.success("Compartilhando cálculos via WhatsApp");
   };
 
@@ -91,7 +76,7 @@ const ShareOptionsButton: React.FC<ShareOptionsButtonProps> = ({
           className="flex-1 bg-green-600 hover:bg-green-700"
           size="sm"
         >
-          <MessageCircle className="mr-2 h-4 w-4" />
+          <WhatsApp className="mr-2 h-4 w-4" />
           WhatsApp
         </Button>
       </div>
@@ -119,7 +104,7 @@ const ShareOptionsButton: React.FC<ShareOptionsButtonProps> = ({
           Compartilhar por E-mail
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleShareWhatsApp}>
-          <MessageCircle className="mr-2 h-4 w-4" />
+          <WhatsApp className="mr-2 h-4 w-4" />
           Compartilhar via WhatsApp
         </DropdownMenuItem>
       </DropdownMenuContent>
