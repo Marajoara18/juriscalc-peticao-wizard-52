@@ -4,9 +4,10 @@ import { formatarMoeda, formatarData } from '@/utils/formatters';
 
 interface PrintVersionCalculadoraProps {
   resultados: any;
+  dadosContrato?: any;
 }
 
-const PrintVersionCalculadora: React.FC<PrintVersionCalculadoraProps> = ({ resultados }) => {
+const PrintVersionCalculadora: React.FC<PrintVersionCalculadoraProps> = ({ resultados, dadosContrato }) => {
   // Não renderizar nada se não houver resultados
   if (!resultados || (!resultados.verbasRescisorias && !resultados.adicionais)) {
     return null;
@@ -23,147 +24,232 @@ const PrintVersionCalculadora: React.FC<PrintVersionCalculadoraProps> = ({ resul
   
   const totalGeral = totalVerbas + totalAdicionais;
 
-  // Dados necessários para o demonstrativo
-  const nomeEscritorio = localStorage.getItem('userName') || 'Administrador';
-  const dataAtual = new Date().toLocaleDateString('pt-BR');
-  
-  // Filtrar apenas verbas rescisórias com valores positivos
-  const verbasPositivas = Object.entries(verbas)
-    .filter(([chave, valor]) => 
-      typeof valor === 'number' && 
-      valor > 0 && 
-      chave !== 'total' && 
-      chave !== 'descontoAvisoPrevio'
-    )
-    .map(([chave, valor]) => ({
-      descricao: 
-        chave === 'saldoSalario' ? 'Saldo de Salário' :
-        chave === 'avisoPrevia' ? 'Aviso Prévio' :
-        chave === 'decimoTerceiro' ? '13º Salário Proporcional' :
-        chave === 'ferias' ? 'Férias Proporcionais' :
-        chave === 'tercoConstitucional' ? '1/3 Constitucional' :
-        chave === 'fgts' ? 'FGTS sobre verbas' :
-        chave === 'multaFgts' ? 'Multa FGTS (40%)' : chave,
-      valor: valor as number
-    }));
-
-  // Filtrar adicionais com valores positivos
-  const adicionaisPositivos = Object.entries(adicionais)
-    .filter(([chave, valor]) => 
-      typeof valor === 'number' && 
-      valor > 0 && 
-      chave !== 'total' && 
-      chave !== 'honorariosAdvocaticios'
-    )
-    .map(([chave, valor]) => ({
-      descricao: 
-        chave === 'adicionalInsalubridade' ? 'Adicional de Insalubridade' :
-        chave === 'adicionalPericulosidade' ? 'Adicional de Periculosidade' :
-        chave === 'multa467' ? 'Multa Art. 467 CLT' :
-        chave === 'multa477' ? 'Multa Art. 477 CLT' :
-        chave === 'adicionalNoturno' ? 'Adicional Noturno' :
-        chave === 'horasExtras' ? 'Horas Extras' :
-        chave === 'feriasVencidas' ? 'Férias Vencidas' :
-        chave === 'indenizacaoDemissao' ? 'Indenização por Demissão' :
-        chave === 'valeTransporte' ? 'Vale Transporte' :
-        chave === 'valeAlimentacao' ? 'Vale Alimentação' :
-        chave === 'adicionalTransferencia' ? 'Adicional de Transferência' :
-        chave === 'descontosIndevidos' ? 'Descontos Indevidos' :
-        chave === 'diferencasSalariais' ? 'Diferenças Salariais' :
-        chave === 'customCalculo' ? 'Cálculo Personalizado' :
-        chave === 'seguroDesemprego' ? 'Seguro Desemprego' : chave,
-      valor: valor as number
-    }));
-
-  // Verificar se há desconto de aviso prévio
-  const temDescontoAvisoPrevio = verbas.descontoAvisoPrevio > 0;
-
   return (
     <div className="hidden print:block print:p-4">
       <div className="max-w-4xl mx-auto">
-        <h2 className="text-center text-xl font-bold mb-2">DEMONSTRATIVO DE CÁLCULOS TRABALHISTAS</h2>
-        <div className="border-b-2 border-gray-800 mb-2"></div>
-        <div className="text-right mb-4 text-sm">Gerado em: {dataAtual}</div>
+        <h2 className="text-center text-xl font-bold mb-4">Calculadora de Verbas Trabalhistas</h2>
         
-        {/* Verbas Rescisórias */}
-        <div className="mb-8">
-          <h3 className="font-bold mb-2">1. VERBAS RESCISÓRIAS</h3>
-          <table className="w-full border-collapse">
-            <thead>
-              <tr>
-                <th className="border border-gray-700 p-2 text-left">Descrição</th>
-                <th className="border border-gray-700 p-2 text-right">Valor</th>
-              </tr>
-            </thead>
-            <tbody>
-              {verbasPositivas.map((item, index) => (
-                <tr key={`verbas-${index}`}>
-                  <td className="border border-gray-700 p-2">{item.descricao}</td>
-                  <td className="border border-gray-700 p-2 text-right">{formatarMoeda(item.valor)}</td>
-                </tr>
-              ))}
-              
-              {/* Mostrar desconto do aviso prévio se for aplicável */}
-              {temDescontoAvisoPrevio && (
-                <tr className="text-red-600">
-                  <td className="border border-gray-700 p-2">Desconto Aviso Prévio não cumprido</td>
-                  <td className="border border-gray-700 p-2 text-right">- {formatarMoeda(verbas.descontoAvisoPrevio)}</td>
-                </tr>
-              )}
-
-              <tr className="font-bold">
-                <td className="border border-gray-700 p-2">Total Verbas Rescisórias</td>
-                <td className="border border-gray-700 p-2 text-right">{formatarMoeda(verbas.total || 0)}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        
-        {/* Adicionais e Multas - apenas se houver */}
-        {adicionaisPositivos.length > 0 && (
-          <div className="mb-8">
-            <h3 className="font-bold mb-2">2. ADICIONAIS E MULTAS</h3>
-            <table className="w-full border-collapse">
-              <thead>
-                <tr>
-                  <th className="border border-gray-700 p-2 text-left">Descrição</th>
-                  <th className="border border-gray-700 p-2 text-right">Valor</th>
-                </tr>
-              </thead>
-              <tbody>
-                {adicionaisPositivos.map((item, index) => (
-                  <tr key={`adicionais-${index}`}>
-                    <td className="border border-gray-700 p-2">{item.descricao}</td>
-                    <td className="border border-gray-700 p-2 text-right">{formatarMoeda(item.valor)}</td>
-                  </tr>
-                ))}
-                <tr className="font-bold">
-                  <td className="border border-gray-700 p-2">Total Adicionais e Multas</td>
-                  <td className="border border-gray-700 p-2 text-right">{formatarMoeda(totalAdicionais)}</td>
-                </tr>
-              </tbody>
-            </table>
+        {/* Dados de Entrada */}
+        {dadosContrato && (
+          <div className="mb-6 border rounded-md p-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <h4 className="text-sm font-medium mb-1">Data de Admissão</h4>
+                <p className="border rounded-md p-2">{dadosContrato.dataAdmissao || '-'}</p>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium mb-1">Data de Demissão</h4>
+                <p className="border rounded-md p-2">{dadosContrato.dataDemissao || '-'}</p>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium mb-1">Salário Base (R$)</h4>
+                <p className="border rounded-md p-2">{formatarMoeda(parseFloat(dadosContrato.salarioBase) || 0)}</p>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium mb-1">Tipo de Rescisão</h4>
+                <p className="border rounded-md p-2">
+                  {dadosContrato.tipoRescisao === 'sem_justa_causa' ? 'Demissão sem Justa Causa' : 
+                   dadosContrato.tipoRescisao === 'pedido_demissao' ? 'Pedido de Demissão' : 
+                   dadosContrato.tipoRescisao === 'justa_causa' ? 'Demissão por Justa Causa' :
+                   dadosContrato.tipoRescisao === 'rescisao_indireta' ? 'Rescisão Indireta' : 
+                   'Não especificado'}
+                </p>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium mb-1">Dias Trabalhados no último mês</h4>
+                <p className="border rounded-md p-2">{dadosContrato.diasTrabalhados || '0'}</p>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium mb-1">Total de Meses Trabalhados</h4>
+                <p className="border rounded-md p-2">{dadosContrato.mesesTrabalhados || '0'}</p>
+              </div>
+            </div>
+            <div className="mt-4">
+              <label className="flex items-center">
+                <input 
+                  type="checkbox" 
+                  checked={dadosContrato.avisoPrevioCumprido || false} 
+                  readOnly 
+                  className="mr-2" 
+                />
+                <span>Aviso Prévio Cumprido</span>
+              </label>
+            </div>
           </div>
         )}
         
-        {/* Valor Total da Reclamação */}
-        <div className="bg-juriscalc-navy text-white p-4 mb-4 rounded-md">
-          <div className="text-center">
-            <p className="mb-1 uppercase font-medium text-sm">VALOR TOTAL DA RECLAMAÇÃO</p>
-            <p className="text-xl font-bold">{formatarMoeda(totalGeral)}</p>
+        {/* Resultados do Cálculo */}
+        <div className="mb-6 border rounded-md p-4">
+          <h3 className="text-lg font-bold mb-4">Resultados do Cálculo</h3>
+          
+          {/* Verbas Rescisórias */}
+          <div className="mb-4">
+            <h4 className="text-md font-bold mb-2">Verbas Rescisórias</h4>
+            <div className="space-y-2">
+              {verbas.saldoSalario > 0 && (
+                <div className="flex justify-between">
+                  <span>Saldo de Salário</span>
+                  <span>{formatarMoeda(verbas.saldoSalario)}</span>
+                </div>
+              )}
+              {verbas.avisoPrevia > 0 && (
+                <div className="flex justify-between">
+                  <span>Aviso Prévio</span>
+                  <span>{formatarMoeda(verbas.avisoPrevia)}</span>
+                </div>
+              )}
+              {verbas.decimoTerceiro > 0 && (
+                <div className="flex justify-between">
+                  <span>13º Salário Proporcional</span>
+                  <span>{formatarMoeda(verbas.decimoTerceiro)}</span>
+                </div>
+              )}
+              {verbas.ferias > 0 && (
+                <div className="flex justify-between">
+                  <span>Férias Proporcionais</span>
+                  <span>{formatarMoeda(verbas.ferias)}</span>
+                </div>
+              )}
+              {verbas.tercoConstitucional > 0 && (
+                <div className="flex justify-between">
+                  <span>1/3 Constitucional</span>
+                  <span>{formatarMoeda(verbas.tercoConstitucional)}</span>
+                </div>
+              )}
+              {verbas.fgts > 0 && (
+                <div className="flex justify-between">
+                  <span>FGTS sobre verbas</span>
+                  <span>{formatarMoeda(verbas.fgts)}</span>
+                </div>
+              )}
+              {verbas.multaFgts > 0 && (
+                <div className="flex justify-between">
+                  <span>Multa FGTS (40%)</span>
+                  <span>{formatarMoeda(verbas.multaFgts)}</span>
+                </div>
+              )}
+              <div className="flex justify-between font-bold border-t pt-1">
+                <span>Total Verbas Rescisórias</span>
+                <span>{formatarMoeda(verbas.total || 0)}</span>
+              </div>
+            </div>
           </div>
-        </div>
-        
-        {/* Rodapé com informações */}
-        <div className="text-center text-sm">
-          <p>Cálculos: {nomeEscritorio}</p>
-          <div className="flex items-center justify-center mt-1">
-            <img 
-              src="/lovable-uploads/caf683c7-0cb3-4ef4-8e5f-5de22f996b8a.png"
-              alt="Logo" 
-              className="h-5 mr-1" 
-            />
-            <p className="font-serif font-bold">IusCalc</p>
+          
+          {/* Adicionais e Multas - apenas se houver */}
+          {Object.values(adicionais).some(value => typeof value === 'number' && value > 0) && (
+            <div className="mb-4">
+              <h4 className="text-md font-bold mb-2">Adicionais e Multas</h4>
+              <div className="space-y-2">
+                {adicionais.adicionalInsalubridade > 0 && (
+                  <div className="flex justify-between">
+                    <span>Adicional de Insalubridade</span>
+                    <span>{formatarMoeda(adicionais.adicionalInsalubridade)}</span>
+                  </div>
+                )}
+                {adicionais.adicionalPericulosidade > 0 && (
+                  <div className="flex justify-between">
+                    <span>Adicional de Periculosidade</span>
+                    <span>{formatarMoeda(adicionais.adicionalPericulosidade)}</span>
+                  </div>
+                )}
+                {adicionais.multa467 > 0 && (
+                  <div className="flex justify-between">
+                    <span>Multa do Art. 467 CLT</span>
+                    <span>{formatarMoeda(adicionais.multa467)}</span>
+                  </div>
+                )}
+                {adicionais.multa477 > 0 && (
+                  <div className="flex justify-between">
+                    <span>Multa do Art. 477 CLT</span>
+                    <span>{formatarMoeda(adicionais.multa477)}</span>
+                  </div>
+                )}
+                {adicionais.adicionalNoturno > 0 && (
+                  <div className="flex justify-between">
+                    <span>Adicional Noturno</span>
+                    <span>{formatarMoeda(adicionais.adicionalNoturno)}</span>
+                  </div>
+                )}
+                {adicionais.horasExtras > 0 && (
+                  <div className="flex justify-between">
+                    <span>Horas Extras</span>
+                    <span>{formatarMoeda(adicionais.horasExtras)}</span>
+                  </div>
+                )}
+                {adicionais.feriasVencidas > 0 && (
+                  <div className="flex justify-between">
+                    <span>Férias Vencidas</span>
+                    <span>{formatarMoeda(adicionais.feriasVencidas)}</span>
+                  </div>
+                )}
+                {adicionais.indenizacaoDemissao > 0 && (
+                  <div className="flex justify-between">
+                    <span>Indenização por Demissão</span>
+                    <span>{formatarMoeda(adicionais.indenizacaoDemissao)}</span>
+                  </div>
+                )}
+                {adicionais.valeTransporte > 0 && (
+                  <div className="flex justify-between">
+                    <span>Vale Transporte</span>
+                    <span>{formatarMoeda(adicionais.valeTransporte)}</span>
+                  </div>
+                )}
+                {adicionais.valeAlimentacao > 0 && (
+                  <div className="flex justify-between">
+                    <span>Vale Alimentação</span>
+                    <span>{formatarMoeda(adicionais.valeAlimentacao)}</span>
+                  </div>
+                )}
+                {adicionais.adicionalTransferencia > 0 && (
+                  <div className="flex justify-between">
+                    <span>Adicional de Transferência</span>
+                    <span>{formatarMoeda(adicionais.adicionalTransferencia)}</span>
+                  </div>
+                )}
+                {adicionais.descontosIndevidos > 0 && (
+                  <div className="flex justify-between">
+                    <span>Descontos Indevidos</span>
+                    <span>{formatarMoeda(adicionais.descontosIndevidos)}</span>
+                  </div>
+                )}
+                {adicionais.diferencasSalariais > 0 && (
+                  <div className="flex justify-between">
+                    <span>Diferenças Salariais</span>
+                    <span>{formatarMoeda(adicionais.diferencasSalariais)}</span>
+                  </div>
+                )}
+                {adicionais.customCalculo > 0 && (
+                  <div className="flex justify-between">
+                    <span>Cálculo Personalizado</span>
+                    <span>{formatarMoeda(adicionais.customCalculo)}</span>
+                  </div>
+                )}
+                {adicionais.seguroDesemprego > 0 && (
+                  <div className="flex justify-between">
+                    <span>Seguro Desemprego</span>
+                    <span>{formatarMoeda(adicionais.seguroDesemprego)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between font-bold border-t pt-1">
+                  <span>Total Adicionais</span>
+                  <span>{formatarMoeda(totalAdicionais)}</span>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Subtotal */}
+          <div className="flex justify-between font-bold mb-4">
+            <span>Subtotal</span>
+            <span>{formatarMoeda(totalGeral)}</span>
+          </div>
+          
+          {/* Valor Total */}
+          <div className="bg-juriscalc-navy text-white p-4 mb-4 rounded-md">
+            <div className="flex justify-between">
+              <span className="font-bold">TOTAL GERAL</span>
+              <span className="font-bold">{formatarMoeda(totalGeral)}</span>
+            </div>
           </div>
         </div>
       </div>

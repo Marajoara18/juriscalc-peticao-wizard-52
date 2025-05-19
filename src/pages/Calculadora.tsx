@@ -8,7 +8,7 @@ import useCalculadora from '@/hooks/useCalculadora';
 
 const Calculadora = () => {
   const navigate = useNavigate();
-  const { resultados } = useCalculadora();
+  const { resultados, dadosContrato } = useCalculadora();
 
   // Verificar se o usuário está logado
   React.useEffect(() => {
@@ -24,7 +24,10 @@ const Calculadora = () => {
         <CalculadoraContainer />
         {/* Versão apenas para impressão - separada da visualização normal */}
         <div id="print-content" className="print:block hidden">
-          <PrintVersionCalculadora resultados={resultados} />
+          <PrintVersionCalculadora 
+            resultados={resultados} 
+            dadosContrato={dadosContrato}
+          />
         </div>
       </div>
     </Layout>
