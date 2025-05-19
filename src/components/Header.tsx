@@ -83,8 +83,7 @@ const Header = () => {
             Nova Petição
           </Button>
           <Button 
-            variant="outline" 
-            className="border-white text-white hover:bg-juriscalc-navy/20"
+            className="bg-white text-juriscalc-navy hover:bg-gray-100"
             onClick={handleUserClick}
           >
             <User className="mr-2 h-4 w-4" />
