@@ -5,17 +5,6 @@
 import { calcularVerbasRescisorias } from './verbas/calculadoraVerbas';
 import { 
   calcularAdicionais,
-  calcularInsalubridade,
-  calcularPericulosidade,
-  calcularMulta467, 
-  calcularMulta477,
-  calcularAdicionalNoturno,
-  calcularHorasExtras,
-  calcularFeriasVencidas,
-  calcularIndenizacaoDemissao,
-  calcularValeTransporte,
-  calcularValeAlimentacao,
-  calcularAdicionalTransferencia,
   calcularSeguroDesempregoHelper,
   calcularSalarioFamiliaHelper
 } from './adicionaisUtils';

@@ -1,170 +1,148 @@
-// Import necessary constants and functions
-import { SALARIO_MINIMO } from '@/utils/calculadoraConstants';
+
+/**
+ * Main utilities file for calculating additional labor values
+ */
+
+// Import specialized calculation utilities
+import { calcularInsalubridade as insalubridadeCalc, calcularPericulosidade as periculosidadeCalc } from './adicionais/adicionalBasicoUtils';
+import { calcularMulta467 as multa467Calc, calcularMulta477 as multa477Calc } from './adicionais/multasUtils';
+import { 
+  calcularAdicionalNoturno as adicionalNoturnoCalc,
+  calcularHorasExtras as horasExtrasCalc,
+  calcularFeriasVencidas as feriasVencidasCalc,
+  calcularIndenizacaoDemissao as indenizacaoDemissaoCalc,
+  calcularAdicionalTransferencia as adicionalTransferenciaCalc
+} from './adicionais/jornadaUtils';
+import { 
+  calcularValeTransporte as valeTransporteCalc,
+  calcularValeAlimentacao as valeAlimentacaoCalc
+} from './adicionais/beneficiosUtils';
+import { 
+  calcularDescontosIndevidos as descontosIndevidosCalc,
+  calcularDiferencasSalariais as diferencasSalariaisCalc,
+  calcularCustom as customCalc
+} from './adicionais/descontosUtils';
+import { calcularSeguroDesemprego, calcularSalarioFamilia } from './adicionais/beneficiosSociaisUtils';
 import { calcularInsalubridade as calcularInsalubridadeUtils } from './adicionais/insalubridadeUtils';
 import { calcularPericulosidade as calcularPericulosidadeUtils } from './adicionais/periculosidadeUtils';
 import { calcularHonorariosAdvocaticios as calcularHonorariosAdvocaticiosUtils } from './adicionais/honorariosAdvocaticiosUtils';
 
-// Import the necessary functions from beneficiosSociaisUtils.ts
-import { calcularSeguroDesemprego, calcularSalarioFamilia } from './adicionais/beneficiosSociaisUtils';
+// Re-export individual calculation functions for direct usage
+export const calcularInsalubridade = calcularInsalubridadeUtils;
+export const calcularPericulosidade = calcularPericulosidadeUtils;
 
-/**
- * Calculate insalubrity
- */
-export const calcularInsalubridade = (salarioBase: number, grauInsalubridade: string, baseCalculoInsalubridade: string): number => {
-  return calcularInsalubridadeUtils(salarioBase, grauInsalubridade, baseCalculoInsalubridade);
-};
-
-/**
- * Calculate perillosity
- */
-export const calcularPericulosidade = (salarioBase: number, percentualPericulosidade: number, baseCalculoPericulosidade: string): number => {
-  return calcularPericulosidadeUtils(salarioBase, percentualPericulosidade, baseCalculoPericulosidade);
-};
-
-/**
- * Calculate late payment fine (Multa 467)
- */
+// Wrappers for multasUtils functions
 export const calcularMulta467 = (calcularMulta: boolean, salarioBase: number): number => {
-  return calcularMulta ? salarioBase : 0;
+  if (!calcularMulta) return 0;
+  return salarioBase;
 };
 
-/**
- * Calculate fine for not annotating the employment record (Multa 477)
- */
 export const calcularMulta477 = (calcularMulta: boolean, salarioBase: number): number => {
-  return calcularMulta ? salarioBase : 0;
+  if (!calcularMulta) return 0;
+  return salarioBase;
 };
 
-/**
- * Calculate night shift allowance
- */
+// Wrappers for jornadaUtils functions
 export const calcularAdicionalNoturno = (
-  calcularAdicional: boolean,
+  calcular: boolean,
   salarioBase: number,
-  percentualAdicionalNoturno: number,
-  horasNoturnas: number
+  percentual: number,
+  horas: number
 ): number => {
-  if (!calcularAdicional) return 0;
-  
-  const valorHoraNormal = salarioBase / 220; // Considerando 220 horas mensais
-  const valorHoraNoturna = valorHoraNormal * (1 + (percentualAdicionalNoturno / 100));
-  
-  return valorHoraNoturna * horasNoturnas;
-};
-
-/**
- * Calculate overtime
- */
-export const calcularHorasExtras = (
-  calcularHorasExtras: boolean,
-  salarioBase: number,
-  quantidadeHorasExtras: number,
-  percentualHorasExtras: number
-): number => {
-  if (!calcularHorasExtras) return 0;
+  if (!calcular) return 0;
   
   const valorHoraNormal = salarioBase / 220;
-  const valorHoraExtra = valorHoraNormal * (1 + (percentualHorasExtras / 100));
+  const valorHoraNoturna = valorHoraNormal * (1 + (percentual / 100));
   
-  return valorHoraExtra * quantidadeHorasExtras;
+  return valorHoraNoturna * horas;
 };
 
-/**
- * Calculate vacation pay
- */
+export const calcularHorasExtras = (
+  calcular: boolean,
+  salarioBase: number,
+  quantidade: number,
+  percentual: number
+): number => {
+  if (!calcular) return 0;
+  
+  const valorHoraNormal = salarioBase / 220;
+  const valorHoraExtra = valorHoraNormal * (1 + (percentual / 100));
+  
+  return valorHoraExtra * quantidade;
+};
+
 export const calcularFeriasVencidas = (
-  calcularFeriasVencidas: boolean,
+  calcular: boolean,
   salarioBase: number,
-  periodosFeriasVencidas: number
+  periodos: number
 ): number => {
-  if (!calcularFeriasVencidas) return 0;
+  if (!calcular) return 0;
   
-  return salarioBase * periodosFeriasVencidas;
+  return salarioBase * periodos;
 };
 
-/**
- * Calculate dismissal compensation
- */
 export const calcularIndenizacaoDemissao = (
-  calcularIndenizacaoDemissao: boolean,
-  valorIndenizacaoDemissao: number
+  calcular: boolean,
+  valor: number
 ): number => {
-  return calcularIndenizacaoDemissao ? valorIndenizacaoDemissao : 0;
+  return calcular ? valor : 0;
 };
 
-/**
- * Calculate transportation voucher
- */
-export const calcularValeTransporte = (
-  calcularValeTransporte: boolean,
-  valorDiarioVT: number,
-  diasValeTransporte: number
-): number => {
-  if (!calcularValeTransporte) return 0;
-  
-  return valorDiarioVT * diasValeTransporte;
-};
-
-/**
- * Calculate food voucher
- */
-export const calcularValeAlimentacao = (
-  calcularValeAlimentacao: boolean,
-  valorDiarioVA: number,
-  diasValeAlimentacao: number
-): number => {
-  if (!calcularValeAlimentacao) return 0;
-  
-  return valorDiarioVA * diasValeAlimentacao;
-};
-
-/**
- * Calculate transfer allowance
- */
 export const calcularAdicionalTransferencia = (
-  calcularAdicionalTransferencia: boolean,
+  calcular: boolean,
   salarioBase: number,
-  percentualAdicionalTransferencia: number
+  percentual: number
 ): number => {
-  if (!calcularAdicionalTransferencia) return 0;
+  if (!calcular) return 0;
   
-  return salarioBase * (percentualAdicionalTransferencia / 100);
+  return salarioBase * (percentual / 100);
 };
 
-/**
- * Calculate undue discounts
- */
+// Wrappers for beneficiosUtils functions
+export const calcularValeTransporte = (
+  calcular: boolean,
+  valorDiario: number,
+  dias: number
+): number => {
+  if (!calcular) return 0;
+  
+  return valorDiario * dias;
+};
+
+export const calcularValeAlimentacao = (
+  calcular: boolean,
+  valorDiario: number,
+  dias: number
+): number => {
+  if (!calcular) return 0;
+  
+  return valorDiario * dias;
+};
+
+// Wrappers for descontosUtils functions
 export const calcularDescontosIndevidos = (
-  calcularDescontosIndevidos: boolean,
-  valorDescontosIndevidos: number
+  calcular: boolean,
+  valor: number
 ): number => {
-  if (!calcularDescontosIndevidos) return 0;
+  if (!calcular) return 0;
   
-  return valorDescontosIndevidos;
+  return valor;
 };
 
-/**
- * Calculate salary differences
- */
 export const calcularDiferencasSalariais = (
-  calcularDiferencasSalariais: boolean,
-  valorDiferencasSalariais: number
+  calcular: boolean,
+  valor: number
 ): number => {
-  if (!calcularDiferencasSalariais) return 0;
+  if (!calcular) return 0;
   
-  return valorDiferencasSalariais;
+  return valor;
 };
 
-/**
- * Calculate custom calculation
- */
-export const calcularCustom = (calcularCustom: boolean, valorCustom: number): number => {
-  return calcularCustom ? valorCustom : 0;
+export const calcularCustom = (calcular: boolean, valor: number): number => {
+  return calcular ? valor : 0;
 };
 
-/**
- * Calculate unemployment insurance
- */
+// Helper functions for beneficiosSociaisUtils
 export function calcularSeguroDesempregoHelper(adicionais: any, salarioBase: number, tipoRescisao: string) {
   if (!adicionais.calcularSeguroDesemprego) return 0;
   
@@ -191,9 +169,6 @@ export function calcularSeguroDesempregoHelper(adicionais: any, salarioBase: num
   return valorTotal;
 }
 
-/**
- * Calculate family salary
- */
 export const calcularSalarioFamiliaHelper = (
   calcularSalarioFamiliaParam: boolean,
   salarioBase: number,
@@ -203,22 +178,20 @@ export const calcularSalarioFamiliaHelper = (
   return calcularSalarioFamilia(calcularSalarioFamiliaParam, salarioBase, quantidadeFilhos);
 };
 
-/**
- * Calculate attorney's fees
- */
+// Honorários Advocatícios
 export const calcularHonorariosAdvocaticios = (
-  calcularHonorariosAdvocaticios: boolean,
+  calcular: boolean,
   totalGeral: number,
-  percentualHonorariosAdvocaticios: number,
-  valorHonorariosAdvocaticios: number,
-  incluirTotalGeralHonorarios: boolean
+  percentual: number,
+  valor: number,
+  incluirTotalGeral: boolean
 ): number => {
   return calcularHonorariosAdvocaticiosUtils(
-    calcularHonorariosAdvocaticios,
+    calcular,
     totalGeral,
-    percentualHonorariosAdvocaticios,
-    valorHonorariosAdvocaticios,
-    incluirTotalGeralHonorarios
+    percentual,
+    valor,
+    incluirTotalGeral
   );
 };
 
@@ -272,23 +245,30 @@ export function calcularAdicionais(
   
   // Calculate late payment fine (Multa 467)
   if (adicionais.calcularMulta467) {
-    multa467 = calcularMulta467(adicionais.calcularMulta467, salarioBase);
+    multa467 = multa467Calc(
+      adicionais.calcularMulta467, 
+      saldoSalario,
+      avisoPrevia,
+      decimoTerceiro,
+      ferias,
+      tercoConstitucional
+    );
   }
   
   // Calculate fine for not annotating the employment record (Multa 477)
   if (adicionais.calcularMulta477) {
-    multa477 = calcularMulta477(adicionais.calcularMulta477, salarioBase);
+    multa477 = multa477Calc(adicionais.calcularMulta477, salarioBase);
   }
   
   // Calculate night shift allowance
   if (adicionais.calcularAdicionalNoturno) {
     const percentualAdicionalNoturno = parseFloat(adicionais.percentualAdicionalNoturno) || 0;
     const horasNoturnas = parseFloat(adicionais.horasNoturnas) || 0;
-    adicionalNoturno = calcularAdicionalNoturno(
+    adicionalNoturno = adicionalNoturnoCalc(
       adicionais.calcularAdicionalNoturno,
-      salarioBase,
-      percentualAdicionalNoturno,
-      horasNoturnas
+      adicionais.percentualAdicionalNoturno,
+      adicionais.horasNoturnas,
+      salarioBase
     );
   }
   
@@ -296,30 +276,31 @@ export function calcularAdicionais(
   if (adicionais.calcularHorasExtras) {
     const quantidadeHorasExtras = parseFloat(adicionais.quantidadeHorasExtras) || 0;
     const percentualHorasExtras = parseFloat(adicionais.percentualHorasExtras) || 0;
-    horasExtras = calcularHorasExtras(
+    horasExtras = horasExtrasCalc(
       adicionais.calcularHorasExtras,
-      salarioBase,
-      quantidadeHorasExtras,
-      percentualHorasExtras
+      adicionais.percentualHorasExtras,
+      adicionais.quantidadeHorasExtras,
+      salarioBase
     );
   }
   
   // Calculate vacation pay
   if (adicionais.calcularFeriasVencidas) {
     const periodosFeriasVencidas = parseFloat(adicionais.periodosFeriasVencidas) || 0;
-    feriasVencidas = calcularFeriasVencidas(
+    feriasVencidas = feriasVencidasCalc(
       adicionais.calcularFeriasVencidas,
-      salarioBase,
-      periodosFeriasVencidas
+      adicionais.periodosFeriasVencidas,
+      salarioBase
     );
   }
   
   // Calculate dismissal compensation
   if (adicionais.calcularIndenizacaoDemissao) {
     const valorIndenizacaoDemissao = parseFloat(adicionais.valorIndenizacaoDemissao) || 0;
-    indenizacaoDemissao = calcularIndenizacaoDemissao(
+    indenizacaoDemissao = indenizacaoDemissaoCalc(
       adicionais.calcularIndenizacaoDemissao,
-      valorIndenizacaoDemissao
+      adicionais.valorIndenizacaoDemissao,
+      salarioBase
     );
   }
   
@@ -327,10 +308,10 @@ export function calcularAdicionais(
   if (adicionais.calcularValeTransporte) {
     const valorDiarioVT = parseFloat(adicionais.valorDiarioVT) || 0;
     const diasValeTransporte = parseFloat(adicionais.diasValeTransporte) || 0;
-    valeTransporte = calcularValeTransporte(
+    valeTransporte = valeTransporteCalc(
       adicionais.calcularValeTransporte,
-      valorDiarioVT,
-      diasValeTransporte
+      adicionais.valorDiarioVT,
+      adicionais.diasValeTransporte
     );
   }
   
@@ -338,27 +319,27 @@ export function calcularAdicionais(
   if (adicionais.calcularValeAlimentacao) {
     const valorDiarioVA = parseFloat(adicionais.valorDiarioVA) || 0;
     const diasValeAlimentacao = parseFloat(adicionais.diasValeAlimentacao) || 0;
-    valeAlimentacao = calcularValeAlimentacao(
+    valeAlimentacao = valeAlimentacaoCalc(
       adicionais.calcularValeAlimentacao,
-      valorDiarioVA,
-      diasValeAlimentacao
+      adicionais.valorDiarioVA,
+      adicionais.diasValeAlimentacao
     );
   }
   
   // Calculate transfer allowance
   if (adicionais.calcularAdicionalTransferencia) {
     const percentualAdicionalTransferencia = parseFloat(adicionais.percentualAdicionalTransferencia) || 0;
-    adicionalTransferencia = calcularAdicionalTransferencia(
+    adicionalTransferencia = adicionalTransferenciaCalc(
       adicionais.calcularAdicionalTransferencia,
-      salarioBase,
-      percentualAdicionalTransferencia
+      adicionais.percentualAdicionalTransferencia,
+      salarioBase
     );
   }
   
   // Calculate undue discounts
   if (adicionais.calcularDescontosIndevidos) {
     const valorDescontosIndevidos = parseFloat(adicionais.valorDescontosIndevidos) || 0;
-    descontosIndevidos = calcularDescontosIndevidos(
+    descontosIndevidos = descontosIndevidosCalc(
       adicionais.calcularDescontosIndevidos,
       valorDescontosIndevidos
     );
@@ -367,7 +348,7 @@ export function calcularAdicionais(
   // Calculate salary differences
   if (adicionais.calcularDiferencasSalariais) {
     const valorDiferencasSalariais = parseFloat(adicionais.valorDiferencasSalariais) || 0;
-    diferencasSalariais = calcularDiferencasSalariais(
+    diferencasSalariais = diferencasSalariaisCalc(
       adicionais.calcularDiferencasSalariais,
       valorDiferencasSalariais
     );
@@ -376,7 +357,7 @@ export function calcularAdicionais(
   // Calculate custom calculation
   if (adicionais.calcularCustom) {
     const valorCustom = parseFloat(adicionais.valorCustom) || 0;
-    customCalculo = calcularCustom(adicionais.calcularCustom, valorCustom);
+    customCalculo = customCalc(adicionais.calcularCustom, valorCustom);
   }
   
   // Calculate unemployment insurance
@@ -398,9 +379,17 @@ export function calcularAdicionais(
   if (adicionais.calcularHonorariosAdvocaticios) {
     const percentualHonorariosAdvocaticios = parseFloat(adicionais.percentualHonorariosAdvocaticios) || 0;
     const valorHonorariosAdvocaticios = parseFloat(adicionais.valorHonorariosAdvocaticios) || 0;
+    
+    const totalGeralSemHonorarios = saldoSalario + avisoPrevia + decimoTerceiro + ferias + 
+      tercoConstitucional + adicionalInsalubridade + adicionalPericulosidade + 
+      multa467 + multa477 + adicionalNoturno + horasExtras + feriasVencidas + 
+      indenizacaoDemissao + valeTransporte + valeAlimentacao + adicionalTransferencia + 
+      descontosIndevidos + diferencasSalariais + customCalculo + seguroDesemprego + 
+      salarioFamilia;
+      
     honorariosAdvocaticios = calcularHonorariosAdvocaticios(
       adicionais.calcularHonorariosAdvocaticios,
-      saldoSalario + avisoPrevia + decimoTerceiro + ferias + tercoConstitucional + adicionalInsalubridade + adicionalPericulosidade + multa467 + multa477 + adicionalNoturno + horasExtras + feriasVencidas + indenizacaoDemissao + valeTransporte + valeAlimentacao + adicionalTransferencia + descontosIndevidos + diferencasSalariais + customCalculo + seguroDesemprego + salarioFamilia,
+      totalGeralSemHonorarios,
       percentualHonorariosAdvocaticios,
       valorHonorariosAdvocaticios,
       adicionais.incluirTotalGeralHonorarios
