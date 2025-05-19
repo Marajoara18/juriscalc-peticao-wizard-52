@@ -6,7 +6,7 @@ import DadosContratoForm from '@/components/calculadora/DadosContratoForm';
 import AdicionaisForm from '@/components/calculadora/AdicionaisForm';
 import ResultadosCalculos from '@/components/calculadora/ResultadosCalculos';
 import CalculosSalvos from '@/components/calculadora/CalculosSalvos';
-import ShareOptionsButton from '@/components/calculadora/share/ShareOptionsButton';
+import ManualRapido from '@/components/calculadora/ManualRapido';
 import { DadosContrato, Adicionais } from '@/types/calculadora';
 
 interface CalculadoraLayoutProps {
@@ -55,6 +55,7 @@ const MobileLayout: React.FC<CalculadoraLayoutProps> = ({
           <TabsList className="w-full">
             <TabsTrigger value="contrato" className="flex-1">Dados do Contrato</TabsTrigger>
             <TabsTrigger value="adicionais" className="flex-1">Adicionais e Multas</TabsTrigger>
+            <TabsTrigger value="manual" className="flex-1">Manual Rápido IusCalc</TabsTrigger>
           </TabsList>
 
           <TabsContent value="contrato">
@@ -72,6 +73,10 @@ const MobileLayout: React.FC<CalculadoraLayoutProps> = ({
               dadosContrato={dadosContrato}
               onChange={handleAdicionaisChange}
             />
+          </TabsContent>
+
+          <TabsContent value="manual">
+            <ManualRapido />
           </TabsContent>
         </Tabs>
       </div>
