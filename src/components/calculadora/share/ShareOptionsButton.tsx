@@ -9,7 +9,7 @@ import {
   DropdownMenuLabel
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Share2, FilePdf, Mail, MessageCircle } from "lucide-react";
+import { Share2, FileText, Mail, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { exportToPDF } from '@/utils/exportUtils';
 
@@ -75,7 +75,7 @@ const ShareOptionsButton: React.FC<ShareOptionsButtonProps> = ({
           className="flex-1 bg-juriscalc-navy hover:bg-opacity-90"
           size="sm"
         >
-          <FilePdf className="mr-2 h-4 w-4" />
+          <FileText className="mr-2 h-4 w-4" />
           PDF
         </Button>
         <Button 
@@ -111,7 +111,7 @@ const ShareOptionsButton: React.FC<ShareOptionsButtonProps> = ({
         <DropdownMenuLabel>Opções de Compartilhamento</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleExportPDF}>
-          <FilePdf className="mr-2 h-4 w-4" />
+          <FileText className="mr-2 h-4 w-4" />
           Exportar como PDF
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleShareEmail}>
