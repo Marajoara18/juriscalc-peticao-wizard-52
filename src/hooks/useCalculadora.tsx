@@ -5,7 +5,6 @@ import { resultadosIniciais } from '@/utils/calculadoraConstants';
 import { useDadosContrato } from './calculadora/useDadosContrato';
 import { useAdicionais } from './calculadora/useAdicionais';
 import { useCalculos } from './calculadora/useCalculos';
-import { useCorrecaoMonetaria } from './calculadora/useCorrecaoMonetaria';
 import useCalculadoraState from './calculadora/useCalculadoraState';
 import { useCalculationLimits } from './calculadora/useCalculationLimits';
 
@@ -76,14 +75,12 @@ const useCalculadora = () => {
   // Estado para os resultados
   const [resultados, setResultados] = useState<Resultados>(resultadosIniciais);
   
-  // Estado para controlar a exibição da correção monetária
-  const [showCorrecaoMonetaria, setShowCorrecaoMonetaria] = useState<boolean>(false);
+  // Removido o estado showCorrecaoMonetaria já que a funcionalidade foi removida
 
   // Hooks específicos
   const { handleDadosContratoChange, handleCheckboxChange, handleTipoRescisaoChange } = useDadosContrato(dadosContrato, setDadosContrato);
   const { handleAdicionaisChange } = useAdicionais(adicionais, setAdicionais);
   const { calcularResultados: originalCalcular } = useCalculos(dadosContrato, adicionais, setResultados);
-  const { aplicarCorrecaoMonetaria } = useCorrecaoMonetaria(resultados, setResultados);
   const { totalAdicionais, totalGeral, hasCalculos } = useCalculadoraState.calcularTotais(resultados);
   const { podeCalcular, showSubscriptionModal, setShowSubscriptionModal, verificarLimiteCalculos } = useCalculationLimits();
   
@@ -109,12 +106,9 @@ const useCalculadora = () => {
     handleTipoRescisaoChange,
     handleAdicionaisChange,
     calcularResultados,
-    aplicarCorrecaoMonetaria,
     podeCalcular,
     showSubscriptionModal,
     setShowSubscriptionModal,
-    showCorrecaoMonetaria,
-    setShowCorrecaoMonetaria,
     totalAdicionais,
     totalGeral,
     hasCalculos,
