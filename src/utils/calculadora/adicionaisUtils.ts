@@ -381,18 +381,6 @@ export function calcularAdicionais(
   
   // Calculate unemployment insurance
   if (adicionais.calcularSeguroDesemprego) {
-    adicionalInsalubridade = calcularInsalubridade(
-      salarioBase, 
-      adicionais.grauInsalubridade, 
-      adicionais.baseCalculoInsalubridade
-    );
-    
-    adicionalPericulosidade = calcularPericulosidade(
-      salarioBase, 
-      parseFloat(adicionais.percentualPericulosidade), 
-      adicionais.baseCalculoPericulosidade
-    );
-    
     seguroDesemprego = calcularSeguroDesempregoHelper(adicionais, salarioBase, 'sem_justa_causa');
   }
   

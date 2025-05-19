@@ -7,6 +7,7 @@ import {
   FAIXA_1_SEGURO_DESEMPREGO, 
   FAIXA_2_SEGURO_DESEMPREGO,
   VALOR_SALARIO_MINIMO_2025,
+  VALOR_ADICIONAL_FAIXA_2,
   VALOR_SALARIO_FAMILIA,
   LIMITE_SALARIO_FAMILIA
 } from '@/utils/calculadoraConstants';
@@ -59,10 +60,13 @@ export const calcularSeguroDesemprego = (
     
     // Cálculo do valor da parcela baseado nas faixas de 2025
     if (mediaSalarial <= FAIXA_1_SEGURO_DESEMPREGO) {
+      // Primeira faixa: até R$ 2.138,76 - multiplica por 0,8
       valorParcela = mediaSalarial * 0.8;
     } else if (mediaSalarial <= FAIXA_2_SEGURO_DESEMPREGO) {
-      valorParcela = ((mediaSalarial - FAIXA_1_SEGURO_DESEMPREGO) * 0.5) + 1711.01;
+      // Segunda faixa: entre R$ 2.138,77 e R$ 3.564,96
+      valorParcela = ((mediaSalarial - FAIXA_1_SEGURO_DESEMPREGO) * 0.5) + VALOR_ADICIONAL_FAIXA_2;
     } else {
+      // Terceira faixa: acima de R$ 3.564,96 - valor fixo
       valorParcela = VALOR_MAXIMO_SEGURO_DESEMPREGO;
     }
     

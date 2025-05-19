@@ -43,6 +43,7 @@ export const VALOR_MAXIMO_SEGURO_DESEMPREGO = 2424.11; // Valor máximo da parce
 export const FAIXA_1_SEGURO_DESEMPREGO = 2138.76; // Primeira faixa salarial
 export const FAIXA_2_SEGURO_DESEMPREGO = 3564.96; // Segunda faixa salarial
 export const VALOR_SALARIO_MINIMO_2025 = 1518.00; // Salário mínimo em 2025
+export const VALOR_ADICIONAL_FAIXA_2 = 1711.01; // Valor adicional para o cálculo da segunda faixa
 
 // Constantes para o cálculo do salário-família
 export const VALOR_SALARIO_FAMILIA = 59.82; // Valor do salário-família por dependente em 2024

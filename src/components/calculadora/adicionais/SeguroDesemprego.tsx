@@ -49,23 +49,25 @@ export const SeguroDesemprego: React.FC<SeguroDesempregoProps> = ({ adicionais, 
             </RadioGroup>
           </div>
           
-          <div className="space-y-2">
-            <Label className="text-sm">O salário foi o mesmo nos 3 últimos meses?</Label>
-            <RadioGroup
-              value={adicionais.salarioUltimos3Meses || "sim"}
-              onValueChange={(value) => onChange("salarioUltimos3Meses", value)}
-              className="grid gap-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="sim" id="mesmo-salario-sim" />
-                <Label htmlFor="mesmo-salario-sim">Sim</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="nao" id="mesmo-salario-nao" />
-                <Label htmlFor="mesmo-salario-nao">Não</Label>
-              </div>
-            </RadioGroup>
-          </div>
+          {adicionais.tipoTrabalhador === "padrao" && (
+            <div className="space-y-2">
+              <Label className="text-sm">O salário foi o mesmo nos 3 últimos meses?</Label>
+              <RadioGroup
+                value={adicionais.salarioUltimos3Meses || "sim"}
+                onValueChange={(value) => onChange("salarioUltimos3Meses", value)}
+                className="grid gap-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="sim" id="mesmo-salario-sim" />
+                  <Label htmlFor="mesmo-salario-sim">Sim</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="nao" id="mesmo-salario-nao" />
+                  <Label htmlFor="mesmo-salario-nao">Não</Label>
+                </div>
+              </RadioGroup>
+            </div>
+          )}
 
           {adicionais.tipoTrabalhador === "padrao" && (
             <>
@@ -96,7 +98,7 @@ export const SeguroDesemprego: React.FC<SeguroDesempregoProps> = ({ adicionais, 
                       min="0"
                       step="0.01"
                       placeholder="0,00"
-                      value={adicionais.salarioMes1}
+                      value={adicionais.salarioMes1 || ""}
                       onChange={(e) => onChange("salarioMes1", e.target.value)}
                     />
                   </div>
@@ -110,7 +112,7 @@ export const SeguroDesemprego: React.FC<SeguroDesempregoProps> = ({ adicionais, 
                       min="0"
                       step="0.01"
                       placeholder="0,00"
-                      value={adicionais.salarioMes2}
+                      value={adicionais.salarioMes2 || ""}
                       onChange={(e) => onChange("salarioMes2", e.target.value)}
                     />
                   </div>
