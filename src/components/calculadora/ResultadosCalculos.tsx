@@ -10,6 +10,12 @@ import ExportResultsButton from './ExportResultsButton';
 import { ArrowUpDown, Mail, Share2 } from 'lucide-react';
 import { toast } from "sonner";
 import { shareViaWhatsApp, shareViaEmail, generateCalculationText } from '@/utils/exportUtils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ResultadosCalculosProps {
   resultados: any; 
@@ -183,15 +189,39 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
       
       {/* Botões de ação abaixo do Total Geral */}
       <div className="mt-4 flex flex-wrap gap-2 justify-end print:hidden">
-        {/* Botão de Atualização Monetária */}
-        <Button 
-          variant="outline"
-          className="border-juriscalc-navy text-juriscalc-navy"
-          onClick={onShowCorrecaoMonetaria}
-        >
-          <ArrowUpDown className="h-4 w-4 mr-2" />
-          Atualização Monetária
-        </Button>
+        {/* Botão de Atualização Monetária com tooltip */}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="outline"
+                className="border-juriscalc-navy text-juriscalc-navy"
+                onClick={onShowCorrecaoMonetaria}
+              >
+                <ArrowUpDown className="h-4 w-4 mr-2" />
+                Atualização Monetária
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="max-w-md p-4 text-sm bg-white border border-gray-200 shadow-lg">
+              <div className="space-y-2">
+                <h3 className="font-bold">Aplicar Correção Monetária</h3>
+                <p>A correção será aplicada mensalmente com base nos índices determinados pelo TST: INPC, IPCA-E ou TR.</p>
+                
+                <h4 className="font-semibold mt-1">Cálculo da Correção:</h4>
+                <p>Valor corrigido = Valor original × (1 + índice de correção)</p>
+                
+                <h4 className="font-semibold mt-1">Índices por tipo de verba:</h4>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li><span className="font-medium">Saldo de salário:</span> INPC ou IPCA-E</li>
+                  <li><span className="font-medium">Férias:</span> INPC ou IPCA-E a partir do vencimento</li>
+                  <li><span className="font-medium">13º Salário:</span> INPC ou IPCA-E a partir de dezembro</li>
+                </ul>
+                
+                <p className="mt-1"><span className="font-medium">Juros de mora:</span> 1% ao mês conforme art. 883 da CLT.</p>
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         
         {/* Botão de compartilhar via WhatsApp */}
         <Button 

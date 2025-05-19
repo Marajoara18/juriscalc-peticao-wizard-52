@@ -12,6 +12,8 @@ import ValorInput from './correcao-monetaria/ValorInput';
 import ResultadoCorrecao from './correcao-monetaria/ResultadoCorrecao';
 import { TipoIndiceCorrecao } from '@/data/indicesCorrecao';
 import { useCalculoCorrecao } from '@/hooks/calculadora/useCalculoCorrecao';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { InfoIcon } from "lucide-react";
 
 interface CorrecaoMonetariaProps {
   onAplicarCorrecao: (valorCorrigido: number) => void;
@@ -112,6 +114,42 @@ const CorrecaoMonetaria: React.FC<CorrecaoMonetariaProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Alert com informações sobre a metodologia de correção */}
+        <Alert className="bg-blue-50 border-blue-200">
+          <InfoIcon className="h-4 w-4 text-blue-500" />
+          <AlertTitle>Metodologia de Correção Monetária</AlertTitle>
+          <AlertDescription className="text-sm mt-2">
+            <p className="mb-2">
+              A correção será aplicada mensalmente com base no índice de correção determinado pelo TST, 
+              que pode ser o INPC, IPCA-E ou TR.
+            </p>
+            
+            <p className="mb-2">
+              <strong>Cálculo de correção:</strong> Valor corrigido = Valor original × (1 + índice de correção)
+            </p>
+            
+            <div className="mb-2">
+              <strong>Aplicação por tipo de verba:</strong>
+              <ul className="list-disc pl-5 mt-1">
+                <li>
+                  <strong>Saldo de salário:</strong> Corrigido de acordo com o INPC ou IPCA-E (se a rescisão não foi feita no mês de vencimento).
+                </li>
+                <li>
+                  <strong>Férias:</strong> Corrigidas desde a data de seu vencimento até a data de pagamento, com INPC ou IPCA-E.
+                </li>
+                <li>
+                  <strong>13º Salário:</strong> Correção de dezembro até a data do pagamento, com INPC ou IPCA-E.
+                </li>
+              </ul>
+            </div>
+            
+            <p>
+              <strong>Juros de mora:</strong> Além da correção monetária, os juros de mora (1% ao mês) podem ser aplicados 
+              a partir da data de vencimento da dívida, conforme o art. 883 da CLT.
+            </p>
+          </AlertDescription>
+        </Alert>
+
         <div className="space-y-3">
           <IndiceSelecao 
             indiceCorrecao={indiceCorrecao} 
