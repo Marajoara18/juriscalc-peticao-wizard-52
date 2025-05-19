@@ -13,6 +13,7 @@ interface PeticoesContextType {
   isAdmin: boolean;
   isViewingAsUser: boolean;
   viewingBanner: string | null;
+  setView: (view: 'list' | 'editor' | 'new' | 'user') => void;
   handleNovaPeticao: () => void;
   handleUseModelo: (id: number) => void;
   handleEditPeticao: (id: number) => void;
@@ -240,6 +241,7 @@ export const PeticoesProvider: React.FC<{ children: ReactNode }> = ({ children }
     isAdmin,
     isViewingAsUser,
     viewingBanner,
+    setView,
     handleNovaPeticao,
     handleUseModelo,
     handleEditPeticao,
