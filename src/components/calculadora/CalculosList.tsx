@@ -10,6 +10,7 @@ interface CalculosListProps {
   onUse: (calculo: CalculoSalvo) => void;
   onReopen: (calculo: CalculoSalvo) => void;
   onPreview: (calculo: CalculoSalvo) => void;
+  onVerify: (calculo: CalculoSalvo) => void;
   onUsePeticao: (calculo: CalculoSalvo) => void;
 }
 
@@ -20,6 +21,7 @@ const CalculosList: React.FC<CalculosListProps> = ({
   onUse,
   onReopen,
   onPreview,
+  onVerify,
   onUsePeticao
 }) => {
   return (
@@ -33,6 +35,7 @@ const CalculosList: React.FC<CalculosListProps> = ({
           onUse={onUse}
           onReopen={onReopen}
           onPreview={onPreview}
+          onVerify={onVerify}
           onUsePeticao={onUsePeticao}
         />
       ))}

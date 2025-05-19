@@ -1,27 +1,24 @@
 
 import React from 'react';
-import { Button } from "@/components/ui/button";
-import { formatarMoeda } from '@/utils/formatters';
-import { Edit, Trash, FileText, RefreshCw, Printer } from "lucide-react";
-
-interface CalculoSalvo {
-  id: string;
-  nome: string;
-  timestamp: string;
-  verbasRescisorias: any;
-  adicionais: any;
-  totalGeral: number;
-  userId?: string;
-  nomeEscritorio?: string;
-  dadosContrato?: {
-    dataAdmissao?: string;
-    dataDemissao?: string;
-    salarioBase?: string;
-    tipoRescisao?: 'sem_justa_causa' | 'pedido_demissao' | 'justa_causa' | 'rescisao_indireta';
-    diasTrabalhados?: string;
-    mesesTrabalhados?: string;
-  };
-}
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { 
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem 
+} from '@/components/ui/dropdown-menu';
+import { 
+  MoreVertical, 
+  Edit, 
+  Trash, 
+  Check, 
+  FileEdit, 
+  Eye, 
+  FileText,
+  ClipboardCheck 
+} from 'lucide-react';
+import { CalculoSalvo } from '@/types/calculoSalvo';
 
 interface CalculoItemProps {
   calculo: CalculoSalvo;
@@ -30,6 +27,7 @@ interface CalculoItemProps {
   onUse: (calculo: CalculoSalvo) => void;
   onReopen: (calculo: CalculoSalvo) => void;
   onPreview: (calculo: CalculoSalvo) => void;
+  onVerify: (calculo: CalculoSalvo) => void;
   onUsePeticao: (calculo: CalculoSalvo) => void;
 }
 
@@ -40,80 +38,91 @@ const CalculoItem: React.FC<CalculoItemProps> = ({
   onUse,
   onReopen,
   onPreview,
+  onVerify,
   onUsePeticao
 }) => {
+  const valorFormatado = new Intl.NumberFormat('pt-BR', { 
+    style: 'currency', 
+    currency: 'BRL' 
+  }).format(calculo.totalGeral);
+  
+  const dataFormatada = new Date(calculo.timestamp).toLocaleDateString('pt-BR');
+  
   return (
-    <div 
-      className="border rounded-md p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2"
-    >
-      <div>
-        <h4 className="font-medium">{calculo.nome}</h4>
-        <p className="text-sm text-gray-500">
-          {new Date(calculo.timestamp).toLocaleDateString('pt-BR')} - 
-          {formatarMoeda(calculo.totalGeral)}
-        </p>
-        {calculo.dadosContrato?.dataAdmissao && calculo.dadosContrato?.dataDemissao && (
-          <p className="text-xs text-gray-500">
-            Período: {new Date(calculo.dadosContrato.dataAdmissao).toLocaleDateString('pt-BR')} a{' '}
-            {new Date(calculo.dadosContrato.dataDemissao).toLocaleDateString('pt-BR')}
-          </p>
-        )}
-      </div>
-      <div className="flex flex-wrap gap-2 w-full sm:w-auto justify-end">
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={() => onUse(calculo)}
-        >
-          Usar
-        </Button>
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={() => onReopen(calculo)}
-          className="flex items-center gap-1"
-          title="Reabrir para Edição"
-        >
-          <RefreshCw className="h-4 w-4" />
-          <span className="hidden sm:inline">Reabrir</span>
-        </Button>
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={() => onPreview(calculo)}
-          className="flex items-center gap-1"
-          title="Visualizar e Imprimir"
-        >
-          <Printer className="h-4 w-4" />
-          <span className="hidden sm:inline">Imprimir</span>
-        </Button>
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={() => onUsePeticao(calculo)}
-          className="flex items-center gap-1"
-          title="Usar na Petição"
-        >
-          <FileText className="h-4 w-4" />
-          <span className="hidden sm:inline">Petição</span>
-        </Button>
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={() => onEdit(calculo)}
-        >
-          <Edit className="h-4 w-4" />
-        </Button>
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={() => onDelete(calculo.id)}
-          className="text-red-500 hover:bg-red-50"
-        >
-          <Trash className="h-4 w-4" />
-        </Button>
-      </div>
-    </div>
+    <Card className="overflow-hidden">
+      <CardContent className="p-4">
+        <div className="flex flex-col sm:flex-row justify-between">
+          <div className="flex-1">
+            <h3 className="font-medium text-gray-900">{calculo.nome}</h3>
+            <div className="flex flex-col sm:flex-row sm:gap-4 text-sm text-gray-500">
+              <p>{dataFormatada}</p>
+              <p className="font-semibold text-juriscalc-navy">{valorFormatado}</p>
+            </div>
+          </div>
+          
+          <div className="flex mt-3 sm:mt-0 gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="text-gray-700"
+              onClick={() => onUse(calculo)}
+            >
+              <Check className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">Usar</span>
+            </Button>
+            
+            <Button
+              size="sm"
+              variant="outline"
+              className="text-indigo-600"
+              onClick={() => onVerify(calculo)}
+            >
+              <ClipboardCheck className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">Verificar</span>
+            </Button>
+            
+            <Button
+              size="sm"
+              variant="outline"
+              className="text-green-600"
+              onClick={() => onUsePeticao(calculo)}
+            >
+              <FileText className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">Petição</span>
+            </Button>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[160px]">
+                <DropdownMenuItem onClick={() => onPreview(calculo)}>
+                  <Eye className="h-4 w-4 mr-2" />
+                  Visualizar
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onReopen(calculo)}>
+                  <FileEdit className="h-4 w-4 mr-2" />
+                  Reabrir cálculo
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onEdit(calculo)}>
+                  <Edit className="h-4 w-4 mr-2" />
+                  Editar nome
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="text-red-600" 
+                  onClick={() => onDelete(calculo.id)}
+                >
+                  <Trash className="h-4 w-4 mr-2" />
+                  Excluir
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

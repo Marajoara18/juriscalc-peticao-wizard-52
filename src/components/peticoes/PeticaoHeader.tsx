@@ -6,16 +6,24 @@ import { ArrowLeft } from 'lucide-react';
 interface PeticaoHeaderProps {
   titulo: string;
   onVoltar: () => void;
+  rightContent?: React.ReactNode;
 }
 
-const PeticaoHeader: React.FC<PeticaoHeaderProps> = ({ titulo, onVoltar }) => {
+const PeticaoHeader: React.FC<PeticaoHeaderProps> = ({ titulo, onVoltar, rightContent }) => {
   return (
-    <div className="mb-6 flex items-center print:hidden">
-      <Button variant="ghost" onClick={onVoltar} className="mr-4">
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Voltar
-      </Button>
-      <h2 className="text-2xl font-serif font-semibold">{titulo}</h2>
+    <div className="flex justify-between items-center mb-6 print:hidden">
+      <div className="flex items-center gap-4">
+        <Button 
+          onClick={onVoltar} 
+          variant="outline" 
+          size="sm" 
+          className="h-9 w-9 p-0"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <h1 className="text-2xl font-serif">{titulo}</h1>
+      </div>
+      {rightContent}
     </div>
   );
 };

@@ -9,6 +9,7 @@ import CalculosList from './CalculosList';
 import SaveCalculoDialog from './dialogs/SaveCalculoDialog';
 import ConfirmPeticaoDialog from './dialogs/ConfirmPeticaoDialog';
 import PreviewCalculoDialog from './dialogs/PreviewCalculoDialog';
+import VerifyCalculosDialog from './dialogs/VerifyCalculosDialog';
 import useCalculosSalvos from '@/hooks/useCalculosSalvos';
 
 interface CalculosSalvosProps {
@@ -25,8 +26,10 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
     nomeCalculo,
     confirmDialogOpen,
     previewDialogOpen,
+    verifyDialogOpen,
     selectedCalculoForPeticao,
     selectedCalculoForPreview,
+    selectedCalculoForVerify,
     salvarCalculos,
     handleSalvar,
     handleEditar,
@@ -34,12 +37,14 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
     handleApagar,
     handleUsarCalculo,
     handlePreviewCalculo,
+    handleVerifyCalculo,
     handleUsarNaPeticao,
     confirmarUsarNaPeticao,
     setDialogOpen,
     setNomeCalculo,
     setConfirmDialogOpen,
     setPreviewDialogOpen,
+    setVerifyDialogOpen,
   } = useCalculosSalvos(resultados, totalGeral, dadosContrato, onLoadCalculo);
 
   return (
@@ -70,6 +75,7 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
               onUse={handleUsarCalculo}
               onReopen={handleReabrirCalculo}
               onPreview={handlePreviewCalculo}
+              onVerify={handleVerifyCalculo}
               onUsePeticao={handleUsarNaPeticao}
             />
           )}
@@ -97,6 +103,12 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
         open={previewDialogOpen}
         onOpenChange={setPreviewDialogOpen}
         calculo={selectedCalculoForPreview}
+      />
+      
+      <VerifyCalculosDialog
+        open={verifyDialogOpen}
+        onOpenChange={setVerifyDialogOpen}
+        calculo={selectedCalculoForVerify}
       />
     </>
   );

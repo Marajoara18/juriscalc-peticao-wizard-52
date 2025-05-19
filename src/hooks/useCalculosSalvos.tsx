@@ -19,6 +19,8 @@ export const useCalculosSalvos = (
   const [selectedCalculoForPeticao, setSelectedCalculoForPeticao] = useState<CalculoSalvo | null>(null);
   const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
   const [selectedCalculoForPreview, setSelectedCalculoForPreview] = useState<CalculoSalvo | null>(null);
+  const [verifyDialogOpen, setVerifyDialogOpen] = useState(false);
+  const [selectedCalculoForVerify, setSelectedCalculoForVerify] = useState<CalculoSalvo | null>(null);
 
   // Carregar cálculos salvos
   useEffect(() => {
@@ -115,6 +117,11 @@ export const useCalculosSalvos = (
     setPreviewDialogOpen(true);
   };
 
+  const handleVerifyCalculo = (calculo: CalculoSalvo) => {
+    setSelectedCalculoForVerify(calculo);
+    setVerifyDialogOpen(true);
+  };
+
   const handleUsarNaPeticao = (calculo: CalculoSalvo) => {
     setSelectedCalculoForPeticao(calculo);
     setConfirmDialogOpen(true);
@@ -154,8 +161,10 @@ export const useCalculosSalvos = (
     nomeCalculo,
     confirmDialogOpen,
     previewDialogOpen,
+    verifyDialogOpen,
     selectedCalculoForPeticao,
     selectedCalculoForPreview,
+    selectedCalculoForVerify,
     salvarCalculos,
     handleSalvar,
     handleEditar,
@@ -163,12 +172,14 @@ export const useCalculosSalvos = (
     handleApagar,
     handleUsarCalculo,
     handlePreviewCalculo,
+    handleVerifyCalculo,
     handleUsarNaPeticao,
     confirmarUsarNaPeticao,
     setDialogOpen,
     setNomeCalculo,
     setConfirmDialogOpen,
     setPreviewDialogOpen,
+    setVerifyDialogOpen,
   };
 };
 

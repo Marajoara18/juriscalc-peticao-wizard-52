@@ -12,6 +12,7 @@ import CalculosImportados from './CalculosImportados';
 import PeticaoForm from './PeticaoForm';
 import PeticaoPrintView from './PeticaoPrintView';
 import PeticaoActions from './PeticaoActions';
+import SharePeticaoButton from './SharePeticaoButton';
 
 const EditorPeticao: React.FC<PeticaoProps> = ({ 
   modelo, 
@@ -76,11 +77,22 @@ const EditorPeticao: React.FC<PeticaoProps> = ({
     toast.success('Petição enviada para impressão!');
   };
 
+  const isFinalized = peticao?.status === 'finalizada';
+
   return (
     <div>
       <PeticaoHeader 
         titulo={modelo ? `Novo documento: ${modelo.titulo}` : `Editando: ${peticao?.titulo}`} 
-        onVoltar={onVoltar} 
+        onVoltar={onVoltar}
+        rightContent={
+          peticao && (
+            <SharePeticaoButton 
+              titulo={peticao.titulo} 
+              id={peticao.id}
+              isFinalized={isFinalized} 
+            />
+          )
+        }
       />
 
       <CalculosImportados 
@@ -109,6 +121,7 @@ const EditorPeticao: React.FC<PeticaoProps> = ({
               onSaveRascunho={handleSaveRascunho}
               onSaveFinalized={handleSaveFinalized}
               onPrint={handlePrintPeticao}
+              isFinalized={isFinalized}
             />
           </div>
         </CardContent>
