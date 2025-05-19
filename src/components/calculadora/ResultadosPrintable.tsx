@@ -118,9 +118,28 @@ const ResultadosPrintable: React.FC<ResultadosPrintableProps> = ({ resultados })
       </div>
       
       {/* Total Geral */}
-      <div className="grand-total" style={{backgroundColor: "#0f172a", color: "#ffffff", border: "1px solid #0f172a"}}>
-        <div className="valor-total-reclamacao">VALOR TOTAL DA RECLAMAÇÃO</div>
-        <div className="valor-total-valor">{formatarMoeda(totalGeral)}</div>
+      <div className="valor-total" style={{
+        backgroundColor: "#1D2D5A",
+        padding: "10px 20px",
+        borderRadius: "10px",
+        textAlign: "center",
+        fontFamily: "Arial, sans-serif",
+        marginTop: "20px"
+      }}>
+        <span className="titulo" style={{
+          display: "block",
+          fontSize: "14px",
+          fontWeight: "bold",
+          color: "#FFFFFF",
+          textTransform: "uppercase"
+        }}>VALOR TOTAL DA RECLAMAÇÃO</span>
+        <span className="valor" style={{
+          display: "block",
+          fontSize: "22px",
+          fontWeight: "bold",
+          color: "#FFFFFF",
+          marginTop: "5px"
+        }}>{formatarMoeda(totalGeral)}</span>
       </div>
     </div>
   );

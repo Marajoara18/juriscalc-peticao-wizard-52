@@ -12,13 +12,35 @@ const TabelaTotal: React.FC<TabelaTotalProps> = ({
   tipoRescisao = 'sem_justa_causa' 
 }) => {
   return (
-    <div className="bg-[#0f172a] p-4 rounded-md text-white border border-[#0f172a] print:bg-[#0f172a] print:text-white print:border-[#0f172a]">
-      <div className="text-center">
-        <p className="text-sm font-medium mb-2 uppercase print:font-bold print:text-white valor-total-reclamacao">VALOR TOTAL DA RECLAMAÇÃO</p>
-        <p className="text-2xl font-bold valor-total-valor print:text-white">
-          {formatarMoeda(totalGeral)}
-        </p>
-      </div>
+    <div className="valor-total print:bg-[#1D2D5A] print:text-white print:border-[#1D2D5A]"
+         style={{ 
+           backgroundColor: '#1D2D5A',
+           padding: '10px 20px',
+           borderRadius: '10px',
+           textAlign: 'center',
+           fontFamily: 'Arial, sans-serif',
+           marginTop: '20px'
+         }}>
+      <span className="titulo"
+            style={{
+              display: 'block',
+              fontSize: '14px',
+              fontWeight: 'bold',
+              color: '#FFFFFF',
+              textTransform: 'uppercase'
+            }}>
+        VALOR TOTAL DA RECLAMAÇÃO
+      </span>
+      <span className="valor"
+            style={{
+              display: 'block',
+              fontSize: '22px',
+              fontWeight: 'bold',
+              color: '#FFFFFF',
+              marginTop: '5px'
+            }}>
+        {formatarMoeda(totalGeral)}
+      </span>
     </div>
   );
 };

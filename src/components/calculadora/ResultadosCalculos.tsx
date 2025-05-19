@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card } from '@/components/ui/card';
@@ -166,18 +167,29 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
         <span className="font-medium">{formatarMoeda(subTotal)}</span>
       </div>
       
-      {/* Total Geral - com cores atualizadas para azul escuro com texto branco */}
-      <div 
-        className={cn(
-          "flex justify-between p-3 rounded-md", 
-          "bg-[#0f172a] text-white border border-[#0f172a]",
-          "dark:bg-[#0f172a] dark:text-white dark:border-[#0f172a]"
-        )}
-      >
-        <span className="font-bold text-lg">TOTAL GERAL</span>
-        <span className="font-bold text-lg">
-          {formatarMoeda(totalGeral)}
-        </span>
+      {/* Total Geral - com a nova formatação padronizada */}
+      <div className="valor-total" style={{
+        backgroundColor: "#1D2D5A",
+        padding: "10px 20px",
+        borderRadius: "10px",
+        textAlign: "center",
+        fontFamily: "Arial, sans-serif",
+        marginTop: "20px"
+      }}>
+        <span className="titulo" style={{
+          display: "block",
+          fontSize: "14px",
+          fontWeight: "bold",
+          color: "#FFFFFF",
+          textTransform: "uppercase"
+        }}>VALOR TOTAL DA RECLAMAÇÃO</span>
+        <span className="valor" style={{
+          display: "block",
+          fontSize: "22px",
+          fontWeight: "bold",
+          color: "#FFFFFF",
+          marginTop: "5px"
+        }}>{formatarMoeda(totalGeral)}</span>
       </div>
       
       {/* Botões de ação abaixo do Total Geral */}

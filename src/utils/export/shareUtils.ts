@@ -84,13 +84,15 @@ export const generateCalculationText = (resultados: any) => {
     text += `• *Subtotal Adicionais: ${formatValue(totalAdicionais)}*\n\n`;
   }
 
-  // Add total geral
+  // Add total geral with special formatting
   const totalGeral = resultados.totalGeral || verbas.total + 
     Object.values(adicionais).reduce((sum: number, value: any) => 
       sum + (typeof value === 'number' ? value : 0), 0
     );
   
-  text += `*Valor total da reclamação: ${formatValue(totalGeral)}*\n\n`;
+  // Formatted with special emphasis
+  text += "*VALOR TOTAL DA RECLAMAÇÃO*\n";
+  text += `*${formatValue(totalGeral)}*\n\n`;
   
   // Add footer
   text += "Acesse o IusCalc para mais cálculos: https://iuscalc.com";

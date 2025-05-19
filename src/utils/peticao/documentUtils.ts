@@ -102,29 +102,28 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
               font-size: 0.75rem;
               color: #6b7280;
             }
-            /* Preservar estilos da tabela de cálculos */
-            .bg-juriscalc-navy {
-              background-color: #0f172a !important;
-              color: white !important;
+            /* Estilos para o valor total */
+            .valor-total {
+              background-color: #1D2D5A;
+              padding: 10px 20px;
+              border-radius: 10px;
+              text-align: center;
+              font-family: Arial, sans-serif;
+              margin-top: 20px;
             }
-            /* Estilo para o valor total da reclamação */
-            .valor-total-reclamacao, 
-            .valor-total-reclamacao * {
-              text-align: center !important;
-              background-color: #0f172a !important;
-              color: #ffffff !important;
-              font-weight: bold !important;
+            .titulo {
+              display: block;
+              font-size: 14px;
+              font-weight: bold;
+              color: #FFFFFF;
+              text-transform: uppercase;
             }
-            /* Aplicar estilo ao valor total */
-            div[style*="background-color"] {
-              background-color: #0f172a !important;
-              color: #ffffff !important;
-              font-weight: bold !important;
-              border: 1px solid #0f172a !important;
-            }
-            div[style*="background-color"] p {
-              color: #ffffff !important;
-              font-weight: bold !important;
+            .valor {
+              display: block;
+              font-size: 22px;
+              font-weight: bold;
+              color: #FFFFFF;
+              margin-top: 5px;
             }
             /* Esconder o logo IusCalc e informações do footer */
             .iuscalc-logo, 
@@ -144,47 +143,6 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
               elementsToRemove.forEach(element => {
                 if (element && element.parentNode) {
                   element.parentNode.removeChild(element);
-                }
-              });
-              
-              // Adicionar estilo aos elementos de valor total
-              const totalElements = document.querySelectorAll('.calculadora-tabela div[style*="background-color"]');
-              totalElements.forEach(el => {
-                el.classList.add('valor-total-reclamacao');
-                el.style.backgroundColor = '#0f172a';
-                el.style.color = '#ffffff';
-                el.style.textAlign = 'center';
-                el.style.border = '1px solid #0f172a';
-                
-                // Garantir que o texto seja branco em negrito
-                const paragraphs = el.querySelectorAll('p');
-                paragraphs.forEach(p => {
-                  p.style.color = '#ffffff';
-                  p.style.fontWeight = 'bold';
-                });
-              });
-              
-              // Assegurar que elementos com a classe valor-total-reclamacao estejam com as cores corretas
-              const boldElements = document.querySelectorAll('.valor-total-reclamacao, .print-bold-white');
-              boldElements.forEach(el => {
-                el.style.backgroundColor = '#0f172a';
-                el.style.color = '#ffffff';
-                el.style.fontWeight = 'bold';
-                el.style.textAlign = 'center';
-                el.style.border = '1px solid #0f172a';
-                
-                // Aplicar em todos os elementos filhos também
-                const children = el.querySelectorAll('*');
-                children.forEach(child => {
-                  child.style.color = '#ffffff';
-                  child.style.fontWeight = 'bold';
-                  child.style.backgroundColor = '#0f172a';
-                });
-                
-                // Garantir que o texto do próprio elemento esteja em negrito branco
-                if (el.firstChild && el.firstChild.nodeType === 3) {
-                  el.style.color = '#ffffff';
-                  el.style.fontWeight = 'bold';
                 }
               });
               
