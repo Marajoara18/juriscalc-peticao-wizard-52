@@ -2,7 +2,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { FilePdf } from 'lucide-react';
+import { FileText } from 'lucide-react'; // Changed FilePdf to FileText
 import ExportDropdown from '@/components/calculadora/ExportDropdown';
 import PreviewCalculoContent from './PreviewCalculoContent';
 import { exportToPDF } from '@/utils/exportUtils';
@@ -60,7 +60,7 @@ const PreviewCalculoDialog: React.FC<PreviewCalculoDialogProps> = ({
             onClick={handleExportPDF}
             className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
           >
-            <FilePdf className="h-4 w-4 mr-2" />
+            <FileText className="h-4 w-4 mr-2" /> {/* Changed FilePdf to FileText */}
             Exportar como PDF
           </Button>
           <div className="flex gap-2">

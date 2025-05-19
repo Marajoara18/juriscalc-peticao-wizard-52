@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import MobileLayout from './layout/MobileLayout';
 import DesktopLayout from './layout/DesktopLayout';
 import useCalculadora from '@/hooks/useCalculadora';
-import useMobile from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile'; // Changed from default to named import
 import { toast } from "sonner";
 
 interface CalculadoraContainerProps {
@@ -16,7 +15,7 @@ const CalculadoraContainer: React.FC<CalculadoraContainerProps> = ({
   scrollToCalculosSalvos,
   onShowCorrecaoMonetaria 
 }) => {
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
   
   const {
     dadosContrato, 
