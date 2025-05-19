@@ -109,16 +109,21 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
             }
             /* Estilo para o valor total da reclamação */
             .valor-total-reclamacao, 
-            .valor-total-reclamacao *,
-            .print-bold-black {
+            .valor-total-reclamacao * {
               text-align: center !important;
-              background-color: #0f172a !important;
-              color: #ffffff !important;
+              background-color: #f2f2f2 !important;
+              color: #000000 !important;
               font-weight: bold !important;
+            }
+            .print-bold-black {
+              font-weight: bold !important;
+              color: #000000 !important;
+              background-color: #f2f2f2 !important;
             }
             .print-bold-white {
               font-weight: bold !important;
-              color: #ffffff !important;
+              color: #000000 !important;
+              background-color: #f2f2f2 !important;
             }
             /* Esconder o logo IusCalc e informações do footer */
             .iuscalc-logo, 
@@ -145,36 +150,38 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
               const totalElements = document.querySelectorAll('.calculadora-tabela div[style*="background-color"]');
               totalElements.forEach(el => {
                 el.classList.add('valor-total-reclamacao');
-                el.classList.add('print-bold-white');
+                el.classList.add('print-bold-black');
                 el.style.textAlign = 'center';
-                el.style.backgroundColor = '#0f172a';
+                el.style.backgroundColor = '#f2f2f2';
                 
-                // Garantir que o texto seja branco
+                // Garantir que o texto seja preto em negrito
                 const paragraphs = el.querySelectorAll('p');
                 paragraphs.forEach(p => {
-                  p.style.color = '#ffffff';
+                  p.style.color = '#000000';
                   p.style.fontWeight = 'bold';
                 });
               });
               
-              // Assegurar que elementos com a classe valor-total-reclamacao ou print-bold-white estejam em branco sobre fundo azul marinho
-              const boldWhiteElements = document.querySelectorAll('.valor-total-reclamacao, .print-bold-white');
-              boldWhiteElements.forEach(el => {
-                el.style.color = '#ffffff';
+              // Assegurar que elementos com a classe valor-total-reclamacao ou print-bold-white estejam em preto sobre fundo cinza
+              const boldElements = document.querySelectorAll('.valor-total-reclamacao, .print-bold-white, .print-bold-black');
+              boldElements.forEach(el => {
+                el.style.color = '#000000';
                 el.style.fontWeight = 'bold';
                 el.style.textAlign = 'center';
+                el.style.backgroundColor = '#f2f2f2';
                 
                 // Aplicar em todos os elementos filhos também
                 const children = el.querySelectorAll('*');
                 children.forEach(child => {
                   child.style.fontWeight = 'bold';
-                  child.style.color = '#ffffff';
+                  child.style.color = '#000000';
+                  child.style.backgroundColor = '#f2f2f2';
                 });
                 
-                // Garantir que o texto do próprio elemento esteja em negrito branco
+                // Garantir que o texto do próprio elemento esteja em negrito preto
                 if (el.firstChild && el.firstChild.nodeType === 3) {
                   el.style.fontWeight = 'bold';
-                  el.style.color = '#ffffff';
+                  el.style.color = '#000000';
                 }
               });
               

@@ -62,10 +62,10 @@ export const criarHTMLCalculosEmbutidos = (calculos: any) => {
         ${renderVerbasRescisoriasHTML(verbasRescisorias)}
         ${renderAdicionaisHTML(adicionais, calculos)}
         
-        <div class="valor-total-reclamacao print-bold-black" style="background-color: #0f172a; color: #ffffff; padding: 0.75rem; border-radius: 0.375rem; margin-top: 1rem; page-break-inside: avoid; text-align: center;">
+        <div style="background-color: #f2f2f2; color: #000000; padding: 0.75rem; border-radius: 0.375rem; margin-top: 1rem; page-break-inside: avoid; text-align: center; border: 1px solid #e0e0e0;">
           <div style="text-align: center;">
-            <p style="font-size: 0.8rem; font-weight: 500; margin-bottom: 0.25rem; color: #ffffff;" class="print-bold-white">VALOR TOTAL DA RECLAMAÇÃO</p>
-            <p style="font-size: 1rem; font-weight: 700; color: #ffffff;" class="print-bold-white">${formatarValor(totalGeral)}</p>
+            <p style="font-size: 0.8rem; font-weight: bold; margin-bottom: 0.25rem; color: #000000;">VALOR TOTAL DA RECLAMAÇÃO</p>
+            <p style="font-size: 1rem; font-weight: 700; color: #000000;">${formatarValor(totalGeral)}</p>
           </div>
         </div>
         
