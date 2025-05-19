@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { formatarMoeda } from '@/utils/formatters';
 import { DadosContrato, Adicionais } from '@/types/calculadora';
 import { cn } from '@/lib/utils';
-import PrintResultButton from './PrintResultButton';
+import ExportResultsButton from './ExportResultsButton';
 
 interface ResultadosCalculosProps {
   resultados: any; 
@@ -160,7 +160,7 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
       </div>
       
       <div className="mt-4 flex justify-end print:hidden">
-        <PrintResultButton />
+        <ExportResultsButton resultados={resultados} />
       </div>
     </Card>
   );

@@ -1,63 +1,43 @@
 
-import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Download, FilePdf, FileExcel } from "lucide-react";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
-import TabelaCalculos from '@/components/peticoes/TabelaCalculos';
+import { Download, FilePdf, FileExcel } from "lucide-react";
 import { handlePrint } from '@/utils/peticaoUtils';
 import { toast } from "sonner";
 import * as XLSX from 'xlsx';
 
-interface CalculoSalvo {
-  id: string;
-  nome: string;
-  timestamp: string;
-  verbasRescisorias: any;
-  adicionais: any;
-  totalGeral: number;
-  userId?: string;
-  nomeEscritorio?: string;
-  dadosContrato?: {
-    dataAdmissao?: string;
-    dataDemissao?: string;
-    salarioBase?: string;
-    tipoRescisao?: 'sem_justa_causa' | 'pedido_demissao' | 'justa_causa' | 'rescisao_indireta';
-    diasTrabalhados?: string;
-    mesesTrabalhados?: string;
-  };
+interface ExportResultsButtonProps {
+  disabled?: boolean;
+  resultados?: any;
 }
 
-interface PreviewCalculoDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  calculo: CalculoSalvo | null;
-}
-
-const PreviewCalculoDialog: React.FC<PreviewCalculoDialogProps> = ({
-  open,
-  onOpenChange,
-  calculo
+const ExportResultsButton: React.FC<ExportResultsButtonProps> = ({ 
+  disabled = false, 
+  resultados 
 }) => {
+  const [open, setOpen] = useState(false);
+
   const handleExportPDF = () => {
     handlePrint();
     toast.success('Demonstrativo de cálculos enviado para impressão como PDF!');
+    setOpen(false);
   };
 
   const handleExportExcel = () => {
-    if (!calculo) {
+    if (!resultados) {
       toast.error('Não há dados para exportar!');
       return;
     }
 
     try {
       // Prepare verbas rescisórias data
-      const verbas = calculo.verbasRescisorias || {};
+      const verbas = resultados.verbasRescisorias || {};
       const verbasRows = Object.entries(verbas)
         .filter(([key, value]) => 
           typeof value === 'number' && 
@@ -83,7 +63,7 @@ const PreviewCalculoDialog: React.FC<PreviewCalculoDialogProps> = ({
         });
       
       // Prepare adicionais data
-      const adicionais = calculo.adicionais || {};
+      const adicionais = resultados.adicionais || {};
       const adicionaisRows = Object.entries(adicionais)
         .filter(([key, value]) => 
           typeof value === 'number' && 
@@ -122,7 +102,7 @@ const PreviewCalculoDialog: React.FC<PreviewCalculoDialogProps> = ({
         { 
           "Tipo": "Total", 
           "Descrição": "VALOR TOTAL DA RECLAMAÇÃO", 
-          "Valor": calculo.totalGeral || 0 
+          "Valor": resultados.totalGeral || 0 
         }
       ];
 
@@ -139,14 +119,14 @@ const PreviewCalculoDialog: React.FC<PreviewCalculoDialogProps> = ({
       ];
       ws['!cols'] = colWidths;
 
-      // Generate file name with current date and calculo name
+      // Generate file name with current date
       const date = new Date();
-      const calculoName = calculo.nome.replace(/[^\w\s]/gi, '').replace(/\s+/g, '_').toLowerCase();
-      const fileName = `${calculoName}_${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}.xlsx`;
+      const fileName = `calculo_trabalhista_${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}.xlsx`;
       
       // Export to file
       XLSX.writeFile(wb, fileName);
       toast.success('Demonstrativo de cálculos exportado em Excel com sucesso!');
+      setOpen(false);
     } catch (error) {
       console.error('Erro ao exportar para Excel:', error);
       toast.error('Erro ao exportar para Excel. Tente novamente.');
@@ -154,55 +134,30 @@ const PreviewCalculoDialog: React.FC<PreviewCalculoDialogProps> = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl">
-        <DialogHeader className="print:hidden">
-          <DialogTitle>Demonstrativo de Cálculos</DialogTitle>
-          <DialogDescription>
-            Visualize e exporte o demonstrativo de cálculos
-          </DialogDescription>
-        </DialogHeader>
-        <div className="py-4 print:py-0">
-          {calculo && (
-            <div id="print-content" className="print:block">
-              <div className="border rounded-md p-4 print:border-none">
-                <div className="print:break-inside-avoid">
-                  <TabelaCalculos
-                    calculos={calculo}
-                    onInserirNoPeticao={() => {}}
-                    embutido={true}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-        <DialogFooter className="print:hidden">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Fechar
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button>
-                <Download className="h-4 w-4 mr-2" />
-                Exportar
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleExportPDF}>
-                <FilePdf className="h-4 w-4 mr-2" />
-                <span>Exportar como PDF</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleExportExcel}>
-                <FileExcel className="h-4 w-4 mr-2" />
-                <span>Exportar como Excel</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={disabled}
+          className="gap-2"
+        >
+          <Download className="h-4 w-4" />
+          Exportar Resultados
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={handleExportPDF}>
+          <FilePdf className="h-4 w-4 mr-2" />
+          <span>Exportar como PDF</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleExportExcel}>
+          <FileExcel className="h-4 w-4 mr-2" />
+          <span>Exportar como Excel</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
-export default PreviewCalculoDialog;
+export default ExportResultsButton;
