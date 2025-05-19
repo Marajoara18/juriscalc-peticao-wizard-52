@@ -22,6 +22,11 @@ const PeticaoActions: React.FC<PeticaoActionsProps> = ({
     printDocument('peticao-preview');
   };
 
+  const handleExportPDF = () => {
+    // Usamos o ID específico do elemento de preview da petição para exportar como PDF
+    printDocument('peticao-preview', true);
+  };
+
   return (
     <div className="pt-4 flex justify-end space-x-4 print:hidden">
       <Button 
@@ -30,8 +35,19 @@ const PeticaoActions: React.FC<PeticaoActionsProps> = ({
         className="border-juriscalc-navy text-juriscalc-navy hover:bg-juriscalc-navy hover:text-white"
       >
         <Printer className="mr-2 h-4 w-4" />
-        Imprimir Apenas a Petição
+        Imprimir
       </Button>
+      
+      {isFinalized && (
+        <Button 
+          variant="outline"
+          onClick={handleExportPDF}
+          className="border-juriscalc-navy text-juriscalc-navy hover:bg-juriscalc-navy hover:text-white"
+        >
+          <FileText className="mr-2 h-4 w-4" />
+          Exportar como PDF
+        </Button>
+      )}
       
       {!isFinalized && (
         <>

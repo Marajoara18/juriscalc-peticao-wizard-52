@@ -63,6 +63,44 @@ export const handlePrint = () => {
         visibility: visible !important;
         display: block !important;
       }
+      /* Melhorar a formatação das tabelas na impressão */
+      table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        margin: 15px 0 !important;
+      }
+      th, td {
+        border: 1px solid #ddd !important;
+        padding: 8px !important;
+        text-align: left !important;
+      }
+      th {
+        background-color: #f9f9f9 !important;
+        font-weight: bold !important;
+      }
+      .tabela-calculos {
+        page-break-inside: avoid !important;
+        margin-top: 20px !important;
+        margin-bottom: 20px !important;
+      }
+      /* Estilo para títulos e seções */
+      h1, h2, h3, h4 {
+        page-break-after: avoid !important;
+      }
+      h1 {
+        font-size: 22px !important;
+        text-align: center !important;
+        margin-bottom: 20px !important;
+      }
+      h3 {
+        font-size: 16px !important;
+        margin-top: 15px !important;
+        color: #0f172a !important;
+      }
+      /* Preservar quebras de linha no texto */
+      .whitespace-pre-wrap {
+        white-space: pre-wrap !important;
+      }
     }
   `;
   
@@ -83,7 +121,7 @@ export const handlePrint = () => {
 };
 
 // Função para preparar a página para impressão e mostrar diálogo de impressão
-export const printDocument = (elementId?: string) => {
+export const printDocument = (elementId?: string, asPDF: boolean = false) => {
   // Se um ID for fornecido, ajuste o conteúdo visível para impressão
   if (elementId) {
     const contentToPrint = document.getElementById(elementId);
@@ -95,12 +133,15 @@ export const printDocument = (elementId?: string) => {
         return;
       }
       
+      // Título para o documento (varia de acordo com o tipo de exportação)
+      const documentTitle = asPDF ? 'Petição (PDF)' : 'Petição';
+      
       // Escrever apenas o conteúdo da petição no novo documento
       printWindow.document.write(`
         <!DOCTYPE html>
         <html>
         <head>
-          <title>Petição</title>
+          <title>${documentTitle}</title>
           <style>
             body {
               font-family: Arial, sans-serif;
@@ -108,24 +149,73 @@ export const printDocument = (elementId?: string) => {
               padding: 20px;
               max-width: 800px;
               margin: 0 auto;
+              color: #333;
             }
             @media print {
               body {
                 padding: 0;
               }
             }
-            .tabela-calculos {
+            /* Estilos para tabelas */
+            table {
               width: 100%;
               border-collapse: collapse;
-              margin: 20px 0;
+              margin: 15px 0;
+              font-size: 0.95em;
             }
-            .tabela-calculos th, .tabela-calculos td {
+            th, td {
               border: 1px solid #ddd;
               padding: 8px;
               text-align: left;
             }
-            .tabela-calculos th {
+            th {
               background-color: #f2f2f2;
+              font-weight: bold;
+            }
+            .tabela-calculos {
+              page-break-inside: avoid;
+              margin: 20px 0;
+            }
+            /* Títulos e seções */
+            h1, h2, h3, h4 {
+              page-break-after: avoid;
+              color: #0f172a;
+            }
+            h1 {
+              font-size: 22px;
+              text-align: center;
+              margin-bottom: 20px;
+              border-bottom: 1px solid #eee;
+              padding-bottom: 10px;
+            }
+            h3 {
+              font-size: 16px;
+              margin-top: 20px;
+              margin-bottom: 10px;
+              border-bottom: 1px solid #f5f5f5;
+              padding-bottom: 5px;
+            }
+            /* Cabeçalhos das tabelas */
+            .font-medium {
+              font-weight: 500;
+            }
+            /* Total e valores importantes */
+            .font-bold {
+              font-weight: 700;
+            }
+            .text-right {
+              text-align: right;
+            }
+            /* Manter quebras de linha */
+            .whitespace-pre-wrap {
+              white-space: pre-wrap;
+            }
+            /* Footer das tabelas de cálculos */
+            .calculadora-tabela .mt-5 {
+              margin-top: 1.25rem;
+              text-align: center;
+              font-size: 0.75rem;
+              color: #6b7280;
             }
           </style>
         </head>
@@ -135,7 +225,7 @@ export const printDocument = (elementId?: string) => {
             // Auto-print e fechar
             setTimeout(() => {
               window.print();
-              setTimeout(() => window.close(), 500);
+              ${asPDF ? '' : 'setTimeout(() => window.close(), 500);'}
             }, 500);
           </script>
         </body>
