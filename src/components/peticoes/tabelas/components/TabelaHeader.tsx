@@ -41,7 +41,7 @@ const TabelaHeader: React.FC<TabelaHeaderProps> = ({
         <img 
           src="/lovable-uploads/caf683c7-0cb3-4ef4-8e5f-5de22f996b8a.png"
           alt="IusCalc Logo" 
-          className="h-10 mr-3" 
+          className="h-8 mr-3" 
         />
         <div>
           <CardTitle className="text-xl">Cálculos Trabalhistas</CardTitle>

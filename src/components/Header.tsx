@@ -46,15 +46,16 @@ const Header = () => {
     <header className="bg-juriscalc-navy text-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link to="/" className="flex items-center">
-          <div className="bg-white p-2 rounded-lg">
+          <div className="bg-white p-1 rounded-lg">
             <img 
               src="/lovable-uploads/caf683c7-0cb3-4ef4-8e5f-5de22f996b8a.png"
               alt="Logo"
-              className="h-28 w-auto"
-              style={{ minWidth: 180 }}
+              className="h-20 w-auto"
+              style={{ minWidth: 140 }}
             />
           </div>
         </Link>
+        
         <nav className="hidden md:flex items-center gap-6">
           <Link to="/" className="hover:text-juriscalc-gold transition-colors">Home</Link>
           <Link to="/calculadora" className="hover:text-juriscalc-gold transition-colors">Calculadora</Link>
@@ -69,6 +70,7 @@ const Header = () => {
             </Button>
           )}
         </nav>
+        
         <div className="flex items-center gap-2">
           <Dialog>
             <DialogTrigger asChild>

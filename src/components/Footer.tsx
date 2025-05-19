@@ -8,12 +8,12 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
           <div className="flex flex-col items-start md:items-start">
-            <div className="bg-white p-2 rounded-lg mb-2">
+            <div className="bg-white p-1 rounded-lg mb-2">
               <img 
                 src="/lovable-uploads/caf683c7-0cb3-4ef4-8e5f-5de22f996b8a.png"
                 alt="Logo"
-                className="h-24 w-auto"
-                style={{ minWidth: 160 }}
+                className="h-20 w-auto"
+                style={{ minWidth: 120 }}
               />
             </div>
             <p className="text-gray-300 mb-4">
