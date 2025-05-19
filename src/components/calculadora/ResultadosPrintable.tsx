@@ -36,14 +36,9 @@ const ResultadosPrintable: React.FC<ResultadosPrintableProps> = ({ resultados })
   
   // Total geral
   const totalGeral = subTotal;
-  
-  // Nome do escritório (se disponível)
-  const nomeEscritorio = localStorage.getItem('userName') || '';
 
   return (
     <div id="print-results-only" style={{display: 'none'}}>
-      <h1>Resultados do Cálculo</h1>
-      
       {/* Verbas Rescisórias */}
       <div className="section">
         <h2>Verbas Rescisórias</h2>
@@ -127,12 +122,6 @@ const ResultadosPrintable: React.FC<ResultadosPrintableProps> = ({ resultados })
         <div>VALOR TOTAL DA RECLAMAÇÃO</div>
         <div>{formatarMoeda(totalGeral)}</div>
       </div>
-      
-      {nomeEscritorio && (
-        <div className="footer">
-          <p>Cálculos: {nomeEscritorio}</p>
-        </div>
-      )}
     </div>
   );
 };
