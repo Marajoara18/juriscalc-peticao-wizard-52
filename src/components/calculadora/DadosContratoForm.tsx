@@ -89,7 +89,7 @@ const DadosContratoForm: React.FC<DadosContratoFormProps> = ({
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Dias Trabalhados - agora read-only */}
+          {/* Dias Trabalhados - agora editável com setas */}
           <div>
             <Label htmlFor="diasTrabalhados" className="juriscalc-label">
               Dias Trabalhados no último mês
@@ -98,9 +98,12 @@ const DadosContratoForm: React.FC<DadosContratoFormProps> = ({
               id="diasTrabalhados" 
               name="diasTrabalhados"
               value={dadosContrato.diasTrabalhados}
-              readOnly
-              className="juriscalc-input bg-gray-50" 
-              type="text"
+              onChange={onChange}
+              className="juriscalc-input" 
+              type="number"
+              min="1"
+              max="31"
+              step="1"
               placeholder="0"
             />
           </div>

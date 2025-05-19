@@ -15,11 +15,11 @@ export const useDadosContrato = (
         
         // Obter o dia exato da data de demissão sem nenhuma alteração
         const dataDemissao = new Date(dadosContrato.dataDemissao);
-        // Usar o dia do mês como está na data de demissão
-        const dias = dataDemissao.getDate();
+        // Usar o dia do mês como está na data de demissão e adicionar um dia
+        const dias = dataDemissao.getDate() + 1;
         
         console.log("Data Demissão:", dataDemissao);
-        console.log("Dia extraído:", dias);
+        console.log("Dia extraído + 1:", dias);
         
         setDadosContrato(prev => ({
           ...prev,
