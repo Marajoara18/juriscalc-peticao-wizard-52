@@ -72,24 +72,39 @@ export const exportToPDF = () => {
         .section {
           margin-bottom: 20px;
         }
-        .grand-total {
-          background-color: #0f172a;
-          padding: 10px;
-          border: 1px solid #0f172a;
-          font-weight: bold;
+        .valor-total {
+          background-color: #1D2D5A;
+          padding: 10px 20px;
+          border-radius: 10px;
           text-align: center;
+          font-family: Arial, sans-serif;
           margin-top: 20px;
-          color: #ffffff;
+          color: #FFFFFF;
         }
-        .grand-total div:first-child {
-          text-transform: uppercase;
+        .titulo {
+          display: block;
           font-size: 14px;
-          margin-bottom: 5px;
-          color: #ffffff;
+          font-weight: bold;
+          color: #FFFFFF;
+          text-transform: uppercase;
         }
-        .grand-total div:last-child {
-          font-size: 16px;
-          color: #ffffff;
+        .valor {
+          display: block;
+          font-size: 22px;
+          font-weight: bold;
+          color: #FFFFFF;
+          margin-top: 5px;
+        }
+        @media print {
+          .valor-total {
+            background-color: #1D2D5A !important;
+            color: #FFFFFF !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .titulo, .valor {
+            color: #FFFFFF !important;
+          }
         }
         .footer {
           margin-top: 30px;

@@ -89,33 +89,31 @@ export const handlePrint = () => {
       .whitespace-pre-wrap {
         white-space: pre-wrap !important;
       }
-      /* Estilo para o valor total - atualizado para azul escuro com texto branco */
-      .print\\:bg-\\[\\#0f172a\\], .print\\:bg-white, .valor-total-reclamacao {
-        background-color: #0f172a !important;
-        color: #ffffff !important;
-        font-weight: bold !important;
-        border: 1px solid #0f172a !important;
-      }
-      .print\\:text-white {
-        color: #ffffff !important;
-        font-weight: bold !important;
-      }
-      /* Estilização específica para total da reclamação */
-      .valor-total-reclamacao {
-        font-size: 16px !important;
-        font-weight: bold !important;
+      /* Estilo para o valor total */
+      .valor-total {
+        background-color: #1D2D5A !important;
+        padding: 10px 20px !important;
+        border-radius: 10px !important;
         text-align: center !important;
+        font-family: Arial, sans-serif !important;
+        margin-top: 20px !important;
+        color: #FFFFFF !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .titulo {
+        display: block !important;
+        font-size: 14px !important;
+        font-weight: bold !important;
+        color: #FFFFFF !important;
         text-transform: uppercase !important;
-        margin-bottom: 5px !important;
-        color: #ffffff !important;
-        background-color: #0f172a !important;
       }
-      .valor-total-valor {
-        font-size: 18px !important;
+      .valor {
+        display: block !important;
+        font-size: 22px !important;
         font-weight: bold !important;
-        text-align: center !important;
-        color: #ffffff !important;
-        background-color: #0f172a !important;
+        color: #FFFFFF !important;
+        margin-top: 5px !important;
       }
       /* Esconder o logo IusCalc e informações do footer */
       .iuscalc-logo, 

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card } from '@/components/ui/card';
@@ -167,7 +166,7 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
         <span className="font-medium">{formatarMoeda(subTotal)}</span>
       </div>
       
-      {/* Total Geral - com a nova formatação padronizada */}
+      {/* Total Geral - usando o componente padronizado */}
       <div className="valor-total" style={{
         backgroundColor: "#1D2D5A",
         padding: "10px 20px",

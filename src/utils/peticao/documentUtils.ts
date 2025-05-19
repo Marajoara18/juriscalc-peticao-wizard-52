@@ -110,6 +110,7 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
               text-align: center;
               font-family: Arial, sans-serif;
               margin-top: 20px;
+              color: #FFFFFF;
             }
             .titulo {
               display: block;
@@ -124,6 +125,17 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
               font-weight: bold;
               color: #FFFFFF;
               margin-top: 5px;
+            }
+            @media print {
+              .valor-total {
+                background-color: #1D2D5A !important;
+                color: #FFFFFF !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+              }
+              .titulo, .valor {
+                color: #FFFFFF !important;
+              }
             }
             /* Esconder o logo IusCalc e informações do footer */
             .iuscalc-logo, 

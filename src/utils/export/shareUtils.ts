@@ -26,7 +26,7 @@ export const generateCalculationText = (resultados: any) => {
   };
 
   // Start building the text
-  let text = "*Cálculos Trabalhistas - IusCalc*\n\n";
+  let text = "*Cálculos Trabalhistas*\n\n";
   text += "Demonstrativo de cálculos trabalhistas\n\n";
 
   // Add verbas rescisórias
@@ -93,9 +93,6 @@ export const generateCalculationText = (resultados: any) => {
   // Formatted with special emphasis
   text += "*VALOR TOTAL DA RECLAMAÇÃO*\n";
   text += `*${formatValue(totalGeral)}*\n\n`;
-  
-  // Add footer
-  text += "Acesse o IusCalc para mais cálculos: https://iuscalc.com";
   
   return text;
 };

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { formatarMoeda } from '@/utils/formatters';
 
@@ -162,14 +161,10 @@ const TabelaCalculosEmbutida: React.FC<TabelaCalculosEmbutidaProps> = ({
           </div>
         )}
 
-        {/* Valor total da reclamação com estilo correspondente à imagem */}
-        <div className="bg-juriscalc-navy p-2 rounded-md text-white mt-4 print:mt-4 print:border print:border-black">
-          <div className="text-center">
-            <p className="text-xs font-medium mb-1 print:text-xs">VALOR TOTAL DA RECLAMAÇÃO</p>
-            <p className="text-lg font-bold print:text-base">
-              {formatarMoeda(totalGeral)}
-            </p>
-          </div>
+        {/* Valor total da reclamação com o novo padrão */}
+        <div className="valor-total">
+          <span className="titulo">VALOR TOTAL DA RECLAMAÇÃO</span>
+          <span className="valor">{formatarMoeda(totalGeral)}</span>
         </div>
         
         <div className="text-center text-xs text-gray-500 border-t mt-2 pt-1">
