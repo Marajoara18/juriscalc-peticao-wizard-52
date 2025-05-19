@@ -222,6 +222,15 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
               background-color: #0f172a !important;
               color: white !important;
             }
+            /* Estilo para o valor total da reclamação */
+            .valor-total-reclamacao {
+              font-weight: bold !important;
+              color: #000 !important;
+            }
+            /* Esconder o logo IusCalc e informações do footer */
+            .iuscalc-logo, .calculadora-footer {
+              display: none !important;
+            }
           </style>
         </head>
         <body>
@@ -229,6 +238,16 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
           <script>
             // Auto-print e fechar
             setTimeout(() => {
+              // Remover elementos com classe iuscalc-logo
+              const logosToRemove = document.querySelectorAll('.iuscalc-logo, .calculadora-footer');
+              logosToRemove.forEach(logo => logo.remove());
+              
+              // Adicionar classe ao elemento de valor total
+              const totalElements = document.querySelectorAll('.calculadora-tabela div[style*="background-color: #f9fafb"]');
+              totalElements.forEach(el => {
+                el.classList.add('valor-total-reclamacao');
+              });
+              
               window.print();
               ${asPDF ? '' : 'setTimeout(() => window.close(), 500);'}
             }, 500);
