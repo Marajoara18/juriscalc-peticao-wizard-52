@@ -3,7 +3,6 @@ import { SALARIO_MINIMO } from '@/utils/calculadoraConstants';
 import { calcularInsalubridade as calcularInsalubridadeUtils } from './adicionais/insalubridadeUtils';
 import { calcularPericulosidade as calcularPericulosidadeUtils } from './adicionais/periculosidadeUtils';
 import { calcularHonorariosAdvocaticios as calcularHonorariosAdvocaticiosUtils } from './adicionais/honorariosAdvocaticiosUtils';
-import { formatarValorParaCalculo } from '@/utils/formatters';
 
 // Import the necessary functions from beneficiosSociaisUtils.ts
 import { calcularSeguroDesemprego, calcularSalarioFamilia } from './adicionais/beneficiosSociaisUtils';
@@ -196,11 +195,12 @@ export function calcularSeguroDesempregoHelper(adicionais: any, salarioBase: num
  * Calculate family salary
  */
 export const calcularSalarioFamiliaHelper = (
-  calcularSalarioFamilia: boolean,
+  calcularSalarioFamiliaParam: boolean,
   salarioBase: number,
   quantidadeFilhos: number
 ): number => {
-  return calcularSalarioFamilia(calcularSalarioFamilia, salarioBase, quantidadeFilhos);
+  // Fix: Use the function directly with correct parameters
+  return calcularSalarioFamilia(calcularSalarioFamiliaParam, salarioBase, quantidadeFilhos);
 };
 
 /**

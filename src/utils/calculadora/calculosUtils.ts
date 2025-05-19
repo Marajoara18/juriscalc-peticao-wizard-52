@@ -16,8 +16,8 @@ import {
   calcularValeTransporte,
   calcularValeAlimentacao,
   calcularAdicionalTransferencia,
-  calcularSeguroDesemprego,
-  calcularSalarioFamilia
+  calcularSeguroDesempregoHelper,
+  calcularSalarioFamiliaHelper
 } from './adicionaisUtils';
 
 /**
