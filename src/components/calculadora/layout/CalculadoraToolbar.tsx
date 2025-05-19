@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, Smartphone, Save } from "lucide-react";
+import { LayoutGrid, Smartphone, Save, BookOpen } from "lucide-react";
 
 interface CalculadoraToolbarProps {
   showUserPanel: boolean;
