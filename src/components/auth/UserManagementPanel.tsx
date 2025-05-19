@@ -117,6 +117,12 @@ const UserManagementPanel = ({ allUsers, updateUsers, isMasterAdmin }: UserManag
     
     updateUsers(updatedUsers);
     
+    // Se o usuário logado for o que está sendo alterado, atualizar o status de premium no localStorage
+    const loggedInUserId = localStorage.getItem('userId');
+    if (loggedInUserId === userId) {
+      localStorage.setItem('isPremium', !currentValue ? 'true' : 'false');
+    }
+    
     const userName = updatedUsers.find(user => user.id === userId)?.nome;
     const action = !currentValue ? 'ativado' : 'desativado';
     toast.success(`Acesso premium para ${userName} ${action} com sucesso!`);

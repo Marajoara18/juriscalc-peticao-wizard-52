@@ -22,6 +22,7 @@ const PremiumAlert = () => {
     // Se for admin ou tiver marcado como premium, considere-o premium
     if (currentUser && (currentUser.isAdmin || currentUser.isPremium)) {
       setIsPremium(true);
+      localStorage.setItem('isPremium', 'true');
       return;
     }
     
@@ -34,6 +35,7 @@ const PremiumAlert = () => {
     const restantes = Math.max(0, LIMITE_CALCULOS_GRATUITOS - calculosRealizados);
     setCalculosRestantes(restantes);
     setIsPremium(false);
+    localStorage.setItem('isPremium', 'false');
   }, []);
   
   // Se for premium, não exibir alerta

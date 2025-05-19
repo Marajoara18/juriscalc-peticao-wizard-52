@@ -68,7 +68,7 @@ const useCalculadora = () => {
     quantidadeFilhos: '',
     calcularHonorariosAdvocaticios: false,
     percentualHonorariosAdvocaticios: '20',
-    valorHonorariosAdvocaticios: '', // Adicionado campo faltante
+    valorHonorariosAdvocaticios: '',
     incluirTotalGeralHonorarios: false,
   });
 
@@ -89,9 +89,17 @@ const useCalculadora = () => {
     const userId = localStorage.getItem('userId');
     const userEmail = localStorage.getItem('userEmail');
     const isAdmin = localStorage.getItem('userIsAdmin') === 'true';
+    const isPremium = localStorage.getItem('isPremium') === 'true';
     
-    // Se o usuário for admin ou for o e-mail específico do admin mestre, pode calcular ilimitadamente
-    if (isAdmin || userEmail === 'johnnysantos_177@msn.com' || userEmail === 'admin@juriscalc.com') {
+    // Verificar diretamente do localStorage para ter dados atualizados
+    const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+    const currentUser = allUsers.find((u: any) => u.id === userId);
+    const isUserPremium = currentUser && (currentUser.isPremium || currentUser.isAdmin);
+    
+    // Se o usuário for admin, admin mestre, ou premium, pode calcular ilimitadamente
+    if (isAdmin || isPremium || isUserPremium || 
+        userEmail === 'johnnysantos_177@msn.com' || 
+        userEmail === 'admin@juriscalc.com') {
       setPodeCalcular(true);
       return;
     }
@@ -105,6 +113,8 @@ const useCalculadora = () => {
     // Se já atingiu o limite, bloquear novos cálculos
     if (calculosRealizados >= LIMITE_CALCULOS_GRATUITOS) {
       setPodeCalcular(false);
+    } else {
+      setPodeCalcular(true);
     }
   }, []);
 
@@ -129,9 +139,17 @@ const useCalculadora = () => {
     const userId = localStorage.getItem('userId');
     const userEmail = localStorage.getItem('userEmail');
     const isAdmin = localStorage.getItem('userIsAdmin') === 'true';
+    const isPremium = localStorage.getItem('isPremium') === 'true';
     
-    // Se o usuário for admin ou for o e-mail específico do admin mestre, pode calcular ilimitadamente
-    if (isAdmin || userEmail === 'johnnysantos_177@msn.com' || userEmail === 'admin@juriscalc.com') {
+    // Verificar diretamente do localStorage para ter dados atualizados
+    const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+    const currentUser = allUsers.find((u: any) => u.id === userId);
+    const isUserPremium = currentUser && (currentUser.isPremium || currentUser.isAdmin);
+    
+    // Se o usuário for admin, admin mestre, ou premium, pode calcular ilimitadamente
+    if (isAdmin || isPremium || isUserPremium || 
+        userEmail === 'johnnysantos_177@msn.com' || 
+        userEmail === 'admin@juriscalc.com') {
       return originalCalcular();
     }
     

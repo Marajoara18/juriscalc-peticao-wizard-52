@@ -19,13 +19,15 @@ const Layout = ({ children }: LayoutProps) => {
     const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
     const currentUser = allUsers.find((u: any) => u.id === userId);
     
-    // Se for admin mestre ou tiver marcado como premium, considere-o premium
+    // Se for admin ou tiver marcado como premium, considere-o premium
     if (currentUser && (currentUser.isAdmin || currentUser.isPremium)) {
       setIsPremium(true);
+      localStorage.setItem('isPremium', 'true'); // Garantir que o status de premium seja salvo no localStorage
       return;
     }
     
     setIsPremium(false);
+    localStorage.setItem('isPremium', 'false');
   }, []);
   
   return (
