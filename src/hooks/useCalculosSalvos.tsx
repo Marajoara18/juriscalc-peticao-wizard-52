@@ -24,14 +24,34 @@ export const useCalculosSalvos = (
 
   // Carregar cálculos salvos
   useEffect(() => {
-    const salvos = localStorage.getItem('calculosSalvos');
-    if (salvos) {
-      try {
-        setCalculosSalvos(JSON.parse(salvos));
-      } catch (error) {
-        console.error('Erro ao carregar cálculos salvos:', error);
+    const carregarCalculosSalvos = () => {
+      const salvos = localStorage.getItem('calculosSalvos');
+      if (salvos) {
+        try {
+          setCalculosSalvos(JSON.parse(salvos));
+        } catch (error) {
+          console.error('Erro ao carregar cálculos salvos:', error);
+        }
       }
-    }
+    };
+    
+    // Carrega os cálculos salvos quando o componente monta
+    carregarCalculosSalvos();
+    
+    // Adiciona um event listener para atualizar os cálculos salvos quando o localStorage mudar
+    // Isso é útil para quando cálculos são adicionados de outros componentes
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'calculosSalvos') {
+        carregarCalculosSalvos();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Limpa o event listener quando o componente desmontar
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const salvarCalculos = () => {
@@ -86,6 +106,10 @@ export const useCalculosSalvos = (
     
     setCalculosSalvos(novosCalculos);
     localStorage.setItem('calculosSalvos', JSON.stringify(novosCalculos));
+    
+    // Disparar um evento de storage para notificar outros componentes
+    window.dispatchEvent(new Event('calculosSalvosUpdated'));
+    
     setDialogOpen(false);
   };
 
@@ -104,6 +128,10 @@ export const useCalculosSalvos = (
     const novosCalculos = calculosSalvos.filter(calc => calc.id !== id);
     setCalculosSalvos(novosCalculos);
     localStorage.setItem('calculosSalvos', JSON.stringify(novosCalculos));
+    
+    // Disparar um evento de storage para notificar outros componentes
+    window.dispatchEvent(new Event('calculosSalvosUpdated'));
+    
     toast.success('Cálculo removido com sucesso!');
   };
 

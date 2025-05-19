@@ -15,11 +15,53 @@ export const gerarHTMLCalculos = (calculosImportados: any) => {
   }
 };
 
-// Função para lidar com a impressão da petição ou cálculos
+// Função para lidar com a impressão apenas da petição
 export const handlePrint = () => {
-  // Usar um pequeno timeout para garantir que quaisquer alterações no DOM sejam aplicadas
+  // Cria um estilo que vai esconder tudo exceto o conteúdo a ser impresso
+  const style = document.createElement('style');
+  style.id = 'print-style';
+  style.innerHTML = `
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      .print\\:block, .print\\:block * {
+        visibility: visible;
+      }
+      .print\\:hidden {
+        display: none !important;
+      }
+      /* Esconder toasts, notificações, etc */
+      [id^='sonner-'], .sonner-toast-container {
+        display: none !important;
+      }
+      header, footer, button, .card-header, .cursor-pointer {
+        display: none !important;
+      }
+      /* Ajuste para impressão adequada */
+      .print\\:block {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 20px;
+      }
+    }
+  `;
+  
+  document.head.appendChild(style);
+  
+  // Dá um pequeno timeout para garantir que o estilo foi aplicado
   setTimeout(() => {
     window.print();
+    
+    // Remove o estilo após imprimir
+    setTimeout(() => {
+      const styleElement = document.getElementById('print-style');
+      if (styleElement) {
+        styleElement.remove();
+      }
+    }, 100);
   }, 100);
 };
 

@@ -25,7 +25,7 @@ const PrintVersionCalculadora: React.FC<PrintVersionCalculadoraProps> = ({ resul
   const totalGeral = totalVerbas + totalAdicionais;
 
   return (
-    <div className="hidden print:block print:p-4">
+    <div className="hidden print:block print:p-4" id="print-content-calculadora">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-center text-xl font-bold mb-4">Calculadora de Verbas Trabalhistas</h2>
         
@@ -239,9 +239,11 @@ const PrintVersionCalculadora: React.FC<PrintVersionCalculadoraProps> = ({ resul
           )}
           
           {/* Subtotal */}
-          <div className="flex justify-between font-bold mb-4">
-            <span>Subtotal</span>
-            <span>{formatarMoeda(totalGeral)}</span>
+          <div className="flex justify-between mb-4">
+            <span className="font-medium">
+              Subtotal
+            </span>
+            <span className="font-medium">{formatarMoeda(totalGeral)}</span>
           </div>
           
           {/* Valor Total */}

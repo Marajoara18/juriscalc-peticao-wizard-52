@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Save, Printer } from 'lucide-react';
+import { Save, Printer, FileText } from 'lucide-react';
 
 interface PeticaoActionsProps {
   onSaveRascunho: () => void;
@@ -23,8 +23,8 @@ const PeticaoActions: React.FC<PeticaoActionsProps> = ({
         onClick={onPrint}
         className="border-juriscalc-navy text-juriscalc-navy hover:bg-juriscalc-navy hover:text-white"
       >
-        <Printer className="mr-2 h-4 w-4" />
-        Imprimir Petição
+        <FileText className="mr-2 h-4 w-4" />
+        Imprimir Apenas a Petição
       </Button>
       
       {!isFinalized && (
