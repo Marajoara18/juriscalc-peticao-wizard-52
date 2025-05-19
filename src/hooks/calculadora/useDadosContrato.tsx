@@ -1,6 +1,6 @@
 
 import { useEffect } from 'react';
-import { calcularMesesEntreDatas, calcularDiasEntreDatas } from '@/utils/formatters';
+import { calcularMesesEntreDatas } from '@/utils/formatters';
 import { DadosContrato } from '@/types/calculadora';
 
 export const useDadosContrato = (
@@ -13,10 +13,9 @@ export const useDadosContrato = (
       try {
         const meses = calcularMesesEntreDatas(dadosContrato.dataAdmissao, dadosContrato.dataDemissao);
         
-        // Para calcular os dias trabalhados no mês, agora incluímos o dia da demissão
-        // Obter a data de demissão
+        // Obter a data de demissão para configurar os dias trabalhados
         const dataDemissao = new Date(dadosContrato.dataDemissao);
-        // O número de dias trabalhados é o dia do mês da data de demissão
+        // Agora, sempre usamos o dia do mês da data de demissão como dias trabalhados
         const dias = dataDemissao.getDate();
         
         setDadosContrato(prev => ({

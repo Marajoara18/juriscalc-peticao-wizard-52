@@ -89,7 +89,7 @@ const DadosContratoForm: React.FC<DadosContratoFormProps> = ({
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Dias Trabalhados */}
+          {/* Dias Trabalhados - agora read-only */}
           <div>
             <Label htmlFor="diasTrabalhados" className="juriscalc-label">
               Dias Trabalhados no último mês
@@ -98,12 +98,10 @@ const DadosContratoForm: React.FC<DadosContratoFormProps> = ({
               id="diasTrabalhados" 
               name="diasTrabalhados"
               value={dadosContrato.diasTrabalhados}
-              onChange={onChange}
-              className="juriscalc-input" 
+              readOnly
+              className="juriscalc-input bg-gray-50" 
               type="number"
               placeholder="0"
-              min="0"
-              max="30"
             />
           </div>
           
@@ -114,11 +112,10 @@ const DadosContratoForm: React.FC<DadosContratoFormProps> = ({
               id="mesesTrabalhados" 
               name="mesesTrabalhados"
               value={dadosContrato.mesesTrabalhados}
-              onChange={onChange}
-              className="juriscalc-input" 
+              readOnly
+              className="juriscalc-input bg-gray-50" 
               type="number"
               placeholder="0"
-              min="0"
             />
           </div>
         </div>
@@ -132,8 +129,6 @@ const DadosContratoForm: React.FC<DadosContratoFormProps> = ({
           />
           <Label htmlFor="aviso_previo_cumprido">Aviso Prévio Cumprido</Label>
         </div>
-        
-        {/* Nota: Opção de férias vencidas removida */}
       </CardContent>
     </Card>
   );
