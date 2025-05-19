@@ -6,6 +6,7 @@ import AdminPanel from './AdminPanel';
 import UserPanelsView from './UserPanelsView';
 import AdminSessionIndicator from './AdminSessionIndicator';
 import UserManagementPanel from './UserManagementPanel';
+import MasterAdminCredentials from './MasterAdminCredentials';
 
 const UserManagement = () => {
   const {
@@ -40,6 +41,15 @@ const UserManagement = () => {
       {isAdmin && (
         <AdminPanel 
           isMasterAdmin={isMasterAdmin}
+          allUsers={allUsers}
+          updateUsers={updateUsers}
+        />
+      )}
+      
+      {/* Master Admin Credentials - Only visible to master admin */}
+      {isMasterAdmin && userData && (
+        <MasterAdminCredentials
+          userData={userData}
           allUsers={allUsers}
           updateUsers={updateUsers}
         />

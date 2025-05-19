@@ -134,11 +134,41 @@ export const useUserManagement = () => {
       setAllUsers(updatedUsers);
       localStorage.setItem('allUsers', JSON.stringify(updatedUsers));
     }
+    
+    // Update localStorage data if it's the current user
+    const userId = localStorage.getItem('userId');
+    if (userId === updatedUser.id) {
+      localStorage.setItem('userEmail', updatedUser.email);
+      localStorage.setItem('userName', updatedUser.nome);
+      localStorage.setItem('userLogoUrl', updatedUser.logoUrl || '');
+    }
   };
 
   const updateUsers = (updatedUsers: UserData[]) => {
     setAllUsers(updatedUsers);
     localStorage.setItem('allUsers', JSON.stringify(updatedUsers));
+    
+    // If the current user is in the updated list, update current user data
+    const userId = localStorage.getItem('userId');
+    const updatedCurrentUser = updatedUsers.find(user => user.id === userId);
+    
+    if (updatedCurrentUser) {
+      setUserData(updatedCurrentUser);
+      localStorage.setItem('userEmail', updatedCurrentUser.email);
+      localStorage.setItem('userName', updatedCurrentUser.nome);
+      localStorage.setItem('userLogoUrl', updatedCurrentUser.logoUrl || '');
+      
+      // Check if still admin
+      const stillAdmin = updatedCurrentUser.isAdmin;
+      setIsAdmin(stillAdmin);
+      localStorage.setItem('userIsAdmin', stillAdmin ? 'true' : 'false');
+      
+      // Check if still master admin
+      const isMaster = updatedCurrentUser.id === 'admin-1' || 
+                      updatedCurrentUser.email === 'admin@juriscalc.com' || 
+                      updatedCurrentUser.email === 'johnnysantos_177@msn.com';
+      setIsMasterAdmin(isMaster);
+    }
   };
 
   // Return to original admin account
