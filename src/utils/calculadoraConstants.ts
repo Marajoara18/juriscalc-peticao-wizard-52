@@ -35,13 +35,14 @@ export const resultadosIniciais: Resultados = {
   }
 };
 
-// Valor do salário mínimo atual (atualizado em 2024)
-export const SALARIO_MINIMO = 1412;
+// Valor do salário mínimo atual (atualizado em 2025 conforme solicitado)
+export const SALARIO_MINIMO = 1518;
 
-// Constantes para o cálculo do seguro-desemprego
-export const VALOR_MAXIMO_SEGURO_DESEMPREGO = 2230.97; // Valor máximo da parcela em 2024
-export const FAIXA_1_SEGURO_DESEMPREGO = 2045.73; // Primeira faixa salarial
-export const FAIXA_2_SEGURO_DESEMPREGO = 3409.00; // Segunda faixa salarial
+// Constantes para o cálculo do seguro-desemprego (atualizadas para 2025)
+export const VALOR_MAXIMO_SEGURO_DESEMPREGO = 2424.11; // Valor máximo da parcela em 2025
+export const FAIXA_1_SEGURO_DESEMPREGO = 2138.76; // Primeira faixa salarial
+export const FAIXA_2_SEGURO_DESEMPREGO = 3564.96; // Segunda faixa salarial
+export const VALOR_SALARIO_MINIMO_2025 = 1518.00; // Salário mínimo em 2025
 
 // Constantes para o cálculo do salário-família
 export const VALOR_SALARIO_FAMILIA = 59.82; // Valor do salário-família por dependente em 2024

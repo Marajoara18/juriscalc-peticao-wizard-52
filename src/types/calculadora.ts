@@ -84,7 +84,11 @@ export type Adicionais = {
   descricaoCustom: string;
   valorCustom: string;
   calcularSeguroDesemprego: boolean;
+  tipoTrabalhador?: 'padrao' | 'domestico' | 'pescador';
+  salarioUltimos3Meses?: 'sim' | 'nao';
   ultimoSalario: string;
+  salarioMes1?: string;
+  salarioMes2?: string;
   mesesTrabalhadosUltimoEmprego: string;
   tempoContribuicaoINSS: string;
   calcularSalarioFamilia: boolean;

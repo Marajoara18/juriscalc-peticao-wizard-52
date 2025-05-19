@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { DadosContrato, Adicionais, Resultados } from '@/types/calculadora';
 import { resultadosIniciais } from '@/utils/calculadoraConstants';
@@ -58,7 +57,11 @@ const useCalculadora = () => {
     descricaoCustom: '',
     valorCustom: '',
     calcularSeguroDesemprego: false,
+    tipoTrabalhador: 'padrao',
+    salarioUltimos3Meses: 'sim',
     ultimoSalario: '',
+    salarioMes1: '',
+    salarioMes2: '',
     mesesTrabalhadosUltimoEmprego: '',
     tempoContribuicaoINSS: '',
     calcularSalarioFamilia: false,
