@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, Smartphone, Save, BookOpen } from "lucide-react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import ManualRapido from '@/components/calculadora/ManualRapido';
 
 interface CalculadoraToolbarProps {
   showUserPanel: boolean;
@@ -26,6 +28,21 @@ const CalculadoraToolbar: React.FC<CalculadoraToolbarProps> = ({
         Calculadora de Verbas Trabalhistas
       </h1>
       <div className="flex gap-3">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              className="border-juriscalc-navy text-juriscalc-navy"
+            >
+              <BookOpen className="h-5 w-5 mr-2" />
+              Manual Rápido
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <ManualRapido />
+          </DialogContent>
+        </Dialog>
+        
         <Button
           variant="outline"
           className="border-juriscalc-navy text-juriscalc-navy"

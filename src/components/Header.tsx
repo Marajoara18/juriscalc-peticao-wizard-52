@@ -1,9 +1,12 @@
+
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FileText, Calculator, Crown, User } from "lucide-react";
+import { FileText, Calculator, Crown, User, BookOpen } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import SubscriptionManager from '@/components/peticoes/SubscriptionManager';
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import ManualRapido from '@/components/calculadora/ManualRapido';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -67,6 +70,20 @@ const Header = () => {
           )}
         </nav>
         <div className="flex items-center gap-2">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button 
+                className="bg-white text-juriscalc-navy hover:bg-gray-100"
+              >
+                <BookOpen className="mr-2 h-4 w-4" />
+                Manual Rápido IusCalc
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+              <ManualRapido />
+            </DialogContent>
+          </Dialog>
+          
           <Button 
             className="bg-white text-juriscalc-navy hover:bg-gray-100"
             onClick={handleCalculadora}
