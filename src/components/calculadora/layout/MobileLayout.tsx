@@ -96,7 +96,16 @@ const MobileLayout: React.FC<CalculadoraLayoutProps> = ({
         {/* Mostrar opções pós-cálculo quando os cálculos estiverem prontos */}
         {hasCalculos && (
           <div className="mt-4 space-y-4">
-            <div className="flex flex-wrap gap-2">
+            {/* Botões de ação */}
+            <div className="flex justify-between gap-2">
+              <Button 
+                variant="outline"
+                className="flex-1 border-juriscalc-navy text-juriscalc-navy"
+                onClick={() => setShowCorrecaoMonetaria(!showCorrecaoMonetaria)}
+              >
+                {showCorrecaoMonetaria ? 'Ocultar Correção' : 'Aplicar Correção'}
+              </Button>
+              
               <ShareOptionsButton 
                 resultados={resultados}
                 dadosContrato={dadosContrato}
@@ -105,41 +114,24 @@ const MobileLayout: React.FC<CalculadoraLayoutProps> = ({
               />
             </div>
             
-            {/* Opção de correção monetária */}
-            {showCorrecaoMonetaria ? (
-              <>
-                <CorrecaoMonetaria 
-                  onAplicarCorrecao={aplicarCorrecaoMonetaria} 
-                  totalGeral={totalGeral}
-                  dataAdmissao={dadosContrato.dataAdmissao}
-                />
-                <Button 
-                  variant="outline"
-                  className="w-full border-juriscalc-navy text-juriscalc-navy mt-2"
-                  onClick={() => setShowCorrecaoMonetaria(false)}
-                >
-                  Ocultar Correção Monetária
-                </Button>
-              </>
-            ) : (
-              <Button 
-                variant="outline"
-                className="w-full border-juriscalc-navy text-juriscalc-navy"
-                onClick={() => setShowCorrecaoMonetaria(true)}
-              >
-                Aplicar Correção Monetária
-              </Button>
+            {/* Cálculos Salvos */}
+            <CalculosSalvos 
+              resultados={resultados}
+              totalGeral={totalGeral}
+              dadosContrato={dadosContrato}
+              onLoadCalculo={handleLoadCalculo}
+            />
+            
+            {/* Correção Monetária */}
+            {showCorrecaoMonetaria && (
+              <CorrecaoMonetaria 
+                onAplicarCorrecao={aplicarCorrecaoMonetaria} 
+                totalGeral={totalGeral}
+                dataAdmissao={dadosContrato.dataAdmissao}
+              />
             )}
           </div>
         )}
-
-        {/* Calculos Salvos */}
-        <CalculosSalvos 
-          resultados={resultados}
-          totalGeral={totalGeral}
-          dadosContrato={dadosContrato}
-          onLoadCalculo={handleLoadCalculo}
-        />
       </div>
     </div>
   );

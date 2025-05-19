@@ -6,6 +6,7 @@ import ResultadosCalculos from '@/components/calculadora/ResultadosCalculos';
 import CorrecaoMonetaria from '@/components/calculadora/CorrecaoMonetaria';
 import CalculosSalvos from '@/components/calculadora/CalculosSalvos';
 import ShareOptionsButton from '@/components/calculadora/share/ShareOptionsButton';
+import { Button } from '@/components/ui/button';
 
 interface CalculadoraLayoutProps {
   dadosContrato: any;
@@ -68,29 +69,30 @@ const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
 
         {hasCalculos && (
           <>
-            <div className="flex justify-between items-center mt-4">
-              <button
+            {/* Botões de ação entre Resultados e Cálculos Salvos */}
+            <div className="flex justify-between items-center mt-4 mb-4">
+              <Button
+                variant="outline"
+                className="border-juriscalc-navy text-juriscalc-navy"
                 onClick={() => setShowCorrecaoMonetaria(!showCorrecaoMonetaria)}
-                className="text-sm text-blue-500 hover:underline"
               >
                 {showCorrecaoMonetaria ? 'Ocultar Correção Monetária' : 'Aplicar Correção Monetária'}
-              </button>
-
-              <div className="flex items-center gap-2">
-                <ShareOptionsButton 
-                  resultados={resultados}
-                  dadosContrato={dadosContrato}
-                  totalGeral={totalGeral}
-                />
-                
-                <CalculosSalvos
-                  totalGeral={totalGeral}
-                  dadosContrato={dadosContrato} 
-                  resultados={resultados}
-                  onLoadCalculo={handleLoadCalculo}
-                />
-              </div>
+              </Button>
+              
+              <ShareOptionsButton 
+                resultados={resultados}
+                dadosContrato={dadosContrato}
+                totalGeral={totalGeral}
+              />
             </div>
+
+            {/* Cálculos Salvos */}
+            <CalculosSalvos
+              totalGeral={totalGeral}
+              dadosContrato={dadosContrato} 
+              resultados={resultados}
+              onLoadCalculo={handleLoadCalculo}
+            />
 
             {showCorrecaoMonetaria && (
               <CorrecaoMonetaria
