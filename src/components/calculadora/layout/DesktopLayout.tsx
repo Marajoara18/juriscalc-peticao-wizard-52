@@ -4,9 +4,7 @@ import DadosContratoForm from '@/components/calculadora/DadosContratoForm';
 import AdicionaisForm from '@/components/calculadora/AdicionaisForm';
 import ResultadosCalculos from '@/components/calculadora/ResultadosCalculos';
 import CalculosSalvos from '@/components/calculadora/CalculosSalvos';
-import ManualRapido from '@/components/calculadora/ManualRapido';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface CalculadoraLayoutProps {
   dadosContrato: any;
@@ -40,69 +38,54 @@ const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
   handleCalcularClick,
   handleLoadCalculo
 }) => {
-  const [activeTab, setActiveTab] = useState<string>("forms");
-  
   // Forçar atualização dos cálculos salvos quando o componente for montado
   useEffect(() => {
     window.dispatchEvent(new Event('calculosSalvosUpdated'));
   }, []);
 
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="mb-4">
-        <TabsTrigger value="forms">Calculadora</TabsTrigger>
-        <TabsTrigger value="manual">Manual Rápido IusCalc</TabsTrigger>
-      </TabsList>
-
-      <TabsContent value="forms">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div>
-            <div className="mb-4">
-              <DadosContratoForm 
-                dadosContrato={dadosContrato}
-                onChange={handleDadosContratoChange}
-                onCheckboxChange={handleCheckboxChange}
-                onTipoRescisaoChange={handleTipoRescisaoChange}
-              />
-            </div>
-            <div>
-              <AdicionaisForm 
-                adicionais={adicionais} 
-                dadosContrato={dadosContrato}
-                onChange={handleAdicionaisChange} 
-              />
-            </div>
-            <div className="mt-4">
-              <Button
-                onClick={handleCalcularClick}
-                className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Calcular
-              </Button>
-            </div>
-          </div>
-          <div>
-            <ResultadosCalculos 
-              resultados={resultados} 
-              adicionais={adicionais}
-              dadosContrato={dadosContrato}
-            />
-
-            {/* Cálculos Salvos agora SEMPRE visíveis, independente de hasCalculos */}
-            <CalculosSalvos
-              totalGeral={totalGeral}
-              dadosContrato={dadosContrato} 
-              resultados={resultados}
-              onLoadCalculo={handleLoadCalculo}
-            />
-          </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div>
+        <div className="mb-4">
+          <DadosContratoForm 
+            dadosContrato={dadosContrato}
+            onChange={handleDadosContratoChange}
+            onCheckboxChange={handleCheckboxChange}
+            onTipoRescisaoChange={handleTipoRescisaoChange}
+          />
         </div>
-      </TabsContent>
+        <div>
+          <AdicionaisForm 
+            adicionais={adicionais} 
+            dadosContrato={dadosContrato}
+            onChange={handleAdicionaisChange} 
+          />
+        </div>
+        <div className="mt-4">
+          <Button
+            onClick={handleCalcularClick}
+            className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Calcular
+          </Button>
+        </div>
+      </div>
+      <div>
+        <ResultadosCalculos 
+          resultados={resultados} 
+          adicionais={adicionais}
+          dadosContrato={dadosContrato}
+        />
 
-      <TabsContent value="manual">
-        <ManualRapido />
-      </TabsContent>
-    </Tabs>
+        {/* Cálculos Salvos agora SEMPRE visíveis, independente de hasCalculos */}
+        <CalculosSalvos
+          totalGeral={totalGeral}
+          dadosContrato={dadosContrato} 
+          resultados={resultados}
+          onLoadCalculo={handleLoadCalculo}
+        />
+      </div>
+    </div>
   );
 };
 
