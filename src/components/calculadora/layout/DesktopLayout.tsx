@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import DadosContratoForm from '@/components/calculadora/DadosContratoForm';
 import AdicionaisForm from '@/components/calculadora/AdicionaisForm';
 import ResultadosCalculos from '@/components/calculadora/ResultadosCalculos';
-import CorrecaoMonetaria from '@/components/calculadora/CorrecaoMonetaria';
 import CalculosSalvos from '@/components/calculadora/CalculosSalvos';
 import ShareOptionsButton from '@/components/calculadora/share/ShareOptionsButton';
 import { Button } from '@/components/ui/button';
@@ -38,10 +37,7 @@ const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
   handleTipoRescisaoChange,
   handleAdicionaisChange,
   handleCalcularClick,
-  handleLoadCalculo,
-  setShowCorrecaoMonetaria,
-  aplicarCorrecaoMonetaria,
-  onShowCorrecaoMonetaria
+  handleLoadCalculo
 }) => {
   // Forçar atualização dos cálculos salvos quando o componente for montado
   useEffect(() => {
@@ -72,7 +68,6 @@ const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
           resultados={resultados} 
           adicionais={adicionais}
           dadosContrato={dadosContrato}
-          onShowCorrecaoMonetaria={onShowCorrecaoMonetaria}
         />
 
         {/* Cálculos Salvos agora SEMPRE visíveis, independente de hasCalculos */}
@@ -82,14 +77,6 @@ const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
           resultados={resultados}
           onLoadCalculo={handleLoadCalculo}
         />
-
-        {hasCalculos && showCorrecaoMonetaria && (
-          <CorrecaoMonetaria
-            onAplicarCorrecao={aplicarCorrecaoMonetaria}
-            totalGeral={totalGeral}
-            dataAdmissao={dadosContrato.dataAdmissao}
-          />
-        )}
 
         {!hasCalculos && (
           <div className="mt-4">

@@ -5,7 +5,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DadosContratoForm from '@/components/calculadora/DadosContratoForm';
 import AdicionaisForm from '@/components/calculadora/AdicionaisForm';
 import ResultadosCalculos from '@/components/calculadora/ResultadosCalculos';
-import CorrecaoMonetaria from '@/components/calculadora/CorrecaoMonetaria';
 import CalculosSalvos from '@/components/calculadora/CalculosSalvos';
 import ShareOptionsButton from '@/components/calculadora/share/ShareOptionsButton';
 import { DadosContrato, Adicionais } from '@/types/calculadora';
@@ -32,7 +31,6 @@ const MobileLayout: React.FC<CalculadoraLayoutProps> = ({
   dadosContrato,
   adicionais,
   resultados,
-  showCorrecaoMonetaria,
   hasCalculos,
   totalGeral,
   handleDadosContratoChange,
@@ -40,10 +38,7 @@ const MobileLayout: React.FC<CalculadoraLayoutProps> = ({
   handleTipoRescisaoChange,
   handleAdicionaisChange,
   handleCalcularClick,
-  handleLoadCalculo,
-  setShowCorrecaoMonetaria,
-  aplicarCorrecaoMonetaria,
-  onShowCorrecaoMonetaria
+  handleLoadCalculo
 }) => {
   const [activeTab, setActiveTab] = useState<'dados' | 'adicionais' | 'resultados'>('dados');
   
@@ -97,7 +92,6 @@ const MobileLayout: React.FC<CalculadoraLayoutProps> = ({
           resultados={resultados} 
           adicionais={adicionais}
           dadosContrato={dadosContrato}
-          onShowCorrecaoMonetaria={onShowCorrecaoMonetaria}
         />
         
         {/* Cálculos Salvos SEMPRE visíveis, independente de hasCalculos */}
@@ -109,15 +103,6 @@ const MobileLayout: React.FC<CalculadoraLayoutProps> = ({
             onLoadCalculo={handleLoadCalculo}
           />
         </div>
-        
-        {/* Correção Monetária */}
-        {hasCalculos && showCorrecaoMonetaria && (
-          <CorrecaoMonetaria 
-            onAplicarCorrecao={aplicarCorrecaoMonetaria} 
-            totalGeral={totalGeral}
-            dataAdmissao={dadosContrato.dataAdmissao}
-          />
-        )}
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 const Calculadora = () => {
   const navigate = useNavigate();
-  const { resultados, dadosContrato, showCorrecaoMonetaria, setShowCorrecaoMonetaria } = useCalculadora();
+  const { resultados, dadosContrato } = useCalculadora();
   const calculosSalvosRef = useRef<HTMLDivElement>(null);
 
   // Verificar se o usuário está logado
@@ -43,18 +43,12 @@ const Calculadora = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  // Handler para mostrar/esconder correção monetária
-  const handleShowCorrecaoMonetaria = () => {
-    setShowCorrecaoMonetaria(!showCorrecaoMonetaria);
-  };
-
   return (
     <Layout>
       <div className="container mx-auto py-10 px-4">
         <div ref={calculosSalvosRef}>
           <CalculadoraContainer 
-            scrollToCalculosSalvos={scrollToCalculosSalvos} 
-            onShowCorrecaoMonetaria={handleShowCorrecaoMonetaria}
+            scrollToCalculosSalvos={scrollToCalculosSalvos}
           />
         </div>
         {/* Versão apenas para impressão - separada da visualização normal */}
