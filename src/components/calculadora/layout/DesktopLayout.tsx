@@ -62,6 +62,14 @@ const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
             onChange={handleAdicionaisChange} 
           />
         </div>
+        <div className="mt-4">
+          <Button
+            onClick={handleCalcularClick}
+            className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Calcular
+          </Button>
+        </div>
       </div>
       <div>
         <ResultadosCalculos 
@@ -77,17 +85,6 @@ const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
           resultados={resultados}
           onLoadCalculo={handleLoadCalculo}
         />
-
-        {!hasCalculos && (
-          <div className="mt-4">
-            <button
-              onClick={handleCalcularClick}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Calcular
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
