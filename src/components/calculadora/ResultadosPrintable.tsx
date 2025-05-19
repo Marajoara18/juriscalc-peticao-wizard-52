@@ -118,7 +118,7 @@ const ResultadosPrintable: React.FC<ResultadosPrintableProps> = ({ resultados })
       </div>
       
       {/* Total Geral */}
-      <div className="grand-total" style={{backgroundColor: "white", border: "1px solid #ddd"}}>
+      <div className="grand-total" style={{backgroundColor: "#0f172a", color: "#ffffff", border: "1px solid #0f172a"}}>
         <div className="valor-total-reclamacao">VALOR TOTAL DA RECLAMAÇÃO</div>
         <div className="valor-total-valor">{formatarMoeda(totalGeral)}</div>
       </div>

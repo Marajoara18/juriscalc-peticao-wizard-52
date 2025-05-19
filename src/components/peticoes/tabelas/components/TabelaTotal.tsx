@@ -12,10 +12,10 @@ const TabelaTotal: React.FC<TabelaTotalProps> = ({
   tipoRescisao = 'sem_justa_causa' 
 }) => {
   return (
-    <div className="bg-white p-4 rounded-md text-black border border-gray-300 print:bg-white print:text-black print:border-gray-300">
+    <div className="bg-[#0f172a] p-4 rounded-md text-white border border-[#0f172a] print:bg-[#0f172a] print:text-white print:border-[#0f172a]">
       <div className="text-center">
-        <p className="text-sm font-medium mb-2 uppercase print:font-bold valor-total-reclamacao">VALOR TOTAL DA RECLAMAÇÃO</p>
-        <p className="text-2xl font-bold valor-total-valor">
+        <p className="text-sm font-medium mb-2 uppercase print:font-bold print:text-white valor-total-reclamacao">VALOR TOTAL DA RECLAMAÇÃO</p>
+        <p className="text-2xl font-bold valor-total-valor print:text-white">
           {formatarMoeda(totalGeral)}
         </p>
       </div>

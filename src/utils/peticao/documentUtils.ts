@@ -111,19 +111,20 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
             .valor-total-reclamacao, 
             .valor-total-reclamacao * {
               text-align: center !important;
-              background-color: #f2f2f2 !important;
-              color: #000000 !important;
+              background-color: #0f172a !important;
+              color: #ffffff !important;
               font-weight: bold !important;
             }
-            .print-bold-black {
+            /* Aplicar estilo ao valor total */
+            div[style*="background-color"] {
+              background-color: #0f172a !important;
+              color: #ffffff !important;
               font-weight: bold !important;
-              color: #000000 !important;
-              background-color: #f2f2f2 !important;
+              border: 1px solid #0f172a !important;
             }
-            .print-bold-white {
+            div[style*="background-color"] p {
+              color: #ffffff !important;
               font-weight: bold !important;
-              color: #000000 !important;
-              background-color: #f2f2f2 !important;
             }
             /* Esconder o logo IusCalc e informações do footer */
             .iuscalc-logo, 
@@ -146,42 +147,44 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
                 }
               });
               
-              // Adicionar classe ao elemento de valor total
+              // Adicionar estilo aos elementos de valor total
               const totalElements = document.querySelectorAll('.calculadora-tabela div[style*="background-color"]');
               totalElements.forEach(el => {
                 el.classList.add('valor-total-reclamacao');
-                el.classList.add('print-bold-black');
+                el.style.backgroundColor = '#0f172a';
+                el.style.color = '#ffffff';
                 el.style.textAlign = 'center';
-                el.style.backgroundColor = '#f2f2f2';
+                el.style.border = '1px solid #0f172a';
                 
-                // Garantir que o texto seja preto em negrito
+                // Garantir que o texto seja branco em negrito
                 const paragraphs = el.querySelectorAll('p');
                 paragraphs.forEach(p => {
-                  p.style.color = '#000000';
+                  p.style.color = '#ffffff';
                   p.style.fontWeight = 'bold';
                 });
               });
               
-              // Assegurar que elementos com a classe valor-total-reclamacao ou print-bold-white estejam em preto sobre fundo cinza
-              const boldElements = document.querySelectorAll('.valor-total-reclamacao, .print-bold-white, .print-bold-black');
+              // Assegurar que elementos com a classe valor-total-reclamacao estejam com as cores corretas
+              const boldElements = document.querySelectorAll('.valor-total-reclamacao, .print-bold-white');
               boldElements.forEach(el => {
-                el.style.color = '#000000';
+                el.style.backgroundColor = '#0f172a';
+                el.style.color = '#ffffff';
                 el.style.fontWeight = 'bold';
                 el.style.textAlign = 'center';
-                el.style.backgroundColor = '#f2f2f2';
+                el.style.border = '1px solid #0f172a';
                 
                 // Aplicar em todos os elementos filhos também
                 const children = el.querySelectorAll('*');
                 children.forEach(child => {
+                  child.style.color = '#ffffff';
                   child.style.fontWeight = 'bold';
-                  child.style.color = '#000000';
-                  child.style.backgroundColor = '#f2f2f2';
+                  child.style.backgroundColor = '#0f172a';
                 });
                 
-                // Garantir que o texto do próprio elemento esteja em negrito preto
+                // Garantir que o texto do próprio elemento esteja em negrito branco
                 if (el.firstChild && el.firstChild.nodeType === 3) {
+                  el.style.color = '#ffffff';
                   el.style.fontWeight = 'bold';
-                  el.style.color = '#000000';
                 }
               });
               

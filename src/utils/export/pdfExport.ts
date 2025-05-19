@@ -73,20 +73,23 @@ export const exportToPDF = () => {
           margin-bottom: 20px;
         }
         .grand-total {
-          background-color: #ffffff;
+          background-color: #0f172a;
           padding: 10px;
-          border: 1px solid #ddd;
+          border: 1px solid #0f172a;
           font-weight: bold;
           text-align: center;
           margin-top: 20px;
+          color: #ffffff;
         }
         .grand-total div:first-child {
           text-transform: uppercase;
           font-size: 14px;
           margin-bottom: 5px;
+          color: #ffffff;
         }
         .grand-total div:last-child {
           font-size: 16px;
+          color: #ffffff;
         }
         .footer {
           margin-top: 30px;

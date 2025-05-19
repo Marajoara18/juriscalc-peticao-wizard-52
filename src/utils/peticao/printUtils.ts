@@ -89,15 +89,15 @@ export const handlePrint = () => {
       .whitespace-pre-wrap {
         white-space: pre-wrap !important;
       }
-      /* Estilo para o valor total - atualizado para fundo branco */
-      .print\\:bg-white, .print\\:bg-gray-200 {
-        background-color: #ffffff !important;
-        color: #000000 !important;
+      /* Estilo para o valor total - atualizado para azul escuro com texto branco */
+      .print\\:bg-\\[\\#0f172a\\], .print\\:bg-white, .valor-total-reclamacao {
+        background-color: #0f172a !important;
+        color: #ffffff !important;
         font-weight: bold !important;
-        border: 1px solid #ddd !important;
+        border: 1px solid #0f172a !important;
       }
-      .print\\:text-black {
-        color: #000000 !important;
+      .print\\:text-white {
+        color: #ffffff !important;
         font-weight: bold !important;
       }
       /* Estilização específica para total da reclamação */
@@ -107,13 +107,15 @@ export const handlePrint = () => {
         text-align: center !important;
         text-transform: uppercase !important;
         margin-bottom: 5px !important;
-        color: #333 !important;
+        color: #ffffff !important;
+        background-color: #0f172a !important;
       }
       .valor-total-valor {
         font-size: 18px !important;
         font-weight: bold !important;
         text-align: center !important;
-        color: #333 !important;
+        color: #ffffff !important;
+        background-color: #0f172a !important;
       }
     }
   `;

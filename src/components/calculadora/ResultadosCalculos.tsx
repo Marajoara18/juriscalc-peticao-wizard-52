@@ -24,6 +24,7 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
   dadosContrato,
   onLoadCalculo
 }) => {
+  
   // Apenas mostrar se houver resultados
   if (!resultados || (!resultados.verbasRescisorias && !resultados.adicionais)) {
     return null;
@@ -165,12 +166,12 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
         <span className="font-medium">{formatarMoeda(subTotal)}</span>
       </div>
       
-      {/* Total Geral - com cores invertidas */}
+      {/* Total Geral - com cores atualizadas para azul escuro com texto branco */}
       <div 
         className={cn(
           "flex justify-between p-3 rounded-md", 
-          "bg-white text-black border border-gray-300",
-          "dark:bg-white dark:text-black dark:border-gray-300"
+          "bg-[#0f172a] text-white border border-[#0f172a]",
+          "dark:bg-[#0f172a] dark:text-white dark:border-[#0f172a]"
         )}
       >
         <span className="font-bold text-lg">TOTAL GERAL</span>
