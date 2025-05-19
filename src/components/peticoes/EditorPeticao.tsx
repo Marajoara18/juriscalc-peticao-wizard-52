@@ -1,10 +1,9 @@
-
 import React, { useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from "sonner";
 import { PeticaoProps } from '@/types/peticao';
 import { usePeticaoForm } from '@/hooks/usePeticaoForm';
-import { handlePrint } from '@/utils/peticaoUtils';
+import { handlePrint } from '@/utils/peticao';
 
 // Import subcomponents
 import PeticaoHeader from './PeticaoHeader';

@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Save, Printer, FileText } from 'lucide-react';
-import { printDocument } from '@/utils/peticaoUtils';
+import { printDocument } from '@/utils/peticao';
 
 interface PeticaoActionsProps {
   onSaveRascunho: () => void;
