@@ -23,7 +23,14 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato): Rescisi
   
   // Cálculo individual das verbas
   const saldoSalario = calcularSaldoSalario(salarioBase, diasTrabalhados);
-  const avisoPrevia = calcularAvisoPrevia(salarioBase, dadosContrato.tipoRescisao, avisoPrevioCumprido);
+  
+  // Passando os meses trabalhados para calcular o aviso prévio proporcional na rescisão indireta
+  const avisoPrevia = calcularAvisoPrevia(
+    salarioBase, 
+    dadosContrato.tipoRescisao, 
+    avisoPrevioCumprido,
+    mesesTrabalhados
+  );
   
   // Usando nova implementação do décimo terceiro baseada nos meses trabalhados no ano corrente
   const decimoTerceiro = calcularDecimoTerceiro(

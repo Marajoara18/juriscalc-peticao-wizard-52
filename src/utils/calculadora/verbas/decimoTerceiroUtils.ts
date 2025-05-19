@@ -23,26 +23,21 @@ export const calcularDecimoTerceiro = (
     return 0;
   }
   
-  // Obtém o ano atual da demissão
-  const anoAtual = new Date(dataDemissao).getFullYear();
+  const dataAdmissaoObj = new Date(dataAdmissao);
+  const dataDemissaoObj = new Date(dataDemissao);
   
-  // Data de início do período aquisitivo do 13º (1º de janeiro do ano atual)
-  const inicioAno = new Date(anoAtual, 0, 1); // Janeiro é 0
+  // Consideramos a quantidade de meses como o mês da demissão (1-indexed)
+  const meses = dataDemissaoObj.getMonth() + 1;
   
-  // Se foi admitido depois do início do ano, usa a data de admissão como início
-  let dataInicio = new Date(dataAdmissao) > inicioAno ? new Date(dataAdmissao) : inicioAno;
-  
-  // Calcula os meses trabalhados no ano atual até a demissão
-  const dataFim = new Date(dataDemissao);
-  
-  // Calcular a diferença de meses
-  let meses = (dataFim.getFullYear() - dataInicio.getFullYear()) * 12;
-  meses += dataFim.getMonth() - dataInicio.getMonth();
-  
-  // Se trabalhou mais de 15 dias no último mês, considera um mês completo
-  const diasNoUltimoMes = dataFim.getDate() - (dataInicio.getDate() > dataFim.getDate() ? 0 : dataInicio.getDate());
-  if (diasNoUltimoMes > 15) {
-    meses += 1;
+  // Se admissão ocorreu no mesmo ano, ajustar para não contar meses antes da contratação
+  if (dataAdmissaoObj.getFullYear() === dataDemissaoObj.getFullYear()) {
+    const mesesAdmissao = dataAdmissaoObj.getMonth() + 1;
+    // Se meses da demissão for maior, subtrair meses antes da admissão e adicionar 1 para incluir o mês de admissão
+    if (meses > mesesAdmissao) {
+      return (salarioBase / 12) * (meses - mesesAdmissao + 1);
+    }
+    // Se for igual ou menor, considerar apenas meses trabalhados
+    return (salarioBase / 12) * 1; // Pelo menos 1 mês
   }
   
   // Valor do 13º proporcional (1/12 do salário para cada mês trabalhado)

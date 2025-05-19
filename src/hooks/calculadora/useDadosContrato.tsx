@@ -12,10 +12,12 @@ export const useDadosContrato = (
     if (dadosContrato.dataAdmissao && dadosContrato.dataDemissao) {
       try {
         const meses = calcularMesesEntreDatas(dadosContrato.dataAdmissao, dadosContrato.dataDemissao);
-        const dias = calcularDiasEntreDatas(
-          `${dadosContrato.dataDemissao.slice(0, 7)}-01`, 
-          dadosContrato.dataDemissao
-        );
+        
+        // Para calcular os dias trabalhados no mês, agora incluímos o dia da demissão
+        // Obter a data de demissão
+        const dataDemissao = new Date(dadosContrato.dataDemissao);
+        // O número de dias trabalhados é o dia do mês da data de demissão
+        const dias = dataDemissao.getDate();
         
         setDadosContrato(prev => ({
           ...prev,
