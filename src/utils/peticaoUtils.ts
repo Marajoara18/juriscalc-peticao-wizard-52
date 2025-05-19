@@ -1,4 +1,3 @@
-
 import { criarHTMLCalculosEmbutidos } from '@/utils/html/calculosHTML';
 
 // Função para gerar o HTML dos cálculos para incorporar na petição
@@ -223,13 +222,14 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
               color: white !important;
             }
             /* Estilo para o valor total da reclamação */
-            .valor-total-reclamacao {
+            .valor-total-reclamacao, .valor-total-reclamacao * {
               font-weight: bold !important;
               color: #000 !important;
             }
             /* Esconder o logo IusCalc e informações do footer */
             .iuscalc-logo, .calculadora-footer {
               display: none !important;
+              visibility: hidden !important;
             }
           </style>
         </head>
@@ -238,14 +238,32 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
           <script>
             // Auto-print e fechar
             setTimeout(() => {
-              // Remover elementos com classe iuscalc-logo
-              const logosToRemove = document.querySelectorAll('.iuscalc-logo, .calculadora-footer');
-              logosToRemove.forEach(logo => logo.remove());
+              // Remover elementos com classe iuscalc-logo e calculadora-footer
+              const elementsToRemove = document.querySelectorAll('.iuscalc-logo, .calculadora-footer');
+              elementsToRemove.forEach(element => {
+                if (element && element.parentNode) {
+                  element.parentNode.removeChild(element);
+                }
+              });
               
               // Adicionar classe ao elemento de valor total
               const totalElements = document.querySelectorAll('.calculadora-tabela div[style*="background-color: #f9fafb"]');
               totalElements.forEach(el => {
                 el.classList.add('valor-total-reclamacao');
+              });
+              
+              // Assegurar que elementos com a classe valor-total-reclamacao estejam em negrito preto
+              const valorTotalElements = document.querySelectorAll('.valor-total-reclamacao');
+              valorTotalElements.forEach(el => {
+                el.style.fontWeight = 'bold';
+                el.style.color = '#000';
+                
+                // Aplicar em todos os elementos filhos também
+                const children = el.querySelectorAll('*');
+                children.forEach(child => {
+                  child.style.fontWeight = 'bold';
+                  child.style.color = '#000';
+                });
               });
               
               window.print();
