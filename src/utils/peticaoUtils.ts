@@ -23,10 +23,12 @@ export const handlePrint = () => {
   style.innerHTML = `
     @media print {
       body * {
-        visibility: hidden;
+        visibility: hidden !important;
+        display: none !important;
       }
       .print\\:block, .print\\:block * {
-        visibility: visible;
+        visibility: visible !important;
+        display: block !important;
       }
       .print\\:hidden {
         display: none !important;
@@ -34,17 +36,19 @@ export const handlePrint = () => {
       /* Esconder toasts, notificações, etc */
       [id^='sonner-'], .sonner-toast-container {
         display: none !important;
+        visibility: hidden !important;
       }
       header, footer, button, .card-header, .cursor-pointer {
         display: none !important;
+        visibility: hidden !important;
       }
       /* Ajuste para impressão adequada */
       .print\\:block {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        padding: 20px;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        padding: 20px !important;
       }
     }
   `;

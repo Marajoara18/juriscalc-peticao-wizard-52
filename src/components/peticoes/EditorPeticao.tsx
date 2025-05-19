@@ -71,7 +71,7 @@ const EditorPeticao: React.FC<PeticaoProps> = ({
       return;
     }
     
-    // Aciona a funcionalidade de impressão do navegador
+    // Aciona a funcionalidade de impressão personalizada
     handlePrint();
     
     toast.success('Petição enviada para impressão!');

@@ -1,5 +1,5 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import CalculadoraContainer from '@/components/calculadora/CalculadoraContainer';
@@ -25,6 +25,19 @@ const Calculadora = () => {
       calculosSalvosRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  // Forçar atualização da lista de cálculos salvos periodicamente
+  useEffect(() => {
+    // Disparar evento de atualização de cálculos ao montar o componente
+    window.dispatchEvent(new Event('calculosSalvosUpdated'));
+    
+    // Configurar intervalo para verificar se há novos cálculos
+    const intervalId = setInterval(() => {
+      window.dispatchEvent(new Event('calculosSalvosUpdated'));
+    }, 3000);
+    
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <Layout>

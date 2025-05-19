@@ -22,24 +22,23 @@ export const useCalculosSalvos = (
   const [verifyDialogOpen, setVerifyDialogOpen] = useState(false);
   const [selectedCalculoForVerify, setSelectedCalculoForVerify] = useState<CalculoSalvo | null>(null);
 
-  // Carregar cálculos salvos
-  useEffect(() => {
-    const carregarCalculosSalvos = () => {
-      const salvos = localStorage.getItem('calculosSalvos');
-      if (salvos) {
-        try {
-          setCalculosSalvos(JSON.parse(salvos));
-        } catch (error) {
-          console.error('Erro ao carregar cálculos salvos:', error);
-        }
+  // Função para carregar cálculos salvos do localStorage
+  const carregarCalculosSalvos = () => {
+    const salvos = localStorage.getItem('calculosSalvos');
+    if (salvos) {
+      try {
+        setCalculosSalvos(JSON.parse(salvos));
+      } catch (error) {
+        console.error('Erro ao carregar cálculos salvos:', error);
       }
-    };
-    
-    // Carrega os cálculos salvos quando o componente monta
+    }
+  };
+
+  // Carregar cálculos salvos quando o componente é montado
+  useEffect(() => {
     carregarCalculosSalvos();
     
-    // Adiciona um event listener para atualizar os cálculos salvos quando o localStorage mudar
-    // Isso é útil para quando cálculos são adicionados de outros componentes
+    // Adicionar um event listener para atualizar os cálculos salvos quando o localStorage mudar
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'calculosSalvos') {
         carregarCalculosSalvos();
@@ -48,9 +47,26 @@ export const useCalculosSalvos = (
     
     window.addEventListener('storage', handleStorageChange);
     
-    // Limpa o event listener quando o componente desmontar
+    // Criar um intervalo para verificar periodicamente se há novos cálculos
+    const intervalId = setInterval(carregarCalculosSalvos, 2000);
+    
+    // Limpar o event listener e o intervalo quando o componente desmontar
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      clearInterval(intervalId);
+    };
+  }, []);
+
+  // Adicionar um efeito para detectar eventos personalizados de atualização
+  useEffect(() => {
+    const handleCustomEvent = () => {
+      carregarCalculosSalvos();
+    };
+
+    window.addEventListener('calculosSalvosUpdated', handleCustomEvent);
+    
+    return () => {
+      window.removeEventListener('calculosSalvosUpdated', handleCustomEvent);
     };
   }, []);
 
@@ -107,7 +123,7 @@ export const useCalculosSalvos = (
     setCalculosSalvos(novosCalculos);
     localStorage.setItem('calculosSalvos', JSON.stringify(novosCalculos));
     
-    // Disparar um evento de storage para notificar outros componentes
+    // Disparar um evento customizado para notificar outros componentes
     window.dispatchEvent(new Event('calculosSalvosUpdated'));
     
     setDialogOpen(false);
@@ -129,7 +145,7 @@ export const useCalculosSalvos = (
     setCalculosSalvos(novosCalculos);
     localStorage.setItem('calculosSalvos', JSON.stringify(novosCalculos));
     
-    // Disparar um evento de storage para notificar outros componentes
+    // Disparar um evento customizado para notificar outros componentes
     window.dispatchEvent(new Event('calculosSalvosUpdated'));
     
     toast.success('Cálculo removido com sucesso!');

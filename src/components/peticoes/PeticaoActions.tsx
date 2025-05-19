@@ -23,7 +23,7 @@ const PeticaoActions: React.FC<PeticaoActionsProps> = ({
         onClick={onPrint}
         className="border-juriscalc-navy text-juriscalc-navy hover:bg-juriscalc-navy hover:text-white"
       >
-        <FileText className="mr-2 h-4 w-4" />
+        <Printer className="mr-2 h-4 w-4" />
         Imprimir Apenas a Petição
       </Button>
       
