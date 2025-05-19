@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, Smartphone, Save } from "lucide-react";
+import { LayoutGrid, Smartphone, Save, BookOpen } from "lucide-react";
 
 interface CalculadoraToolbarProps {
   showUserPanel: boolean;
@@ -10,6 +10,7 @@ interface CalculadoraToolbarProps {
   handleComecaCalcular: () => void;
   setShowUserPanel: React.Dispatch<React.SetStateAction<boolean>>;
   showCalculosSalvos?: () => void;
+  showManualRapido?: () => void;
 }
 
 const CalculadoraToolbar: React.FC<CalculadoraToolbarProps> = ({
@@ -18,8 +19,18 @@ const CalculadoraToolbar: React.FC<CalculadoraToolbarProps> = ({
   toggleLayoutMode,
   handleComecaCalcular,
   setShowUserPanel,
-  showCalculosSalvos
+  showCalculosSalvos,
+  showManualRapido
 }) => {
+  const [showingManual, setShowingManual] = useState(false);
+  
+  const handleManualClick = () => {
+    if (showManualRapido) {
+      showManualRapido();
+    }
+    setShowingManual(!showingManual);
+  };
+  
   return (
     <div className="flex justify-between items-center mb-6">
       <h1 className="text-3xl font-serif font-bold text-juriscalc-navy">
@@ -38,6 +49,16 @@ const CalculadoraToolbar: React.FC<CalculadoraToolbarProps> = ({
             <LayoutGrid className="h-5 w-5 mr-2" />
           )}
           {layoutMode === 'desktop' ? 'Smartphone' : 'Computador'}
+        </Button>
+        <Button
+          variant={showingManual ? "default" : "outline"}
+          className={showingManual 
+            ? "bg-juriscalc-navy" 
+            : "border-juriscalc-navy text-juriscalc-navy"}
+          onClick={handleManualClick}
+        >
+          <BookOpen className="h-5 w-5 mr-2" />
+          Manual Rápido
         </Button>
         <Button
           variant="outline"
