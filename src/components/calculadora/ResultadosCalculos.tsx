@@ -51,9 +51,8 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
 
   return (
     <Card className="p-4 mt-4">
-      <div className="flex justify-between items-center mb-4">
+      <div className="mb-4">
         <h2 className="text-xl font-bold">Resultados do Cálculo</h2>
-        <PrintResultButton />
       </div>
       
       {/* Verbas Rescisórias */}

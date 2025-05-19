@@ -72,7 +72,7 @@ const TabelaCalculosEmbutida: React.FC<TabelaCalculosEmbutidaProps> = ({
     { descricao: 'Saldo de Salário', valor: verbasRescisorias.saldoSalario },
     { descricao: 'Aviso Prévio', valor: verbasRescisorias.avisoPrevia },
     { descricao: '13º Salário Proporcional', valor: verbasRescisorias.decimoTerceiro },
-    { descricao: 'Férias Proporcionais', valor: verbasRescisorias.ferias }, // Atualizado o nome
+    { descricao: 'Férias Proporcionais', valor: verbasRescisorias.ferias },
     { descricao: '1/3 Constitucional', valor: verbasRescisorias.tercoConstitucional },
     { descricao: 'FGTS sobre verbas', valor: verbasRescisorias.fgts },
     { descricao: 'Multa FGTS (40%)', valor: verbasRescisorias.multaFgts },
@@ -162,7 +162,7 @@ const TabelaCalculosEmbutida: React.FC<TabelaCalculosEmbutidaProps> = ({
           </div>
         )}
 
-        {/* Valor total da reclamação com tamanho reduzido para impressão */}
+        {/* Valor total da reclamação com estilo correspondente à imagem */}
         <div className="bg-juriscalc-navy p-2 rounded-md text-white mt-4 print:mt-4 print:border print:border-black">
           <div className="text-center">
             <p className="text-xs font-medium mb-1 print:text-xs">VALOR TOTAL DA RECLAMAÇÃO</p>
