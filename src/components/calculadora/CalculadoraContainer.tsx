@@ -9,7 +9,11 @@ import CalculadoraToolbar from '@/components/calculadora/layout/CalculadoraToolb
 import HelpSectionContainer from '@/components/calculadora/layout/HelpSectionContainer';
 import useCalculadoraState from '@/hooks/calculadora/useCalculadoraState';
 
-const CalculadoraContainer = () => {
+interface CalculadoraContainerProps {
+  scrollToCalculosSalvos?: () => void;
+}
+
+const CalculadoraContainer: React.FC<CalculadoraContainerProps> = ({ scrollToCalculosSalvos }) => {
   const { 
     dadosContrato, 
     adicionais, 
@@ -75,6 +79,7 @@ const CalculadoraContainer = () => {
         toggleLayoutMode={toggleLayoutMode}
         handleComecaCalcular={handleComecaCalcular}
         setShowUserPanel={setShowUserPanel}
+        showCalculosSalvos={scrollToCalculosSalvos}
       />
 
       {showUserPanel ? (

@@ -9,7 +9,7 @@ import {
   DropdownMenuLabel
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Share2, FileText, Mail, MessageSquare } from "lucide-react";
+import { Share2, Mail, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { exportToPDF, shareViaWhatsApp, shareViaEmail, generateCalculationText } from '@/utils/exportUtils';
 
@@ -31,10 +31,6 @@ const ShareOptionsButton: React.FC<ShareOptionsButtonProps> = ({
     return null;
   }
 
-  const handleExportPDF = () => {
-    exportToPDF();
-  };
-
   const handleShareEmail = () => {
     const subject = encodeURIComponent("Cálculos Trabalhistas - IusCalc");
     const body = generateCalculationText(resultados);
@@ -55,14 +51,6 @@ const ShareOptionsButton: React.FC<ShareOptionsButtonProps> = ({
   if (isMobile) {
     return (
       <div className="flex gap-2 w-full">
-        <Button 
-          onClick={handleExportPDF} 
-          className="flex-1 bg-juriscalc-navy hover:bg-opacity-90"
-          size="sm"
-        >
-          <FileText className="mr-2 h-4 w-4" />
-          PDF
-        </Button>
         <Button 
           onClick={handleShareEmail}
           className="flex-1 bg-red-600 hover:bg-red-700"
@@ -95,10 +83,6 @@ const ShareOptionsButton: React.FC<ShareOptionsButtonProps> = ({
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>Opções de Compartilhamento</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleExportPDF}>
-          <FileText className="mr-2 h-4 w-4" />
-          Exportar como PDF
-        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleShareEmail}>
           <Mail className="mr-2 h-4 w-4" />
           Compartilhar por E-mail

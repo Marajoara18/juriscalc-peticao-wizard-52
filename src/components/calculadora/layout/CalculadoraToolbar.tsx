@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, Smartphone } from "lucide-react";
+import { LayoutGrid, Smartphone, Save } from "lucide-react";
 
 interface CalculadoraToolbarProps {
   showUserPanel: boolean;
@@ -9,6 +9,7 @@ interface CalculadoraToolbarProps {
   toggleLayoutMode: () => void;
   handleComecaCalcular: () => void;
   setShowUserPanel: React.Dispatch<React.SetStateAction<boolean>>;
+  showCalculosSalvos?: () => void;
 }
 
 const CalculadoraToolbar: React.FC<CalculadoraToolbarProps> = ({
@@ -16,7 +17,8 @@ const CalculadoraToolbar: React.FC<CalculadoraToolbarProps> = ({
   layoutMode,
   toggleLayoutMode,
   handleComecaCalcular,
-  setShowUserPanel
+  setShowUserPanel,
+  showCalculosSalvos
 }) => {
   return (
     <div className="flex justify-between items-center mb-6">
@@ -43,6 +45,14 @@ const CalculadoraToolbar: React.FC<CalculadoraToolbarProps> = ({
           onClick={handleComecaCalcular}
         >
           Começar Novo Cálculo
+        </Button>
+        <Button
+          variant="outline"
+          className="border-juriscalc-navy text-juriscalc-navy"
+          onClick={showCalculosSalvos}
+        >
+          <Save className="h-5 w-5 mr-2" />
+          Cálculos Salvos
         </Button>
         <Button
           variant={showUserPanel ? "default" : "outline"}
