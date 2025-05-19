@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { PeticaoFormData } from '@/types/peticao';
 import TabelaCalculos from './TabelaCalculos';
@@ -41,7 +42,7 @@ const PeticaoPrintView: React.FC<PeticaoPrintViewProps> = ({ formData }) => {
 
   return (
     <>
-      <div className="hidden print:block print:break-inside-avoid">
+      <div className="hidden print:block print:break-inside-avoid peticao-preview-content">
         <h1 className="text-2xl font-bold text-center mb-6">{formData.titulo}</h1>
         
         <div className="mb-6">
@@ -72,7 +73,7 @@ const PeticaoPrintView: React.FC<PeticaoPrintViewProps> = ({ formData }) => {
       {formData.calculosTabela && (
         <div className="border-2 border-gray-200 rounded-md p-4 print:hidden">
           <h3 className="text-lg font-medium mb-3 text-juriscalc-navy">Preview da Petição com Cálculos</h3>
-          <div className="p-4 bg-white border rounded-md max-h-[400px] overflow-y-auto">
+          <div id="peticao-preview" className="p-4 bg-white border rounded-md max-h-[400px] overflow-y-auto peticao-preview-content">
             {renderCalculosPreview(formData)}
           </div>
         </div>
@@ -91,6 +92,16 @@ const renderCalculosPreview = (formData: PeticaoFormData) => {
     
     return (
       <>
+        <h1 className="text-2xl font-bold text-center mb-6">{formData.titulo}</h1>
+        
+        <div className="mb-6">
+          <p className="font-bold">RECLAMANTE:</p> 
+          <p className="mb-3">{formData.reclamante || "[Nome do Reclamante]"}</p>
+          
+          <p className="font-bold">RECLAMADO:</p>
+          <p>{formData.reclamado || "[Nome do Reclamado/Empresa]"}</p>
+        </div>
+        
         {parts.map((part, index) => (
           <React.Fragment key={index}>
             <div className="whitespace-pre-wrap">{part}</div>
@@ -112,6 +123,16 @@ const renderCalculosPreview = (formData: PeticaoFormData) => {
   // If no marker is found, show the old way
   return (
     <>
+      <h1 className="text-2xl font-bold text-center mb-6">{formData.titulo}</h1>
+      
+      <div className="mb-6">
+        <p className="font-bold">RECLAMANTE:</p> 
+        <p className="mb-3">{formData.reclamante || "[Nome do Reclamante]"}</p>
+        
+        <p className="font-bold">RECLAMADO:</p>
+        <p>{formData.reclamado || "[Nome do Reclamado/Empresa]"}</p>
+      </div>
+      
       <div className="whitespace-pre-wrap mb-6">{formData.descricao}</div>
       <div className="mt-6 border-t-2 border-dashed border-gray-300 pt-6">
         <TabelaCalculos 

@@ -50,6 +50,19 @@ export const handlePrint = () => {
         width: 100% !important;
         padding: 20px !important;
       }
+      /* Garantir que apenas a previsão da petição seja visível */
+      .peticao-preview-content {
+        visibility: visible !important;
+        display: block !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+      }
+      .peticao-preview-content * {
+        visibility: visible !important;
+        display: block !important;
+      }
     }
   `;
   
@@ -75,22 +88,65 @@ export const printDocument = (elementId?: string) => {
   if (elementId) {
     const contentToPrint = document.getElementById(elementId);
     if (contentToPrint) {
-      // Armazenar o estilo original de todo o corpo
-      const originalBodyContent = document.body.innerHTML;
+      // Criar um novo documento para impressão
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) {
+        alert('Por favor, permita pop-ups para esta página para imprimir a petição.');
+        return;
+      }
       
-      // Substituir temporariamente o conteúdo do corpo pelo conteúdo a ser impresso
-      document.body.innerHTML = contentToPrint.innerHTML;
+      // Escrever apenas o conteúdo da petição no novo documento
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Petição</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              line-height: 1.6;
+              padding: 20px;
+              max-width: 800px;
+              margin: 0 auto;
+            }
+            @media print {
+              body {
+                padding: 0;
+              }
+            }
+            .tabela-calculos {
+              width: 100%;
+              border-collapse: collapse;
+              margin: 20px 0;
+            }
+            .tabela-calculos th, .tabela-calculos td {
+              border: 1px solid #ddd;
+              padding: 8px;
+              text-align: left;
+            }
+            .tabela-calculos th {
+              background-color: #f2f2f2;
+            }
+          </style>
+        </head>
+        <body>
+          ${contentToPrint.innerHTML}
+          <script>
+            // Auto-print e fechar
+            setTimeout(() => {
+              window.print();
+              setTimeout(() => window.close(), 500);
+            }, 500);
+          </script>
+        </body>
+        </html>
+      `);
       
-      // Imprimir
-      window.print();
-      
-      // Restaurar o conteúdo original
-      document.body.innerHTML = originalBodyContent;
-      
+      printWindow.document.close();
       return;
     }
   }
   
-  // Se nenhum ID for fornecido ou o elemento não for encontrado, imprimir normalmente
-  window.print();
+  // Se nenhum ID for fornecido ou o elemento não for encontrado, usar o método padrão
+  handlePrint();
 };
