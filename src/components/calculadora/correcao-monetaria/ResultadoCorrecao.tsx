@@ -12,6 +12,8 @@ interface ResultadoCorrecaoProps {
   onAplicarCorrecao: () => void;
   usarTotalGeral: boolean;
   totalGeral?: number;
+  aplicarJurosMora?: boolean;
+  taxaJurosMora?: string;
 }
 
 const ResultadoCorrecao: React.FC<ResultadoCorrecaoProps> = ({
@@ -21,8 +23,14 @@ const ResultadoCorrecao: React.FC<ResultadoCorrecaoProps> = ({
   dataInicio,
   onAplicarCorrecao,
   usarTotalGeral,
-  totalGeral = 0
+  totalGeral = 0,
+  aplicarJurosMora = false,
+  taxaJurosMora = "1"
 }) => {
+  // Calcular diferença percentual
+  const valorOriginalNumerico = usarTotalGeral ? totalGeral : parseFloat(valorOriginal.replace(/\./g, '').replace(',', '.'));
+  const diferencaPercentual = ((valorCorrigido - valorOriginalNumerico) / valorOriginalNumerico) * 100;
+  
   return (
     <div className="pt-2 border-t border-gray-200 mt-4">
       <div className="bg-gray-50 rounded-md p-4">
@@ -39,9 +47,21 @@ const ResultadoCorrecao: React.FC<ResultadoCorrecaoProps> = ({
           <span>Data inicial:</span>
           <span className="font-medium text-right">{dataInicio}</span>
           
+          {aplicarJurosMora && (
+            <>
+              <span>Juros de mora:</span>
+              <span className="font-medium text-right">{taxaJurosMora}% ao mês</span>
+            </>
+          )}
+          
           <span>Valor corrigido:</span>
           <span className="font-bold text-right text-juriscalc-navy">
             {formatarMoeda(valorCorrigido)}
+          </span>
+          
+          <span>Diferença:</span>
+          <span className={`font-medium text-right ${diferencaPercentual > 0 ? 'text-green-600' : 'text-red-600'}`}>
+            {formatarMoeda(valorCorrigido - valorOriginalNumerico)} ({diferencaPercentual.toFixed(2)}%)
           </span>
         </div>
         

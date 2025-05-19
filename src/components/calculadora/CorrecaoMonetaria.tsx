@@ -32,6 +32,8 @@ const CorrecaoMonetaria: React.FC<CorrecaoMonetariaProps> = ({
   const [tipoCalculo, setTipoCalculo] = useState<string>("");
   const [usarTotalGeral, setUsarTotalGeral] = useState<boolean>(false);
   const [usarDataAdmissao, setUsarDataAdmissao] = useState<boolean>(false);
+  const [aplicarJurosMora, setAplicarJurosMora] = useState<boolean>(false);
+  const [taxaJurosMora, setTaxaJurosMora] = useState<string>("1");
   
   const { valorCorrigido, setValorCorrigido, calcularCorrecaoMonetaria } = useCalculoCorrecao();
 
@@ -42,11 +44,40 @@ const CorrecaoMonetaria: React.FC<CorrecaoMonetariaProps> = ({
       ? totalGeral 
       : parseFloat(valor.replace(/\./g, '').replace(',', '.'));
     
-    calcularCorrecaoMonetaria({
+    if (isNaN(valorNumerico)) {
+      toast({
+        title: "Valor inválido",
+        description: "Por favor, insira um valor válido para o cálculo.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!dataInicio) {
+      toast({
+        title: "Data inválida",
+        description: "Por favor, insira uma data de início para o cálculo.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Calcular com ou sem juros de mora
+    const jurosMora = aplicarJurosMora ? parseFloat(taxaJurosMora) / 100 : 0;
+    
+    const resultado = calcularCorrecaoMonetaria({
       valor: valorNumerico,
       dataInicio,
-      indiceCorrecao
+      indiceCorrecao,
+      jurosMora
     });
+    
+    if (resultado) {
+      toast({
+        title: "Cálculo realizado",
+        description: `Valor corrigido calculado com base no índice ${indiceCorrecao}${aplicarJurosMora ? ' e juros de mora de ' + taxaJurosMora + '%' : ''}.`,
+      });
+    }
   };
   
   const handleAplicarCorrecao = () => {
@@ -185,6 +216,36 @@ const CorrecaoMonetaria: React.FC<CorrecaoMonetariaProps> = ({
             />
           </div>
 
+          {/* Adicionando opção de juros de mora */}
+          <div className="flex items-center space-x-2 pt-2">
+            <input
+              type="checkbox"
+              id="aplicarJurosMora"
+              checked={aplicarJurosMora}
+              onChange={(e) => setAplicarJurosMora(e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <Label htmlFor="aplicarJurosMora" className="text-sm">
+              Aplicar juros de mora
+            </Label>
+            
+            {aplicarJurosMora && (
+              <div className="flex items-center space-x-2 ml-4">
+                <Input
+                  type="number"
+                  id="taxaJurosMora"
+                  value={taxaJurosMora}
+                  onChange={(e) => setTaxaJurosMora(e.target.value)}
+                  className="w-16 h-8 text-sm"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                />
+                <span className="text-sm">% ao mês</span>
+              </div>
+            )}
+          </div>
+
           <div className="pt-2">
             <Button 
               onClick={handleCalcularCorrecaoMonetaria}
@@ -203,6 +264,8 @@ const CorrecaoMonetaria: React.FC<CorrecaoMonetariaProps> = ({
               onAplicarCorrecao={handleAplicarCorrecao}
               usarTotalGeral={usarTotalGeral}
               totalGeral={totalGeral}
+              aplicarJurosMora={aplicarJurosMora}
+              taxaJurosMora={taxaJurosMora}
             />
           )}
         </div>
