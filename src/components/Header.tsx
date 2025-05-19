@@ -36,7 +36,7 @@ const Header = () => {
   };
   
   const handleUserClick = () => {
-    // Navigate to the user account view in peticoes
+    // Navigate to the user account view in peticoes with the correct state parameter
     navigate('/peticoes', { state: { initialView: 'user' } });
   };
   
