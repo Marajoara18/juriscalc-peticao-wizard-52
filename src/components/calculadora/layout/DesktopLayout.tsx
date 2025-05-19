@@ -5,6 +5,7 @@ import AdicionaisForm from '@/components/calculadora/AdicionaisForm';
 import ResultadosCalculos from '@/components/calculadora/ResultadosCalculos';
 import CorrecaoMonetaria from '@/components/calculadora/CorrecaoMonetaria';
 import CalculosSalvos from '@/components/calculadora/CalculosSalvos';
+import ShareOptionsButton from '@/components/calculadora/share/ShareOptionsButton';
 
 interface CalculadoraLayoutProps {
   dadosContrato: any;
@@ -75,12 +76,20 @@ const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
                 {showCorrecaoMonetaria ? 'Ocultar Correção Monetária' : 'Aplicar Correção Monetária'}
               </button>
 
-              <CalculosSalvos
-                totalGeral={totalGeral}
-                dadosContrato={dadosContrato} 
-                resultados={resultados}
-                onLoadCalculo={handleLoadCalculo}
-              />
+              <div className="flex items-center gap-2">
+                <ShareOptionsButton 
+                  resultados={resultados}
+                  dadosContrato={dadosContrato}
+                  totalGeral={totalGeral}
+                />
+                
+                <CalculosSalvos
+                  totalGeral={totalGeral}
+                  dadosContrato={dadosContrato} 
+                  resultados={resultados}
+                  onLoadCalculo={handleLoadCalculo}
+                />
+              </div>
             </div>
 
             {showCorrecaoMonetaria && (

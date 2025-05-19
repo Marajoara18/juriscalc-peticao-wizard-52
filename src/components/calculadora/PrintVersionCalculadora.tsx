@@ -78,7 +78,7 @@ const PrintVersionCalculadora: React.FC<PrintVersionCalculadoraProps> = ({ resul
         
         <div className="bg-juriscalc-navy text-white p-4 mb-4 rounded-md">
           <div className="text-center">
-            <p className="mb-1 uppercase">VALOR TOTAL DA RECLAMAÇÃO</p>
+            <p className="mb-1 uppercase font-medium text-sm">VALOR TOTAL DA RECLAMAÇÃO</p>
             <p className="text-xl font-bold">{formatarMoeda(totalGeral)}</p>
           </div>
         </div>

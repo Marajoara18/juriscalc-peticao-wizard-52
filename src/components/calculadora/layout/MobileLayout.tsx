@@ -7,6 +7,7 @@ import AdicionaisForm from '@/components/calculadora/AdicionaisForm';
 import ResultadosCalculos from '@/components/calculadora/ResultadosCalculos';
 import CorrecaoMonetaria from '@/components/calculadora/CorrecaoMonetaria';
 import CalculosSalvos from '@/components/calculadora/CalculosSalvos';
+import ShareOptionsButton from '@/components/calculadora/share/ShareOptionsButton';
 import { DadosContrato, Adicionais } from '@/types/calculadora';
 
 interface CalculadoraLayoutProps {
@@ -95,6 +96,15 @@ const MobileLayout: React.FC<CalculadoraLayoutProps> = ({
         {/* Mostrar opções pós-cálculo quando os cálculos estiverem prontos */}
         {hasCalculos && (
           <div className="mt-4 space-y-4">
+            <div className="flex flex-wrap gap-2">
+              <ShareOptionsButton 
+                resultados={resultados}
+                dadosContrato={dadosContrato}
+                totalGeral={totalGeral}
+                isMobile={true}
+              />
+            </div>
+            
             {/* Opção de correção monetária */}
             {showCorrecaoMonetaria ? (
               <>

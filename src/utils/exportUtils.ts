@@ -118,3 +118,16 @@ export const exportToExcel = (data: ExportData, fileName?: string) => {
     return false;
   }
 };
+
+// Função para compartilhar via WhatsApp
+export const shareViaWhatsApp = (text: string) => {
+  const encodedText = encodeURIComponent(text);
+  window.open(`https://wa.me/?text=${encodedText}`);
+};
+
+// Função para compartilhar via Email
+export const shareViaEmail = (subject: string, body: string) => {
+  const encodedSubject = encodeURIComponent(subject);
+  const encodedBody = encodeURIComponent(body);
+  window.open(`mailto:?subject=${encodedSubject}&body=${encodedBody}`);
+};
