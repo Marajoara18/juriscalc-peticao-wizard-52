@@ -7,8 +7,8 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
-import { Download, FileSpreadsheet } from "lucide-react";
-import { exportToExcel } from '@/utils/exportUtils';
+import { Download, FileSpreadsheet, FilePdf } from "lucide-react";
+import { exportToExcel, exportToPDF } from '@/utils/exportUtils';
 
 interface ExportData {
   verbasRescisorias?: Record<string, any>;
@@ -53,6 +53,12 @@ const ExportDropdown: React.FC<ExportDropdownProps> = ({
       onClose?.();
     }
   };
+  
+  const handleExportPDF = () => {
+    exportToPDF();
+    setOpen(false);
+    onClose?.();
+  };
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -71,6 +77,10 @@ const ExportDropdown: React.FC<ExportDropdownProps> = ({
         <DropdownMenuItem onClick={handleExportExcel}>
           <FileSpreadsheet className="h-4 w-4 mr-2" />
           <span>Exportar como Excel</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleExportPDF}>
+          <FilePdf className="h-4 w-4 mr-2" />
+          <span>Exportar como PDF</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

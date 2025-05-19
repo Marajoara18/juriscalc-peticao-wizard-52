@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { DadosContrato, Adicionais, Resultados } from '@/types/calculadora';
 import { resultadosIniciais } from '@/utils/calculadoraConstants';

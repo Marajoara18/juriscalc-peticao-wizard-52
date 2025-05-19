@@ -1,131 +1,102 @@
 
 import React, { useState, useEffect } from 'react';
-import UserManagement from '@/components/auth/UserManagement';
+import { Button } from '@/components/ui/button';
+import MobileLayout from './layout/MobileLayout';
+import DesktopLayout from './layout/DesktopLayout';
 import useCalculadora from '@/hooks/useCalculadora';
-import { toast } from 'sonner';
-import DesktopLayout from '@/components/calculadora/layout/DesktopLayout';
-import MobileLayout from '@/components/calculadora/layout/MobileLayout';
-import CalculadoraToolbar from '@/components/calculadora/layout/CalculadoraToolbar';
-import HelpSectionContainer from '@/components/calculadora/layout/HelpSectionContainer';
-import useCalculadoraState from '@/hooks/calculadora/useCalculadoraState';
+import useMobile from '@/hooks/use-mobile';
+import { toast } from "sonner";
 
 interface CalculadoraContainerProps {
-  scrollToCalculosSalvos?: () => void;
+  scrollToCalculosSalvos: () => void;
+  onShowCorrecaoMonetaria?: () => void;
 }
 
-const CalculadoraContainer: React.FC<CalculadoraContainerProps> = ({ scrollToCalculosSalvos }) => {
-  const { 
+const CalculadoraContainer: React.FC<CalculadoraContainerProps> = ({ 
+  scrollToCalculosSalvos,
+  onShowCorrecaoMonetaria 
+}) => {
+  const isMobile = useMobile();
+  
+  const {
     dadosContrato, 
     adicionais, 
     resultados,
-    setDadosContrato,
-    setAdicionais,
-    setResultados,
-    handleDadosContratoChange, 
+    showCorrecaoMonetaria,
+    setShowCorrecaoMonetaria,
+    handleDadosContratoChange,
     handleCheckboxChange,
     handleTipoRescisaoChange,
-    handleAdicionaisChange, 
+    handleAdicionaisChange,
     calcularResultados,
-    aplicarCorrecaoMonetaria,
-    podeCalcular,
-    showSubscriptionModal,
-    setShowSubscriptionModal
+    totalGeral,
+    hasCalculos,
+    handleLoadCalculo,
+    aplicarCorrecaoMonetaria
   } = useCalculadora();
-  
-  const [showUserPanel, setShowUserPanel] = useState(false);
-  const [showCorrecaoMonetaria, setShowCorrecaoMonetaria] = useState(false);
-  const [layoutMode, setLayoutMode] = useState<'desktop' | 'mobile'>('desktop');
-  
-  // Detectar tipo de dispositivo para layout inicial
-  useEffect(() => {
-    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    if (isMobileDevice) {
-      setLayoutMode('mobile');
-    }
-  }, []);
-  
-  const handleComecaCalcular = () => {
-    // Reiniciar dados do formulário
-    useCalculadoraState.reiniciarFormulario(setDadosContrato, setAdicionais, setResultados);
-    setShowCorrecaoMonetaria(false);
-    toast.info('Formulário reiniciado. Você pode iniciar um novo cálculo.');
-  };
-  
-  const handleLoadCalculo = (calculo: any) => {
-    if (!calculo) return;
-    useCalculadoraState.carregarCalculo(calculo, setDadosContrato, setAdicionais, setResultados, adicionais, resultados);
-    toast.success('Cálculo carregado com sucesso!');
-  };
-  
-  // Calcular o total geral para o botão de salvar cálculos
-  const { totalGeral, hasCalculos } = useCalculadoraState.calcularTotais(resultados);
-  
-  const handleCalcularClick = () => {
-    calcularResultados();
-    console.log("Cálculos realizados com sucesso. Total:", totalGeral);
-  };
 
-  // Toggle para alternar entre layout para desktop e mobile
-  const toggleLayoutMode = () => {
-    setLayoutMode(prevMode => prevMode === 'desktop' ? 'mobile' : 'desktop');
-    toast.success(`Layout alterado para ${layoutMode === 'desktop' ? 'Smartphone' : 'Computador'}`);
+  // Função para calcular as verbas rescisórias
+  const handleCalcularClick = () => {
+    // Verificar se os campos obrigatórios foram preenchidos
+    if (!dadosContrato.dataAdmissao || !dadosContrato.dataDemissao || !dadosContrato.salarioBase) {
+      toast.error('Por favor, preencha todos os campos obrigatórios.');
+      return;
+    }
+
+    calcularResultados();
+    
+    // Rolar até a seção de resultados/cálculos salvos
+    setTimeout(() => {
+      scrollToCalculosSalvos();
+    }, 500);
   };
 
   return (
-    <>
-      <CalculadoraToolbar 
-        showUserPanel={showUserPanel}
-        layoutMode={layoutMode}
-        toggleLayoutMode={toggleLayoutMode}
-        handleComecaCalcular={handleComecaCalcular}
-        setShowUserPanel={setShowUserPanel}
-        showCalculosSalvos={scrollToCalculosSalvos}
-      />
+    <div>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-center">
+          Calculadora de Verbas Rescisórias
+        </h1>
+      </div>
 
-      {showUserPanel ? (
-        <UserManagement />
+      {isMobile ? (
+        <MobileLayout
+          dadosContrato={dadosContrato}
+          adicionais={adicionais}
+          resultados={resultados}
+          showCorrecaoMonetaria={showCorrecaoMonetaria}
+          hasCalculos={hasCalculos}
+          totalGeral={totalGeral}
+          handleDadosContratoChange={handleDadosContratoChange}
+          handleCheckboxChange={handleCheckboxChange}
+          handleTipoRescisaoChange={handleTipoRescisaoChange}
+          handleAdicionaisChange={handleAdicionaisChange}
+          handleCalcularClick={handleCalcularClick}
+          handleLoadCalculo={handleLoadCalculo}
+          setShowCorrecaoMonetaria={setShowCorrecaoMonetaria}
+          aplicarCorrecaoMonetaria={aplicarCorrecaoMonetaria}
+          onShowCorrecaoMonetaria={onShowCorrecaoMonetaria}
+        />
       ) : (
-        <>
-          {layoutMode === 'desktop' ? (
-            <DesktopLayout
-              dadosContrato={dadosContrato}
-              adicionais={adicionais}
-              resultados={resultados}
-              showCorrecaoMonetaria={showCorrecaoMonetaria}
-              hasCalculos={hasCalculos}
-              totalGeral={totalGeral}
-              handleDadosContratoChange={handleDadosContratoChange}
-              handleCheckboxChange={handleCheckboxChange}
-              handleTipoRescisaoChange={handleTipoRescisaoChange}
-              handleAdicionaisChange={handleAdicionaisChange}
-              handleCalcularClick={handleCalcularClick}
-              handleLoadCalculo={handleLoadCalculo}
-              setShowCorrecaoMonetaria={setShowCorrecaoMonetaria}
-              aplicarCorrecaoMonetaria={aplicarCorrecaoMonetaria}
-            />
-          ) : (
-            <MobileLayout
-              dadosContrato={dadosContrato}
-              adicionais={adicionais}
-              resultados={resultados}
-              showCorrecaoMonetaria={showCorrecaoMonetaria}
-              hasCalculos={hasCalculos}
-              totalGeral={totalGeral}
-              handleDadosContratoChange={handleDadosContratoChange}
-              handleCheckboxChange={handleCheckboxChange}
-              handleTipoRescisaoChange={handleTipoRescisaoChange}
-              handleAdicionaisChange={handleAdicionaisChange}
-              handleCalcularClick={handleCalcularClick}
-              handleLoadCalculo={handleLoadCalculo}
-              setShowCorrecaoMonetaria={setShowCorrecaoMonetaria}
-              aplicarCorrecaoMonetaria={aplicarCorrecaoMonetaria}
-            />
-          )}
-      
-          <HelpSectionContainer calculosDisponiveis={hasCalculos} />
-        </>
+        <DesktopLayout
+          dadosContrato={dadosContrato}
+          adicionais={adicionais}
+          resultados={resultados}
+          showCorrecaoMonetaria={showCorrecaoMonetaria}
+          hasCalculos={hasCalculos}
+          totalGeral={totalGeral}
+          handleDadosContratoChange={handleDadosContratoChange}
+          handleCheckboxChange={handleCheckboxChange}
+          handleTipoRescisaoChange={handleTipoRescisaoChange}
+          handleAdicionaisChange={handleAdicionaisChange}
+          handleCalcularClick={handleCalcularClick}
+          handleLoadCalculo={handleLoadCalculo}
+          setShowCorrecaoMonetaria={setShowCorrecaoMonetaria}
+          aplicarCorrecaoMonetaria={aplicarCorrecaoMonetaria}
+          onShowCorrecaoMonetaria={onShowCorrecaoMonetaria}
+        />
       )}
-    </>
+    </div>
   );
 };
 

@@ -2,8 +2,10 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { FilePdf } from 'lucide-react';
 import ExportDropdown from '@/components/calculadora/ExportDropdown';
 import PreviewCalculoContent from './PreviewCalculoContent';
+import { exportToPDF } from '@/utils/exportUtils';
 
 interface CalculoSalvo {
   id: string;
@@ -35,6 +37,11 @@ const PreviewCalculoDialog: React.FC<PreviewCalculoDialogProps> = ({
   onOpenChange,
   calculo
 }) => {
+  const handleExportPDF = () => {
+    exportToPDF();
+    // Não feche o diálogo para permitir que o usuário continue vendo o conteúdo
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl">
@@ -47,14 +54,24 @@ const PreviewCalculoDialog: React.FC<PreviewCalculoDialogProps> = ({
         <div className="py-4 print:py-0">
           {calculo && <PreviewCalculoContent calculo={calculo} />}
         </div>
-        <DialogFooter className="print:hidden">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Fechar
+        <DialogFooter className="print:hidden flex flex-wrap gap-2 justify-end sm:justify-between">
+          <Button 
+            variant="outline" 
+            onClick={handleExportPDF}
+            className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+          >
+            <FilePdf className="h-4 w-4 mr-2" />
+            Exportar como PDF
           </Button>
-          <ExportDropdown 
-            data={calculo || undefined} 
-            onClose={() => onOpenChange(false)}
-          />
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              Fechar
+            </Button>
+            <ExportDropdown 
+              data={calculo || undefined} 
+              onClose={() => onOpenChange(false)}
+            />
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

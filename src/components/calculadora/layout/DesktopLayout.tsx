@@ -23,6 +23,7 @@ interface CalculadoraLayoutProps {
   handleLoadCalculo: (calculo: any) => void;
   setShowCorrecaoMonetaria: (show: boolean) => void;
   aplicarCorrecaoMonetaria: (valorCorrigido: number) => void;
+  onShowCorrecaoMonetaria?: () => void;
 }
 
 const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
@@ -39,7 +40,8 @@ const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
   handleCalcularClick,
   handleLoadCalculo,
   setShowCorrecaoMonetaria,
-  aplicarCorrecaoMonetaria
+  aplicarCorrecaoMonetaria,
+  onShowCorrecaoMonetaria
 }) => {
   // Forçar atualização dos cálculos salvos quando o componente for montado
   useEffect(() => {
@@ -70,28 +72,8 @@ const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
           resultados={resultados} 
           adicionais={adicionais}
           dadosContrato={dadosContrato}
+          onShowCorrecaoMonetaria={onShowCorrecaoMonetaria}
         />
-
-        {hasCalculos && (
-          <>
-            {/* Botões de ação entre Resultados e Cálculos Salvos */}
-            <div className="flex justify-between items-center mt-4 mb-4">
-              <Button
-                variant="outline"
-                className="border-juriscalc-navy text-juriscalc-navy"
-                onClick={() => setShowCorrecaoMonetaria(!showCorrecaoMonetaria)}
-              >
-                {showCorrecaoMonetaria ? 'Ocultar Correção Monetária' : 'Aplicar Correção Monetária'}
-              </Button>
-              
-              <ShareOptionsButton 
-                resultados={resultados}
-                dadosContrato={dadosContrato}
-                totalGeral={totalGeral}
-              />
-            </div>
-          </>
-        )}
 
         {/* Cálculos Salvos agora SEMPRE visíveis, independente de hasCalculos */}
         <CalculosSalvos

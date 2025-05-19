@@ -2,23 +2,29 @@
 import React from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { formatarMoeda } from '@/utils/formatters';
 import { DadosContrato, Adicionais } from '@/types/calculadora';
 import { cn } from '@/lib/utils';
 import ExportResultsButton from './ExportResultsButton';
+import { ArrowUpDown, Mail, Share2 } from 'lucide-react';
+import { toast } from "sonner";
+import { shareViaWhatsApp, shareViaEmail, generateCalculationText } from '@/utils/exportUtils';
 
 interface ResultadosCalculosProps {
   resultados: any; 
   adicionais: Adicionais;
   dadosContrato: DadosContrato;
   onLoadCalculo?: (calculo: any) => void;
+  onShowCorrecaoMonetaria?: () => void;
 }
 
 const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({ 
   resultados, 
   adicionais,
   dadosContrato,
-  onLoadCalculo 
+  onLoadCalculo,
+  onShowCorrecaoMonetaria
 }) => {
   // Apenas mostrar se houver resultados
   if (!resultados || (!resultados.verbasRescisorias && !resultados.adicionais)) {
@@ -48,6 +54,22 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
   
   // Total geral é o mesmo que subtotal agora que não mostramos honorários
   const totalGeral = subTotal;
+
+  // Funções de compartilhamento
+  const handleShareEmail = () => {
+    const subject = encodeURIComponent("Cálculos Trabalhistas - IusCalc");
+    const body = generateCalculationText(resultados);
+    
+    shareViaEmail(subject, body);
+    toast.success("Preparando e-mail com os cálculos");
+  };
+
+  const handleShareWhatsApp = () => {
+    const text = generateCalculationText(resultados);
+    
+    shareViaWhatsApp(text);
+    toast.success("Compartilhando cálculos via WhatsApp");
+  };
 
   return (
     <Card className="p-4 mt-4">
@@ -159,7 +181,39 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
         </span>
       </div>
       
-      <div className="mt-4 flex justify-end print:hidden">
+      {/* Botões de ação abaixo do Total Geral */}
+      <div className="mt-4 flex flex-wrap gap-2 justify-end print:hidden">
+        {/* Botão de Atualização Monetária */}
+        <Button 
+          variant="outline"
+          className="border-juriscalc-navy text-juriscalc-navy"
+          onClick={onShowCorrecaoMonetaria}
+        >
+          <ArrowUpDown className="h-4 w-4 mr-2" />
+          Atualização Monetária
+        </Button>
+        
+        {/* Botão de compartilhar via WhatsApp */}
+        <Button 
+          variant="outline"
+          className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+          onClick={handleShareWhatsApp}
+        >
+          <Share2 className="h-4 w-4 mr-2" />
+          WhatsApp
+        </Button>
+        
+        {/* Botão de compartilhar via E-mail */}
+        <Button 
+          variant="outline"
+          className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+          onClick={handleShareEmail}
+        >
+          <Mail className="h-4 w-4 mr-2" />
+          E-mail
+        </Button>
+        
+        {/* Botão de exportar (existente) */}
         <ExportResultsButton resultados={resultados} />
       </div>
     </Card>

@@ -25,6 +25,7 @@ interface CalculadoraLayoutProps {
   handleLoadCalculo: (calculo: any) => void;
   setShowCorrecaoMonetaria: React.Dispatch<React.SetStateAction<boolean>>;
   aplicarCorrecaoMonetaria: (valorCorrigido: number) => void;
+  onShowCorrecaoMonetaria?: () => void;
 }
 
 const MobileLayout: React.FC<CalculadoraLayoutProps> = ({
@@ -41,7 +42,8 @@ const MobileLayout: React.FC<CalculadoraLayoutProps> = ({
   handleCalcularClick,
   handleLoadCalculo,
   setShowCorrecaoMonetaria,
-  aplicarCorrecaoMonetaria
+  aplicarCorrecaoMonetaria,
+  onShowCorrecaoMonetaria
 }) => {
   const [activeTab, setActiveTab] = useState<'dados' | 'adicionais' | 'resultados'>('dados');
   
@@ -95,30 +97,8 @@ const MobileLayout: React.FC<CalculadoraLayoutProps> = ({
           resultados={resultados} 
           adicionais={adicionais}
           dadosContrato={dadosContrato}
+          onShowCorrecaoMonetaria={onShowCorrecaoMonetaria}
         />
-        
-        {/* Mostrar opções pós-cálculo quando os cálculos estiverem prontos */}
-        {hasCalculos && (
-          <div className="mt-4 space-y-4">
-            {/* Botões de ação */}
-            <div className="flex justify-between gap-2">
-              <Button 
-                variant="outline"
-                className="flex-1 border-juriscalc-navy text-juriscalc-navy"
-                onClick={() => setShowCorrecaoMonetaria(!showCorrecaoMonetaria)}
-              >
-                {showCorrecaoMonetaria ? 'Ocultar Correção' : 'Aplicar Correção'}
-              </Button>
-              
-              <ShareOptionsButton 
-                resultados={resultados}
-                dadosContrato={dadosContrato}
-                totalGeral={totalGeral}
-                isMobile={true}
-              />
-            </div>
-          </div>
-        )}
         
         {/* Cálculos Salvos SEMPRE visíveis, independente de hasCalculos */}
         <div className="mt-4">
