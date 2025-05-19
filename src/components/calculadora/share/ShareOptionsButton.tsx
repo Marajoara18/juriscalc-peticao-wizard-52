@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   DropdownMenu, 
@@ -11,7 +10,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Share2, Mail, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
-import { exportToPDF, shareViaWhatsApp, shareViaEmail, generateCalculationText } from '@/utils/exportUtils';
+import { 
+  exportToPDF, 
+  shareViaWhatsApp, 
+  shareViaEmail, 
+  generateCalculationText 
+} from '@/utils/export';
 
 interface ShareOptionsButtonProps {
   resultados: any;

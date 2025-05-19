@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card } from '@/components/ui/card';
@@ -8,7 +9,7 @@ import { cn } from '@/lib/utils';
 import ExportResultsButton from './ExportResultsButton';
 import { Mail, Share2 } from 'lucide-react';
 import { toast } from "sonner";
-import { shareViaWhatsApp, shareViaEmail, generateCalculationText } from '@/utils/exportUtils';
+import { shareViaWhatsApp, shareViaEmail, generateCalculationText } from '@/utils/export';
 import ResultadosPrintable from './ResultadosPrintable';
 
 interface ResultadosCalculosProps {
