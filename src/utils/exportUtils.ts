@@ -1,3 +1,4 @@
+
 import * as XLSX from 'xlsx';
 import { toast } from "sonner";
 
@@ -262,12 +263,12 @@ export const exportToExcel = (data: ExportData, fileName?: string) => {
       { s: {r: 2, c: 0}, e: {r: 2, c: 2} }  // Merge third row
     );
     
-    // Add the IusCalc logo in Excel (as text, since adding real images requires more complex operations)
+    // Add only "IusCalc" at the bottom of the Excel file (without website URL)
     XLSX.utils.sheet_add_aoa(ws, [
-      ['Gerado por IusCalc - https://iuscalc.com']
+      ['IusCalc']
     ], { origin: { r: exportData.length + 5, c: 0 } });
     
-    // Merge the logo row
+    // Merge the IusCalc row
     ws['!merges'].push({ s: {r: exportData.length + 5, c: 0}, e: {r: exportData.length + 5, c: 2} });
     
     // Export to file
