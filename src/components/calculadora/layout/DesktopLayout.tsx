@@ -1,17 +1,13 @@
-
 import React from 'react';
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DadosContratoForm from '@/components/calculadora/DadosContratoForm';
 import AdicionaisForm from '@/components/calculadora/AdicionaisForm';
-import ResultadosCalculos from '@/components/calculadora/ResultadosCalculos';
+import ResultadosSection from '@/components/calculadora/ResultadosSection';
 import CorrecaoMonetaria from '@/components/calculadora/CorrecaoMonetaria';
-import CalculosSalvos from '@/components/calculadora/CalculosSalvos';
-import { DadosContrato, Adicionais } from '@/types/calculadora';
+import SalvarCalculoModal from '@/components/calculadora/SalvarCalculoModal';
 
-interface DesktopLayoutProps {
-  dadosContrato: DadosContrato;
-  adicionais: Adicionais;
+interface CalculadoraLayoutProps {
+  dadosContrato: any;
+  adicionais: any;
   resultados: any;
   showCorrecaoMonetaria: boolean;
   hasCalculos: boolean;
@@ -19,14 +15,14 @@ interface DesktopLayoutProps {
   handleDadosContratoChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleCheckboxChange: (field: string, checked: boolean) => void;
   handleTipoRescisaoChange: (value: string) => void;
-  handleAdicionaisChange: (name: string, value: string | boolean) => void;
+  handleAdicionaisChange: (name: string, value: string | boolean | any) => void;
   handleCalcularClick: () => void;
   handleLoadCalculo: (calculo: any) => void;
-  setShowCorrecaoMonetaria: React.Dispatch<React.SetStateAction<boolean>>;
-  aplicarCorrecaoMonetaria: (valorCorrigido: number) => void;
+  setShowCorrecaoMonetaria: (show: boolean) => void;
+  aplicarCorrecaoMonetaria: () => void;
 }
 
-const DesktopLayout: React.FC<DesktopLayoutProps> = ({
+const DesktopLayout: React.FC<CalculadoraLayoutProps> = ({
   dadosContrato,
   adicionais,
   resultados,
@@ -42,93 +38,60 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   setShowCorrecaoMonetaria,
   aplicarCorrecaoMonetaria
 }) => {
-  
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* Column 1 - Form */}
-      <div className="lg:col-span-2">
-        <Tabs defaultValue="contrato">
-          <TabsList className="w-full">
-            <TabsTrigger value="contrato" className="flex-1">Dados do Contrato</TabsTrigger>
-            <TabsTrigger value="adicionais" className="flex-1">Adicionais e Multas</TabsTrigger>
-          </TabsList>
-
-          {/* Tab de Dados do Contrato */}
-          <TabsContent value="contrato">
-            <DadosContratoForm 
-              dadosContrato={dadosContrato}
-              onChange={handleDadosContratoChange}
-              onTipoRescisaoChange={handleTipoRescisaoChange}
-              onCheckboxChange={handleCheckboxChange}
-            />
-          </TabsContent>
-
-          {/* Tab de Adicionais */}
-          <TabsContent value="adicionais">
-            <AdicionaisForm 
-              adicionais={adicionais}
-              onChange={handleAdicionaisChange}
-            />
-          </TabsContent>
-        </Tabs>
-
-        <div className="mt-6">
-          <Button 
-            onClick={handleCalcularClick}
-            className="w-full bg-juriscalc-navy text-white hover:bg-opacity-90"
-            size="lg"
-          >
-            Calcular Verbas
-          </Button>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div>
+        <div className="mb-4">
+          <DadosContratoForm 
+            dadosContrato={dadosContrato}
+            onChange={handleDadosContratoChange}
+            onCheckboxChange={handleCheckboxChange}
+            onTipoRescisaoChange={handleTipoRescisaoChange}
+          />
         </div>
-        
-        {/* Mostrar opções pós-cálculo quando os cálculos estiverem prontos */}
+        <div>
+          <AdicionaisForm 
+            adicionais={adicionais} 
+            dadosContrato={dadosContrato}
+            onChange={handleAdicionaisChange} 
+          />
+        </div>
+      </div>
+      <div>
+        <ResultadosSection resultados={resultados} />
+
         {hasCalculos && (
-          <div className="mt-6 space-y-4">
-            {/* Opção de correção monetária */}
-            {showCorrecaoMonetaria ? (
-              <>
-                <CorrecaoMonetaria 
-                  onAplicarCorrecao={aplicarCorrecaoMonetaria} 
-                  totalGeral={totalGeral}
-                  dataAdmissao={dadosContrato.dataAdmissao} 
-                />
-                <Button 
-                  variant="outline"
-                  className="w-full border-juriscalc-navy text-juriscalc-navy"
-                  onClick={() => setShowCorrecaoMonetaria(false)}
-                >
-                  Ocultar Correção Monetária
-                </Button>
-              </>
-            ) : (
-              <Button 
-                variant="outline"
-                className="w-full border-juriscalc-navy text-juriscalc-navy"
-                onClick={() => setShowCorrecaoMonetaria(true)}
+          <>
+            <div className="flex justify-between items-center mt-4">
+              <button
+                onClick={() => setShowCorrecaoMonetaria(!showCorrecaoMonetaria)}
+                className="text-sm text-blue-500 hover:underline"
               >
-                Aplicar Correção Monetária
-              </Button>
+                {showCorrecaoMonetaria ? 'Ocultar Correção Monetária' : 'Aplicar Correção Monetária'}
+              </button>
+
+              <SalvarCalculoModal totalGeral={totalGeral} dadosContrato={dadosContrato} adicionais={adicionais} resultados={resultados} />
+            </div>
+
+            {showCorrecaoMonetaria && (
+              <CorrecaoMonetaria
+                resultados={resultados}
+                aplicarCorrecaoMonetaria={aplicarCorrecaoMonetaria}
+              />
             )}
+          </>
+        )}
+
+        {!hasCalculos && (
+          <div className="mt-4">
+            <button
+              onClick={handleCalcularClick}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Calcular
+            </button>
           </div>
         )}
-      </div>
-      
-      {/* Coluna 2 - Resultados */}
-      <div>
-        <ResultadosCalculos 
-          resultados={resultados} 
-          adicionais={adicionais}
-          dadosContrato={dadosContrato}
-          onLoadCalculo={handleLoadCalculo}
-        />
-        
-        <CalculosSalvos 
-          resultados={resultados}
-          totalGeral={totalGeral}
-          dadosContrato={dadosContrato}
-          onLoadCalculo={handleLoadCalculo}
-        />
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-
 /**
  * Main utilities file for calculating additional labor values
  */
@@ -20,7 +19,7 @@ import {
 import { 
   calcularDescontosIndevidos as descontosIndevidosCalc,
   calcularDiferencasSalariais as diferencasSalariaisCalc,
-  calcularCustom as customCalc
+  calcularTodosCustom
 } from './adicionais/descontosUtils';
 import { calcularSeguroDesemprego, calcularSalarioFamilia } from './adicionais/beneficiosSociaisUtils';
 import { calcularInsalubridade as calcularInsalubridadeUtils } from './adicionais/insalubridadeUtils';
@@ -354,10 +353,12 @@ export function calcularAdicionais(
     );
   }
   
-  // Calculate custom calculation
+  // Calculate custom calculations from array
   if (adicionais.calcularCustom) {
-    const valorCustom = parseFloat(adicionais.valorCustom) || 0;
-    customCalculo = customCalc(adicionais.calcularCustom, valorCustom);
+    customCalculo = calcularTodosCustom(
+      adicionais.calcularCustom,
+      adicionais.calculosCustom || []
+    );
   }
   
   // Calculate unemployment insurance

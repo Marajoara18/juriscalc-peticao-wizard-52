@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,7 +8,7 @@ import CorrecaoMonetaria from '@/components/calculadora/CorrecaoMonetaria';
 import CalculosSalvos from '@/components/calculadora/CalculosSalvos';
 import { DadosContrato, Adicionais } from '@/types/calculadora';
 
-interface MobileLayoutProps {
+interface CalculadoraLayoutProps {
   dadosContrato: DadosContrato;
   adicionais: Adicionais;
   resultados: any;
@@ -26,7 +25,7 @@ interface MobileLayoutProps {
   aplicarCorrecaoMonetaria: (valorCorrigido: number) => void;
 }
 
-const MobileLayout: React.FC<MobileLayoutProps> = ({
+const MobileLayout: React.FC<CalculadoraLayoutProps> = ({
   dadosContrato,
   adicionais,
   resultados,
@@ -42,32 +41,35 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   setShowCorrecaoMonetaria,
   aplicarCorrecaoMonetaria
 }) => {
+  const [activeTab, setActiveTab] = useState<'dados' | 'adicionais' | 'resultados'>('dados');
   
   return (
-    <div className="space-y-6">
-      {/* Form area */}
-      <Tabs defaultValue="contrato">
-        <TabsList className="w-full">
-          <TabsTrigger value="contrato" className="flex-1">Dados do Contrato</TabsTrigger>
-          <TabsTrigger value="adicionais" className="flex-1">Adicionais e Multas</TabsTrigger>
-        </TabsList>
+    <div className="space-y-4">
+      <div className="flex border-b">
+        {/* Form area */}
+        <Tabs defaultValue="contrato">
+          <TabsList className="w-full">
+            <TabsTrigger value="contrato" className="flex-1">Dados do Contrato</TabsTrigger>
+            <TabsTrigger value="adicionais" className="flex-1">Adicionais e Multas</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="contrato">
-          <DadosContratoForm 
-            dadosContrato={dadosContrato}
-            onChange={handleDadosContratoChange}
-            onCheckboxChange={handleCheckboxChange}
-            onTipoRescisaoChange={handleTipoRescisaoChange}
-          />
-        </TabsContent>
+          <TabsContent value="contrato">
+            <DadosContratoForm 
+              dadosContrato={dadosContrato}
+              onChange={handleDadosContratoChange}
+              onCheckboxChange={handleCheckboxChange}
+              onTipoRescisaoChange={handleTipoRescisaoChange}
+            />
+          </TabsContent>
 
-        <TabsContent value="adicionais">
-          <AdicionaisForm 
-            adicionais={adicionais}
-            onChange={handleAdicionaisChange}
-          />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="adicionais">
+            <AdicionaisForm 
+              adicionais={adicionais}
+              onChange={handleAdicionaisChange}
+            />
+          </TabsContent>
+        </Tabs>
+      </div>
 
       <div>
         <Button 

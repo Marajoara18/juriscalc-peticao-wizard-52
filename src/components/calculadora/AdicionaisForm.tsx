@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -8,14 +7,15 @@ import { Multas } from './adicionais/Multas';
 import { OutrosAdicionais } from './adicionais/OutrosAdicionais';
 import { CalculoPersonalizado } from './adicionais/CalculoPersonalizado';
 import { SeguroDesemprego } from './adicionais/SeguroDesemprego';
-import { Adicionais } from '@/types/calculadora';
+import { Adicionais, DadosContrato } from '@/types/calculadora';
 
 interface AdicionaisFormProps {
   adicionais: Adicionais;
-  onChange: (name: string, value: string | boolean) => void;
+  dadosContrato?: DadosContrato;
+  onChange: (name: string, value: string | boolean | any) => void;
 }
 
-const AdicionaisForm: React.FC<AdicionaisFormProps> = ({ adicionais, onChange }) => {
+const AdicionaisForm: React.FC<AdicionaisFormProps> = ({ adicionais, dadosContrato, onChange }) => {
   return (
     <Card>
       <CardHeader>
@@ -49,7 +49,7 @@ const AdicionaisForm: React.FC<AdicionaisFormProps> = ({ adicionais, onChange })
         <div className="space-y-3">
           <Separator className="my-4" />
           <h3 className="font-serif font-semibold text-juriscalc-navy">Seguro-Desemprego</h3>
-          <SeguroDesemprego adicionais={adicionais} onChange={onChange} />
+          <SeguroDesemprego adicionais={adicionais} dadosContrato={dadosContrato} onChange={onChange} />
         </div>
 
         {/* Outros Adicionais */}
