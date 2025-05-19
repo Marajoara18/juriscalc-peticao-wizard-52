@@ -1,3 +1,4 @@
+
 import { criarHTMLCalculosEmbutidos } from '@/utils/html/calculosHTML';
 
 // Função para gerar o HTML dos cálculos para incorporar na petição
@@ -222,12 +223,15 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
               color: white !important;
             }
             /* Estilo para o valor total da reclamação */
-            .valor-total-reclamacao, .valor-total-reclamacao * {
+            .valor-total-reclamacao, 
+            .valor-total-reclamacao *,
+            .print-bold-black {
               font-weight: bold !important;
               color: #000 !important;
             }
             /* Esconder o logo IusCalc e informações do footer */
-            .iuscalc-logo, .calculadora-footer {
+            .iuscalc-logo, 
+            .calculadora-footer {
               display: none !important;
               visibility: hidden !important;
             }
@@ -250,11 +254,12 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
               const totalElements = document.querySelectorAll('.calculadora-tabela div[style*="background-color: #f9fafb"]');
               totalElements.forEach(el => {
                 el.classList.add('valor-total-reclamacao');
+                el.classList.add('print-bold-black');
               });
               
-              // Assegurar que elementos com a classe valor-total-reclamacao estejam em negrito preto
-              const valorTotalElements = document.querySelectorAll('.valor-total-reclamacao');
-              valorTotalElements.forEach(el => {
+              // Assegurar que elementos com a classe valor-total-reclamacao ou print-bold-black estejam em negrito preto
+              const boldBlackElements = document.querySelectorAll('.valor-total-reclamacao, .print-bold-black');
+              boldBlackElements.forEach(el => {
                 el.style.fontWeight = 'bold';
                 el.style.color = '#000';
                 
@@ -264,6 +269,19 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
                   child.style.fontWeight = 'bold';
                   child.style.color = '#000';
                 });
+                
+                // Garantir que o texto do próprio elemento esteja em negrito preto
+                if (el.firstChild && el.firstChild.nodeType === 3) {
+                  el.style.fontWeight = 'bold';
+                  el.style.color = '#000';
+                }
+              });
+              
+              // Garantir que o texto "VALOR TOTAL DA RECLAMAÇÃO" esteja em negrito preto
+              const valorTexts = document.querySelectorAll('p:contains("VALOR TOTAL DA RECLAMAÇÃO")');
+              valorTexts.forEach(text => {
+                text.style.fontWeight = 'bold';
+                text.style.color = '#000';
               });
               
               window.print();
