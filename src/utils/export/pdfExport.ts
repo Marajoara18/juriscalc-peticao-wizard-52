@@ -80,6 +80,14 @@ export const exportToPDF = () => {
           text-align: center;
           margin-top: 20px;
         }
+        .grand-total div:first-child {
+          text-transform: uppercase;
+          font-size: 14px;
+          margin-bottom: 5px;
+        }
+        .grand-total div:last-child {
+          font-size: 16px;
+        }
         .footer {
           margin-top: 30px;
           font-size: 12px;

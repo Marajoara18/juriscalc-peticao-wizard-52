@@ -99,6 +99,21 @@ export const handlePrint = () => {
         color: #000000 !important;
         font-weight: bold !important;
       }
+      /* Estilização específica para total da reclamação */
+      .valor-total-reclamacao {
+        font-size: 16px !important;
+        font-weight: bold !important;
+        text-align: center !important;
+        text-transform: uppercase !important;
+        margin-bottom: 5px !important;
+        color: #333 !important;
+      }
+      .valor-total-valor {
+        font-size: 18px !important;
+        font-weight: bold !important;
+        text-align: center !important;
+        color: #333 !important;
+      }
     }
   `;
   
@@ -116,4 +131,9 @@ export const handlePrint = () => {
       }
     }, 100);
   }, 100);
+};
+
+// Exportar como função independente para o index.ts
+export const printDocument = (elementId?: string, asPDF = false) => {
+  handlePrint();
 };

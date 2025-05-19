@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button, ButtonProps } from "@/components/ui/button";
 import { 
@@ -70,7 +71,7 @@ const ExportDropdown: React.FC<ExportDropdownProps> = ({
           <FileSpreadsheet className="h-4 w-4 mr-2" />
           <span>Exportar como Excel</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleExportPDF}>
+        <DropdownMenuItem onClick={handleExportPDF} className="font-medium">
           <FileText className="h-4 w-4 mr-2" />
           <span>Exportar como PDF</span>
         </DropdownMenuItem>

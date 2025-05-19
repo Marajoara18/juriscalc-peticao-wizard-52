@@ -38,6 +38,16 @@ const CalculadoraToolbar: React.FC<CalculadoraToolbarProps> = ({
       </h1>
       <div className="flex gap-3">
         <Button
+          variant={showingManual ? "default" : "outline"}
+          className={showingManual 
+            ? "bg-juriscalc-navy" 
+            : "border-juriscalc-navy text-juriscalc-navy"}
+          onClick={handleManualClick}
+        >
+          <BookOpen className="h-5 w-5 mr-2" />
+          Manual Rápido
+        </Button>
+        <Button
           variant="outline"
           className="border-juriscalc-navy text-juriscalc-navy"
           onClick={toggleLayoutMode}
@@ -49,16 +59,6 @@ const CalculadoraToolbar: React.FC<CalculadoraToolbarProps> = ({
             <LayoutGrid className="h-5 w-5 mr-2" />
           )}
           {layoutMode === 'desktop' ? 'Smartphone' : 'Computador'}
-        </Button>
-        <Button
-          variant={showingManual ? "default" : "outline"}
-          className={showingManual 
-            ? "bg-juriscalc-navy" 
-            : "border-juriscalc-navy text-juriscalc-navy"}
-          onClick={handleManualClick}
-        >
-          <BookOpen className="h-5 w-5 mr-2" />
-          Manual Rápido
         </Button>
         <Button
           variant="outline"
