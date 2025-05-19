@@ -1,24 +1,25 @@
 
 /**
- * Utilities for calculating work schedule related additionals
+ * Utilities for calculating additional values related to work hours
  */
+import { ajustarMesesPorDias } from "../verbasRescisoriasUtils";
 
 /**
- * Calculates night shift additional
+ * Calculates night shift premium
  */
 export const calcularAdicionalNoturno = (
   calcular: boolean,
   percentual: string,
-  horas: string,
+  horasNoturnas: string,
   salarioBase: number
 ): number => {
   if (!calcular) return 0;
   
-  const valorHoraNormal = salarioBase / 220;
-  const percentualValor = parseInt(percentual) / 100;
-  const horasNoturnas = parseInt(horas) || 0;
+  const percentualAdicional = parseFloat(percentual) / 100 || 0.2; // Default 20%
+  const qtdHorasNoturnas = parseInt(horasNoturnas) || 0;
+  const valorHoraNormal = salarioBase / 220; // 220 horas mensais padrão
   
-  return valorHoraNormal * percentualValor * horasNoturnas;
+  return valorHoraNormal * percentualAdicional * qtdHorasNoturnas;
 };
 
 /**
@@ -27,55 +28,81 @@ export const calcularAdicionalNoturno = (
 export const calcularHorasExtras = (
   calcular: boolean,
   percentual: string,
-  quantidade: string,
+  quantidadeHoras: string,
   salarioBase: number
 ): number => {
   if (!calcular) return 0;
   
-  const valorHoraNormal = salarioBase / 220;
-  const percentualValor = parseInt(percentual) / 100;
-  const quantidadeHorasExtras = parseInt(quantidade) || 0;
+  const percentualAdicional = parseFloat(percentual) / 100 || 0.5; // Default 50%
+  const qtdHoras = parseFloat(quantidadeHoras) || 0;
+  const valorHoraNormal = salarioBase / 220; // 220 horas mensais padrão
   
-  return valorHoraNormal * (1 + percentualValor) * quantidadeHorasExtras;
+  return valorHoraNormal * (1 + percentualAdicional) * qtdHoras;
 };
 
 /**
- * Calculates expired vacation values
+ * Calculates expired vacation value
  */
 export const calcularFeriasVencidas = (
   calcular: boolean,
   periodos: string,
-  salarioBase: number
+  salarioBase: number,
+  diasNoUltimoMes: number = 0
 ): number => {
   if (!calcular) return 0;
   
-  const periodosFeriasVencidas = parseInt(periodos) || 1;
-  return salarioBase * periodosFeriasVencidas + (salarioBase * periodosFeriasVencidas / 3);
+  // Quantidade de períodos aquisitivos vencidos não gozados
+  let qtdPeriodos = parseInt(periodos) || 1;
+  
+  // Aplicar a regra dos 15 dias se o período incluir dias parciais
+  if (diasNoUltimoMes > 15) {
+    qtdPeriodos = Math.ceil(qtdPeriodos);
+  }
+  
+  // Cada período vencido equivale a um salário + 1/3 constitucional
+  return salarioBase * qtdPeriodos * (1 + 1/3);
 };
 
 /**
- * Calculates dismissal indemnification
+ * Calculates dismissal indemnity
  */
 export const calcularIndenizacaoDemissao = (
   calcular: boolean,
-  valor: string,
+  valorIndenizacao: string,
   salarioBase: number
 ): number => {
   if (!calcular) return 0;
   
-  return parseFloat(valor) || salarioBase;
+  // Se o usuário definiu um valor específico, usar esse valor
+  const valorDefinido = parseFloat(valorIndenizacao);
+  if (valorDefinido && !isNaN(valorDefinido)) {
+    return valorDefinido;
+  }
+  
+  // Se não definiu valor, usa um salário como padrão
+  return salarioBase;
 };
 
 /**
- * Calculates transfer additional
+ * Calculates transfer premium
  */
 export const calcularAdicionalTransferencia = (
   calcular: boolean,
   percentual: string,
-  salarioBase: number
+  salarioBase: number,
+  diasNoUltimoMes: number = 0
 ): number => {
   if (!calcular) return 0;
   
-  const percentualTransferencia = parseInt(percentual) / 100;
-  return salarioBase * percentualTransferencia;
+  const percentualAdicional = parseFloat(percentual) / 100 || 0.25; // Default 25%
+  
+  // Aplicamos a regra dos 15 dias para considerar mês completo
+  // se aplicável (quando há dias parciais)
+  if (diasNoUltimoMes > 0) {
+    // Se trabalhou mais de 15 dias, considera um mês completo
+    const fatorMes = diasNoUltimoMes > 15 ? 1 : diasNoUltimoMes / 30;
+    return salarioBase * percentualAdicional * fatorMes;
+  }
+  
+  return salarioBase * percentualAdicional;
 };

@@ -1,3 +1,4 @@
+
 /**
  * Main utilities module for additional values calculation
  */
@@ -13,6 +14,7 @@ import {
 } from './adicionais/jornadaUtils';
 import { calcularValeTransporte, calcularValeAlimentacao } from './adicionais/beneficiosUtils';
 import { calcularSeguroDesemprego, calcularSalarioFamilia } from './adicionais/beneficiosSociaisUtils';
+import { ajustarMesesPorDias } from './verbasRescisoriasUtils';
 
 /**
  * Calcular honorários advocatícios com base no valor definido diretamente
@@ -52,6 +54,9 @@ export const calcularAdicionais = (
   ferias: number,
   tercoConstitucional: number
 ) => {
+  // Obter dias trabalhados no mês para aplicar regra dos 15 dias
+  const diasTrabalhados = parseInt(adicionais.diasValeTransporte) || 0;
+  
   // Cálculo de insalubridade e periculosidade
   let adicionalInsalubridade = calcularInsalubridade(
     adicionais.calcularInsalubridade,
@@ -103,11 +108,12 @@ export const calcularAdicionais = (
     salarioBase
   );
 
-  // Cálculo de férias vencidas e indenização
+  // Cálculo de férias vencidas com a regra dos 15 dias
   const feriasVencidas = calcularFeriasVencidas(
     adicionais.calcularFeriasVencidas,
     adicionais.periodosFeriasVencidas,
-    salarioBase
+    salarioBase,
+    diasTrabalhados
   );
   
   const indenizacaoDemissao = calcularIndenizacaoDemissao(
@@ -116,7 +122,7 @@ export const calcularAdicionais = (
     salarioBase
   );
 
-  // Cálculo dos vales
+  // Cálculo dos vales com a regra dos 15 dias
   const valeTransporte = calcularValeTransporte(
     adicionais.calcularValeTransporte,
     adicionais.valorDiarioVT,
@@ -129,11 +135,12 @@ export const calcularAdicionais = (
     adicionais.diasValeAlimentacao
   );
 
-  // Outros cálculos
+  // Cálculo do adicional de transferência com a regra dos 15 dias
   const adicionalTransferencia = calcularAdicionalTransferencia(
     adicionais.calcularAdicionalTransferencia,
     adicionais.percentualAdicionalTransferencia,
-    salarioBase
+    salarioBase,
+    diasTrabalhados
   );
   
   const descontosIndevidos = adicionais.calcularDescontosIndevidos ? 
@@ -156,12 +163,19 @@ export const calcularAdicionais = (
     }
   }
 
+  // Aplicar a regra dos 15 dias nos benefícios sociais
+  // Obter meses trabalhados para seguro desemprego
+  let mesesTrabalhadosUltimoEmprego = parseInt(adicionais.mesesTrabalhadosUltimoEmprego) || 0;
+  if (diasTrabalhados > 15) {
+    mesesTrabalhadosUltimoEmprego = Math.ceil(mesesTrabalhadosUltimoEmprego);
+  }
+  
   // Cálculo do seguro desemprego e salário família
   const seguroDesemprego = calcularSeguroDesemprego(
     adicionais.calcularSeguroDesemprego,
     adicionais.calcularSeguroDesemprego ? 'sem_justa_causa' : '',
     parseFloat(adicionais.ultimoSalario || '0') || 0,
-    parseInt(adicionais.mesesTrabalhadosUltimoEmprego) || 0,
+    mesesTrabalhadosUltimoEmprego,
     parseFloat(adicionais.tempoContribuicaoINSS) || 0
   );
   

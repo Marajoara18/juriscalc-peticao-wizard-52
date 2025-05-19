@@ -8,6 +8,7 @@ import { calcularAvisoPrevia } from "./avisoPrevioUtils";
 import { calcularDecimoTerceiro } from "./decimoTerceiroUtils";
 import { calcularFerias, calcularTercoConstitucional } from "./feriasUtils";
 import { calcularFGTS, calcularMultaFGTS } from "./fgtsUtils";
+import { ajustarMesesPorDias } from "../verbasRescisoriasUtils";
 
 /**
  * Calculates all rescission values
@@ -41,7 +42,10 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato): Rescisi
   );
   
   const tercoConstitucional = calcularTercoConstitucional(ferias);
-  const fgts = calcularFGTS(salarioBase, mesesTrabalhados);
+  
+  // Cálculo do FGTS e multa com a regra de 15 dias
+  // Aplicamos a regra dos 15 dias para mesesTrabalhados
+  const fgts = calcularFGTS(salarioBase, mesesTrabalhados, diasTrabalhados);
   const multaFgts = calcularMultaFGTS(fgts, dadosContrato.tipoRescisao);
   
   // Para o cálculo do total e a visualização, tratamos o aviso prévio diferentemente
