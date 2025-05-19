@@ -226,8 +226,14 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
             .valor-total-reclamacao, 
             .valor-total-reclamacao *,
             .print-bold-black {
+              text-align: center !important;
+              background-color: #0f172a !important;
+              color: #ffffff !important;
               font-weight: bold !important;
-              color: #000 !important;
+            }
+            .print-bold-white {
+              font-weight: bold !important;
+              color: #ffffff !important;
             }
             /* Esconder o logo IusCalc e informações do footer */
             .iuscalc-logo, 
@@ -251,37 +257,40 @@ export const printDocument = (elementId?: string, asPDF: boolean = false) => {
               });
               
               // Adicionar classe ao elemento de valor total
-              const totalElements = document.querySelectorAll('.calculadora-tabela div[style*="background-color: #f9fafb"]');
+              const totalElements = document.querySelectorAll('.calculadora-tabela div[style*="background-color"]');
               totalElements.forEach(el => {
                 el.classList.add('valor-total-reclamacao');
-                el.classList.add('print-bold-black');
+                el.classList.add('print-bold-white');
+                el.style.textAlign = 'center';
+                el.style.backgroundColor = '#0f172a';
+                
+                // Garantir que o texto seja branco
+                const paragraphs = el.querySelectorAll('p');
+                paragraphs.forEach(p => {
+                  p.style.color = '#ffffff';
+                  p.style.fontWeight = 'bold';
+                });
               });
               
-              // Assegurar que elementos com a classe valor-total-reclamacao ou print-bold-black estejam em negrito preto
-              const boldBlackElements = document.querySelectorAll('.valor-total-reclamacao, .print-bold-black');
-              boldBlackElements.forEach(el => {
+              // Assegurar que elementos com a classe valor-total-reclamacao ou print-bold-white estejam em branco sobre fundo azul marinho
+              const boldWhiteElements = document.querySelectorAll('.valor-total-reclamacao, .print-bold-white');
+              boldWhiteElements.forEach(el => {
+                el.style.color = '#ffffff';
                 el.style.fontWeight = 'bold';
-                el.style.color = '#000';
+                el.style.textAlign = 'center';
                 
                 // Aplicar em todos os elementos filhos também
                 const children = el.querySelectorAll('*');
                 children.forEach(child => {
                   child.style.fontWeight = 'bold';
-                  child.style.color = '#000';
+                  child.style.color = '#ffffff';
                 });
                 
-                // Garantir que o texto do próprio elemento esteja em negrito preto
+                // Garantir que o texto do próprio elemento esteja em negrito branco
                 if (el.firstChild && el.firstChild.nodeType === 3) {
                   el.style.fontWeight = 'bold';
-                  el.style.color = '#000';
+                  el.style.color = '#ffffff';
                 }
-              });
-              
-              // Garantir que o texto "VALOR TOTAL DA RECLAMAÇÃO" esteja em negrito preto
-              const valorTexts = document.querySelectorAll('p:contains("VALOR TOTAL DA RECLAMAÇÃO")');
-              valorTexts.forEach(text => {
-                text.style.fontWeight = 'bold';
-                text.style.color = '#000';
               });
               
               window.print();
