@@ -15,8 +15,11 @@ export const useDadosContrato = (
         
         // Obter o dia exato da data de demissão sem nenhuma alteração
         const dataDemissao = new Date(dadosContrato.dataDemissao);
-        // Usar o dia do mês da data de demissão exatamente como está, sem qualquer modificação
+        // Usar o dia do mês como está na data de demissão
         const dias = dataDemissao.getDate();
+        
+        console.log("Data Demissão:", dataDemissao);
+        console.log("Dia extraído:", dias);
         
         setDadosContrato(prev => ({
           ...prev,
@@ -32,10 +35,19 @@ export const useDadosContrato = (
   // Função para atualizar os dados do contrato
   const handleDadosContratoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setDadosContrato(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    // Se for mudança nas datas, garantimos que não manipulamos o valor
+    if (name === 'dataAdmissao' || name === 'dataDemissao') {
+      setDadosContrato(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    } else {
+      setDadosContrato(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
   
   // Função para atualizar checkboxes

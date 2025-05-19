@@ -100,7 +100,7 @@ const DadosContratoForm: React.FC<DadosContratoFormProps> = ({
               value={dadosContrato.diasTrabalhados}
               readOnly
               className="juriscalc-input bg-gray-50" 
-              type="number"
+              type="text"
               placeholder="0"
             />
           </div>
@@ -114,7 +114,7 @@ const DadosContratoForm: React.FC<DadosContratoFormProps> = ({
               value={dadosContrato.mesesTrabalhados}
               readOnly
               className="juriscalc-input bg-gray-50" 
-              type="number"
+              type="text"
               placeholder="0"
             />
           </div>
