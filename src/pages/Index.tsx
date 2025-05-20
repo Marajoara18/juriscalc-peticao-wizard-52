@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Calculator, FileText, BookOpen, Check, Info, ArrowRight } from "lucide-react";
+import { Calculator, FileText, BookOpen, Check, Info, ArrowRight, FileSpreadsheet, Mail, Share2 } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import Layout from '@/components/Layout';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
@@ -11,27 +11,27 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 const Index = () => {
   return (
     <Layout>
-      {/* Welcome Section */}
-      <section className="bg-gradient-to-r from-juriscalc-navy to-blue-900 text-white py-16">
+      {/* Welcome Section with more elegant styling */}
+      <section className="bg-gradient-to-r from-juriscalc-navy to-blue-800 text-white py-20">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 mb-10 md:mb-0">
-              <h1 className="text-4xl md:text-5xl font-serif font-bold mb-6">
+              <h1 className="text-4xl md:text-5xl font-serif font-bold mb-6 leading-tight">
                 Bem-vindo ao IusCalc Trabalhista
               </h1>
-              <p className="text-lg mb-8 text-gray-200">
+              <p className="text-lg mb-8 text-gray-200 leading-relaxed">
                 Sua plataforma completa para automatizar cálculos trabalhistas e gerar petições com precisão e agilidade.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link to="/calculadora">
-                  <Button size="lg" className="bg-juriscalc-gold text-juriscalc-navy hover:bg-opacity-90">
+                  <Button size="lg" className="bg-juriscalc-gold text-juriscalc-navy hover:bg-opacity-90 shadow-lg transition-all duration-300">
                     <Calculator className="mr-2 h-5 w-5" />
                     Começar a Calcular
                   </Button>
                 </Link>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="lg" className="bg-transparent text-white border-white hover:bg-white/10">
+                    <Button variant="outline" size="lg" className="bg-transparent text-white border-white hover:bg-white/10 shadow-lg transition-all duration-300">
                       <BookOpen className="mr-2 h-5 w-5" />
                       Manual Rápido
                     </Button>
@@ -43,7 +43,7 @@ const Index = () => {
               </div>
             </div>
             <div className="md:w-1/2">
-              <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg shadow-xl border border-white/20">
+              <div className="bg-white/10 backdrop-blur-sm p-8 rounded-lg shadow-2xl border border-white/20 transform hover:scale-[1.01] transition-transform duration-300">
                 <img 
                   src="/lovable-uploads/520e0a12-c37a-4e2d-8eb3-0abe543bc359.png" 
                   alt="IusCalc App Interface" 
@@ -55,15 +55,15 @@ const Index = () => {
         </div>
       </section>
 
-      {/* How to Use Section */}
-      <section className="py-16 bg-white">
+      {/* How to Use Section with improved styling */}
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-serif font-bold text-center mb-12 text-juriscalc-navy">
             Como Utilizar o IusCalc
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card>
+            <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <div className="w-8 h-8 bg-juriscalc-navy rounded-full flex items-center justify-center mr-3">
@@ -80,7 +80,7 @@ const Index = () => {
               </CardContent>
             </Card>
             
-            <Card>
+            <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <div className="w-8 h-8 bg-juriscalc-navy rounded-full flex items-center justify-center mr-3">
@@ -97,7 +97,7 @@ const Index = () => {
               </CardContent>
             </Card>
             
-            <Card>
+            <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <div className="w-8 h-8 bg-juriscalc-navy rounded-full flex items-center justify-center mr-3">
@@ -118,7 +118,7 @@ const Index = () => {
           <div className="mt-12 flex justify-center">
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="bg-juriscalc-navy text-white">
+                <Button className="bg-juriscalc-navy text-white hover:bg-juriscalc-navy/90 shadow-md transition-all duration-300">
                   <Info className="mr-2 h-4 w-4" />
                   Saiba Mais sobre a Utilização
                 </Button>
@@ -131,15 +131,15 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 bg-juriscalc-lightgray">
+      {/* Features Section with updated info about sharing calculations */}
+      <section className="py-20 bg-juriscalc-lightgray">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-serif font-bold text-center mb-12 text-juriscalc-navy">
             Recursos Principais
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="juriscalc-card p-6">
+            <div className="juriscalc-card p-8 bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="w-12 h-12 bg-juriscalc-navy rounded-full flex items-center justify-center mb-4">
                 <Calculator size={24} className="text-juriscalc-gold" />
               </div>
@@ -149,7 +149,7 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="juriscalc-card p-6">
+            <div className="juriscalc-card p-8 bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="w-12 h-12 bg-juriscalc-navy rounded-full flex items-center justify-center mb-4">
                 <FileText size={24} className="text-juriscalc-gold" />
               </div>
@@ -159,24 +159,35 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="juriscalc-card p-6">
+            <div className="juriscalc-card p-8 bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="w-12 h-12 bg-juriscalc-navy rounded-full flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-juriscalc-gold">
-                  <path d="M16 16V18a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V5a1 1 0 0 1 1-1h3"></path>
-                  <path d="M10 12a4 4 0 0 0 4 4h7a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-7a4 4 0 0 0-4 4Z"></path>
-                </svg>
+                <Share2 size={24} className="text-juriscalc-gold" />
               </div>
-              <h3 className="text-xl font-serif font-bold mb-3 text-juriscalc-navy">Base de Conhecimento</h3>
+              <h3 className="text-xl font-serif font-bold mb-3 text-juriscalc-navy">Compartilhamento Fácil</h3>
               <p className="text-juriscalc-darkgray">
-                Acesso a jurisprudências atualizadas, súmulas e OJs do TST para fundamentação precisa das petições.
+                Compartilhe seus cálculos via WhatsApp, e-mail e exporte em formatos PDF e Excel para facilitar a comunicação com clientes e colegas.
               </p>
+              <div className="flex flex-wrap gap-2 mt-4">
+                <span className="inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-green-100 text-green-700">
+                  <Mail className="mr-1 h-3 w-3" />
+                  E-mail
+                </span>
+                <span className="inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-blue-100 text-blue-700">
+                  <FileSpreadsheet className="mr-1 h-3 w-3" />
+                  Excel
+                </span>
+                <span className="inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-red-100 text-red-700">
+                  <FileText className="mr-1 h-3 w-3" />
+                  PDF
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 bg-white">
+      {/* CTA Section with improved styling */}
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-serif font-bold mb-6 text-juriscalc-navy">
             Pronto para Otimizar seu Trabalho?
@@ -185,7 +196,7 @@ const Index = () => {
             Comece agora a usar o IusCalc Trabalhista e reduza em até 70% o tempo gasto na elaboração de petições iniciais trabalhistas.
           </p>
           <Link to="/calculadora">
-            <Button size="lg" className="bg-juriscalc-navy text-white hover:bg-opacity-90">
+            <Button size="lg" className="bg-juriscalc-navy text-white hover:bg-opacity-90 shadow-md transition-all duration-300">
               Começar Agora
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>

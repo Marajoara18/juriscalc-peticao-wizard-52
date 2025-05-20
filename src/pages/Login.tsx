@@ -8,7 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { LoginFormData, RegisterFormData } from '@/types/auth';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Check, Star } from 'lucide-react';
+import { BookOpen, Check, Star, Mail, FileText, FileSpreadsheet, Share2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import ManualRapido from '@/components/calculadora/ManualRapido';
 import SubscriptionManager from '@/components/peticoes/SubscriptionManager';
@@ -29,7 +29,7 @@ const Login = () => {
   return (
     <div className="login-container min-h-screen flex items-center justify-center bg-cover bg-center px-4 py-12" 
          style={{ backgroundImage: "url('/lovable-uploads/6ca45eaa-5e64-4059-919a-249b086b29ae.png')" }}>
-      <div className="max-w-md w-full space-y-8 bg-white/90 backdrop-blur-sm p-8 rounded-xl shadow-xl">
+      <div className="max-w-md w-full space-y-8 bg-white/95 backdrop-blur-sm p-8 rounded-xl shadow-2xl">
         <AuthLogo />
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -52,17 +52,17 @@ const Login = () => {
           </TabsContent>
         </Tabs>
         
-        {/* Premium Plan Button */}
+        {/* Premium Plan Button with improved styling */}
         <div className="border-t border-gray-200 pt-6 mt-4">
-          <div className="bg-gradient-to-r from-juriscalc-navy to-blue-800 p-4 rounded-lg text-white mb-4">
-            <div className="flex items-center mb-2">
+          <div className="bg-gradient-to-r from-juriscalc-navy to-blue-800 p-5 rounded-lg text-white mb-4 shadow-lg">
+            <div className="flex items-center mb-3">
               <Star className="h-5 w-5 text-juriscalc-gold mr-2" />
               <h3 className="text-lg font-bold">Plano Premium</h3>
             </div>
             <p className="text-sm mb-3">
               Desbloqueie recursos avançados e aumente sua produtividade:
             </p>
-            <ul className="text-sm space-y-1 mb-3">
+            <ul className="text-sm space-y-2 mb-4">
               <li className="flex items-start">
                 <Check className="h-4 w-4 text-juriscalc-gold mr-1 mt-0.5 flex-shrink-0" />
                 <span>Cálculos ilimitados</span>
@@ -71,14 +71,38 @@ const Login = () => {
                 <Check className="h-4 w-4 text-juriscalc-gold mr-1 mt-0.5 flex-shrink-0" />
                 <span>Suporte prioritário</span>
               </li>
+              <li className="flex items-start">
+                <Check className="h-4 w-4 text-juriscalc-gold mr-1 mt-0.5 flex-shrink-0" />
+                <span>Compartilhamento via WhatsApp, e-mail e exportação PDF/Excel</span>
+              </li>
             </ul>
             <Button 
-              className="w-full bg-juriscalc-gold text-juriscalc-navy hover:bg-juriscalc-gold/90"
+              className="w-full bg-juriscalc-gold text-juriscalc-navy hover:bg-juriscalc-gold/90 shadow-md transition-all duration-300"
               onClick={() => setShowSubscription(true)}
             >
               <Star className="mr-2 h-4 w-4" />
               Assinar Premium
             </Button>
+          </div>
+          
+          {/* Feature badges */}
+          <div className="flex flex-wrap gap-2 justify-center mb-4">
+            <span className="inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-green-100 text-green-700">
+              <Mail className="mr-1 h-3 w-3" />
+              E-mail
+            </span>
+            <span className="inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-blue-100 text-blue-700">
+              <FileSpreadsheet className="mr-1 h-3 w-3" />
+              Excel
+            </span>
+            <span className="inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-red-100 text-red-700">
+              <FileText className="mr-1 h-3 w-3" />
+              PDF
+            </span>
+            <span className="inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-green-100 text-green-700">
+              <Share2 className="mr-1 h-3 w-3" />
+              WhatsApp
+            </span>
           </div>
         </div>
         
@@ -88,7 +112,7 @@ const Login = () => {
             <DialogTrigger asChild>
               <Button 
                 variant="outline"
-                className="border-juriscalc-navy text-juriscalc-navy hover:bg-gray-100"
+                className="border-juriscalc-navy text-juriscalc-navy hover:bg-gray-100 transition-colors duration-300"
               >
                 <BookOpen className="mr-2 h-4 w-4" />
                 Manual Rápido IusCalc
