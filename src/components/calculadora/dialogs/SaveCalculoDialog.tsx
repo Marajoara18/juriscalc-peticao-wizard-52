@@ -3,7 +3,7 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Printer } from "lucide-react";
+import { Printer, AlertCircle } from "lucide-react";
 import { handlePrint } from '@/utils/peticaoUtils';
 import { toast } from "sonner";
 
@@ -36,6 +36,22 @@ const SaveCalculoDialog: React.FC<SaveCalculoDialogProps> = ({
           <DialogTitle>{isEditing ? 'Editar Cálculo' : 'Salvar Cálculo'}</DialogTitle>
           <DialogDescription>Dê um nome descritivo para identificar este cálculo posteriormente.</DialogDescription>
         </DialogHeader>
+
+        {!isEditing && (
+          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 text-sm">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <AlertCircle className="h-5 w-5 text-yellow-400" />
+              </div>
+              <div className="ml-3">
+                <p className="text-yellow-700">
+                  Atenção: Você pode salvar no máximo 3 cálculos. Para adicionar novos, você precisará apagar cálculos existentes.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="py-4">
           <label className="block text-sm font-medium mb-2" htmlFor="nome-calculo">
             Nome do Cálculo

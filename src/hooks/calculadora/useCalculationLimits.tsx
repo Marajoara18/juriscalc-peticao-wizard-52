@@ -15,22 +15,6 @@ export const useCalculationLimits = () => {
   // Verificar número de cálculos realizados pelo usuário
   useEffect(() => {
     const userId = localStorage.getItem('userId');
-    const userEmail = localStorage.getItem('userEmail');
-    const isAdmin = localStorage.getItem('userIsAdmin') === 'true';
-    const isPremium = localStorage.getItem('isPremium') === 'true';
-    
-    // Verificar diretamente do localStorage para ter dados atualizados
-    const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
-    const currentUser = allUsers.find((u: any) => u.id === userId);
-    const isUserPremium = currentUser && (currentUser.isPremium || currentUser.isAdmin);
-    
-    // Se o usuário for admin, admin mestre, ou premium, pode calcular ilimitadamente
-    if (isAdmin || isPremium || isUserPremium || 
-        userEmail === 'johnnysantos_177@msn.com' || 
-        userEmail === 'admin@juriscalc.com') {
-      setPodeCalcular(true);
-      return;
-    }
     
     // Verificar o contador de cálculos do usuário atual
     const calculosKey = `${KEY_CONTADOR_CALCULOS}_${userId}`;
@@ -49,26 +33,11 @@ export const useCalculationLimits = () => {
   // Função para verificar e incrementar contador de cálculos
   const verificarLimiteCalculos = (originalCalc: () => void) => {
     const userId = localStorage.getItem('userId');
-    const userEmail = localStorage.getItem('userEmail');
-    const isAdmin = localStorage.getItem('userIsAdmin') === 'true';
-    const isPremium = localStorage.getItem('isPremium') === 'true';
-    
-    // Verificar diretamente do localStorage para ter dados atualizados
-    const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
-    const currentUser = allUsers.find((u: any) => u.id === userId);
-    const isUserPremium = currentUser && (currentUser.isPremium || currentUser.isAdmin);
-    
-    // Se o usuário for admin, admin mestre, ou premium, pode calcular ilimitadamente
-    if (isAdmin || isPremium || isUserPremium || 
-        userEmail === 'johnnysantos_177@msn.com' || 
-        userEmail === 'admin@juriscalc.com') {
-      return originalCalc();
-    }
     
     // Verificar se o usuário pode calcular
     if (!podeCalcular) {
       setShowSubscriptionModal(true);
-      toast.error('Você atingiu o limite de cálculos gratuitos. Assine o plano premium para continuar calculando.');
+      toast.error('Você atingiu o limite de 3 cálculos. Apague algum cálculo existente para continuar calculando.');
       return;
     }
     
@@ -84,9 +53,9 @@ export const useCalculationLimits = () => {
     // Verificar se atingiu o limite após este cálculo
     if (novoValor >= LIMITE_CALCULOS_GRATUITOS) {
       setPodeCalcular(false);
-      toast.warning(`Este é seu último cálculo gratuito. Para continuar calculando, assine o plano premium.`);
+      toast.warning(`Este é seu último cálculo disponível. Você atingiu o limite de ${LIMITE_CALCULOS_GRATUITOS} cálculos.`);
     } else if (novoValor === LIMITE_CALCULOS_GRATUITOS - 1) {
-      toast.warning(`Você tem apenas mais 1 cálculo gratuito disponível.`);
+      toast.warning(`Você tem apenas mais 1 cálculo disponível.`);
     }
     
     // Executar o cálculo original

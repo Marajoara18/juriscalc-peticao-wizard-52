@@ -1,8 +1,10 @@
-
 import { useState, useEffect } from 'react';
 import { toast } from "sonner";
 import { useNavigate } from 'react-router-dom';
 import { CalculoSalvo } from '@/types/calculoSalvo';
+
+// Constante para limitar o número de cálculos salvos
+const LIMITE_CALCULOS_SALVOS = 3;
 
 export const useCalculosSalvos = (
   resultados: any, 
@@ -89,6 +91,15 @@ export const useCalculosSalvos = (
       return;
     }
     
+    // Verificar se o usuário já atingiu o limite de cálculos salvos
+    const userId = localStorage.getItem('userId') || 'anonymous';
+    const calculosDoUsuario = calculosSalvos.filter(c => c.userId === userId);
+    
+    if (calculosDoUsuario.length >= LIMITE_CALCULOS_SALVOS && !editandoId) {
+      toast.error(`Você atingiu o limite de ${LIMITE_CALCULOS_SALVOS} cálculos salvos. Apague algum cálculo para adicionar um novo.`);
+      return;
+    }
+    
     setNomeCalculo('');
     setEditandoId(null);
     setDialogOpen(true);
@@ -100,6 +111,16 @@ export const useCalculosSalvos = (
       return;
     }
 
+    const userId = localStorage.getItem('userId') || 'anonymous';
+    const calculosDoUsuario = calculosSalvos.filter(c => c.userId === userId);
+    
+    // Verificar novamente o limite (para caso de edições concorrentes)
+    if (calculosDoUsuario.length >= LIMITE_CALCULOS_SALVOS && !editandoId) {
+      toast.error(`Você atingiu o limite de ${LIMITE_CALCULOS_SALVOS} cálculos salvos. Apague algum cálculo para adicionar um novo.`);
+      setDialogOpen(false);
+      return;
+    }
+    
     const nomeEscritorio = localStorage.getItem('userName') || undefined;
     
     const novoCalculo: CalculoSalvo = {
