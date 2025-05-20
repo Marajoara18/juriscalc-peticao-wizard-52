@@ -19,7 +19,7 @@ export const useAuth = () => {
   useEffect(() => {
     const userId = localStorage.getItem('userId');
     if (userId) {
-      navigate('/calculadora');
+      navigate('/home');
     }
     
     // Inicializar usuário admin se não existir

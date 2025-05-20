@@ -86,7 +86,7 @@ export const useAuthLogin = () => {
     }
     
     toast.success('Login realizado com sucesso!');
-    navigate('/calculadora');
+    navigate('/home');
   };
   
   return {
