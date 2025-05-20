@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Mail, FileText, FileSpreadsheet, Share2 } from 'lucide-react';
+import { Share2, Mail, FileText, FileSpreadsheet } from 'lucide-react';
 
 const SubscriptionBadges: React.FC = () => {
   return (
