@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { useNavigate } from 'react-router-dom';
 import { CalculoSalvo } from '@/types/calculoSalvo';
 
-// Constante para limitar o número de cálculos salvos
+// Constante para limitar o número de cálculos salvos (para todos os usuários)
 const LIMITE_CALCULOS_SALVOS = 3;
 
 export const useCalculosSalvos = (
@@ -92,6 +92,7 @@ export const useCalculosSalvos = (
     }
     
     // Verificar se o usuário já atingiu o limite de cálculos salvos
+    // Este limite se aplica a todos os usuários, premium ou não
     const userId = localStorage.getItem('userId') || 'anonymous';
     const calculosDoUsuario = calculosSalvos.filter(c => c.userId === userId);
     
@@ -115,6 +116,7 @@ export const useCalculosSalvos = (
     const calculosDoUsuario = calculosSalvos.filter(c => c.userId === userId);
     
     // Verificar novamente o limite (para caso de edições concorrentes)
+    // Este limite se aplica a todos os usuários, premium ou não
     if (calculosDoUsuario.length >= LIMITE_CALCULOS_SALVOS && !editandoId) {
       toast.error(`Você atingiu o limite de ${LIMITE_CALCULOS_SALVOS} cálculos salvos. Apague algum cálculo para adicionar um novo.`);
       setDialogOpen(false);

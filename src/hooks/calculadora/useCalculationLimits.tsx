@@ -12,7 +12,7 @@ export const useCalculationLimits = () => {
   // Estado para controlar a modal de assinatura
   const [showSubscriptionModal, setShowSubscriptionModal] = useState<boolean>(false);
   
-  // Verificar número de cálculos realizados pelo usuário
+  // Verificar número de cálculos realizados pelo usuário (apenas para fins de monitoramento)
   useEffect(() => {
     const userId = localStorage.getItem('userId');
     
@@ -22,26 +22,16 @@ export const useCalculationLimits = () => {
       ? parseInt(localStorage.getItem(calculosKey) || '0', 10) 
       : 0;
     
-    // Se já atingiu o limite, bloquear novos cálculos
-    if (calculosRealizados >= LIMITE_CALCULOS_GRATUITOS) {
-      setPodeCalcular(false);
-    } else {
-      setPodeCalcular(true);
-    }
+    // Para efeito de cálculos, todos os usuários podem calcular sem limitação
+    setPodeCalcular(true);
   }, []);
 
   // Função para verificar e incrementar contador de cálculos
   const verificarLimiteCalculos = (originalCalc: () => void) => {
     const userId = localStorage.getItem('userId');
     
-    // Verificar se o usuário pode calcular
-    if (!podeCalcular) {
-      setShowSubscriptionModal(true);
-      toast.error('Você atingiu o limite de 3 cálculos. Apague algum cálculo existente para continuar calculando.');
-      return;
-    }
-    
-    // Incrementar contador de cálculos
+    // Para cálculos, não temos limitação
+    // Incrementar contador de cálculos apenas para estatísticas
     const calculosKey = `${KEY_CONTADOR_CALCULOS}_${userId}`;
     const calculosRealizados = localStorage.getItem(calculosKey) 
       ? parseInt(localStorage.getItem(calculosKey) || '0', 10) 
@@ -50,15 +40,7 @@ export const useCalculationLimits = () => {
     const novoValor = calculosRealizados + 1;
     localStorage.setItem(calculosKey, novoValor.toString());
     
-    // Verificar se atingiu o limite após este cálculo
-    if (novoValor >= LIMITE_CALCULOS_GRATUITOS) {
-      setPodeCalcular(false);
-      toast.warning(`Este é seu último cálculo disponível. Você atingiu o limite de ${LIMITE_CALCULOS_GRATUITOS} cálculos.`);
-    } else if (novoValor === LIMITE_CALCULOS_GRATUITOS - 1) {
-      toast.warning(`Você tem apenas mais 1 cálculo disponível.`);
-    }
-    
-    // Executar o cálculo original
+    // Executar o cálculo original sem restrições
     return originalCalc();
   };
 
