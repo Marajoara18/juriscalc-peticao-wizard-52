@@ -69,10 +69,6 @@ const Login = () => {
               </li>
               <li className="flex items-start">
                 <Check className="h-4 w-4 text-juriscalc-gold mr-1 mt-0.5 flex-shrink-0" />
-                <span>Acesso a todos os modelos de petições</span>
-              </li>
-              <li className="flex items-start">
-                <Check className="h-4 w-4 text-juriscalc-gold mr-1 mt-0.5 flex-shrink-0" />
                 <span>Suporte prioritário</span>
               </li>
             </ul>
