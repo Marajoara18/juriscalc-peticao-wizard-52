@@ -27,6 +27,7 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Login />} />
+              <Route path="/home" element={<Index />} />
               <Route path="/calculadora" element={<Calculadora />} />
               <Route path="/peticoes" element={<Peticoes />} />
               <Route path="/reset-password" element={<MasterPasswordReset />} />
@@ -34,7 +35,7 @@ const App = () => {
               <Route path="/esqueci-senha" element={<PasswordResetRequest />} />
               <Route path="/reset-senha" element={<PasswordReset />} />
               {/* Redirecionar a página index antiga para o login */}
-              <Route path="/index" element={<Navigate to="/" replace />} />
+              <Route path="/index" element={<Navigate to="/home" replace />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
