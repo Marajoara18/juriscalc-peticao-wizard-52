@@ -28,8 +28,8 @@ const TabelaVerbaRescisoria: React.FC<TabelaVerbaRescisoriasProps> = ({
   const itensVerbaRescisoria = [
     { descricao: 'Saldo de Salário', valor: verbasRescisorias.saldoSalario },
     { descricao: 'Aviso Prévio', valor: verbasRescisorias.avisoPrevia },
-    { descricao: 'Férias Indenizadas', valor: verbasRescisorias.feriasIndenizadas || 0 },
-    { descricao: '13º Indenizado', valor: verbasRescisorias.decimoTerceiroIndenizado || 0 },
+    { descricao: 'Férias Indenizadas do Aviso Prévio', valor: verbasRescisorias.feriasIndenizadas || 0 },
+    { descricao: '13º proporcional do Aviso Prévio', valor: verbasRescisorias.decimoTerceiroIndenizado || 0 },
     { descricao: '13º Salário Proporcional', valor: verbasRescisorias.decimoTerceiro },
     { descricao: 'Férias Proporcionais', valor: verbasRescisorias.ferias },
     { descricao: '1/3 Constitucional', valor: verbasRescisorias.tercoConstitucional },
