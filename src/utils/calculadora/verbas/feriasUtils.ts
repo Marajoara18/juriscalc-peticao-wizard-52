@@ -7,6 +7,7 @@ import { DadosContrato } from "@/types/calculadora";
 /**
  * Calculates the proportional vacation value based on time worked
  * Formula: (Salário Mensal / 12) × Meses Trabalhados
+ * Exception: If worked period is 12 complete months, proportional vacation should not be calculated
  * @param salarioBase Base salary
  * @param dataAdmissao Admission date
  * @param dataDemissao Termination date
@@ -38,6 +39,11 @@ export const calcularFerias = (salarioBase: number, dataAdmissao: string, dataDe
   // Garantir que não seja negativo ou zero
   if (mesesTrabalhados <= 0) {
     mesesTrabalhados = 1;
+  }
+  
+  // Se o período trabalhado foi de 12 meses completos, não calcular as férias proporcionais
+  if (mesesTrabalhados >= 12) {
+    return 0;
   }
   
   // Fórmula: (Salário Mensal / 12) × Meses Trabalhados

@@ -7,6 +7,7 @@ import { DadosContrato } from "@/types/calculadora";
 /**
  * Calculates the thirteenth salary proportional value based on months worked in the current year
  * Formula: (Salário Bruto / 12) × Meses Trabalhados
+ * Exception: If worked period is 12 complete months, proportional 13th salary should not be calculated
  * @param salarioBase Base salary
  * @param dataAdmissao Admission date
  * @param dataDemissao Termination date
@@ -43,6 +44,11 @@ export const calcularDecimoTerceiro = (
   // Garantir que não seja negativo ou zero
   if (mesesTrabalhados <= 0) {
     mesesTrabalhados = 1;
+  }
+  
+  // Se o período trabalhado foi de 12 meses completos, não calcular o 13º proporcional
+  if (mesesTrabalhados >= 12) {
+    return 0;
   }
   
   // Fórmula: (Salário Bruto / 12) × Meses Trabalhados
