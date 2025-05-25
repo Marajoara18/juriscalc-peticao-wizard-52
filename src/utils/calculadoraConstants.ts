@@ -6,7 +6,9 @@ export const resultadosIniciais: Resultados = {
   verbasRescisorias: {
     saldoSalario: 0,
     avisoPrevia: 0,
-    descontoAvisoPrevio: 0, // Added new field
+    descontoAvisoPrevio: 0,
+    feriasAvisoPrevia: 0,
+    decimoTerceiroAvisoPrevia: 0,
     decimoTerceiro: 0,
     ferias: 0,
     tercoConstitucional: 0,

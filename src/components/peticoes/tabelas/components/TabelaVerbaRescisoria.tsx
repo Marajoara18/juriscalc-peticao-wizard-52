@@ -7,7 +7,9 @@ interface TabelaVerbaRescisoriasProps {
   verbasRescisorias: {
     saldoSalario: number;
     avisoPrevia: number;
-    descontoAvisoPrevio?: number; // Added new optional field
+    descontoAvisoPrevio?: number;
+    feriasAvisoPrevia: number;
+    decimoTerceiroAvisoPrevia: number;
     decimoTerceiro: number;
     ferias: number;
     tercoConstitucional: number;
@@ -22,13 +24,27 @@ const TabelaVerbaRescisoria: React.FC<TabelaVerbaRescisoriasProps> = ({
   verbasRescisorias,
   tipoRescisao = 'sem_justa_causa'
 }) => {
-  // Filtrar itens com valor maior que zero para exibição
+  // Itens das verbas principais
   const itensVerbaRescisoria = [
     { descricao: 'Saldo de Salário', valor: verbasRescisorias.saldoSalario },
     { descricao: 'Aviso Prévio', valor: verbasRescisorias.avisoPrevia },
+  ].filter(item => item.valor > 0);
+
+  // Valores proporcionais ao aviso prévio
+  const valoresAvisoPrevia = [
+    { descricao: '13º salário proporcional ao aviso prévio', valor: verbasRescisorias.decimoTerceiroAvisoPrevia },
+    { descricao: 'Férias proporcionais ao aviso prévio', valor: verbasRescisorias.feriasAvisoPrevia },
+  ].filter(item => item.valor > 0);
+
+  // Valores proporcionais gerais
+  const valoresProporcionaisGerais = [
     { descricao: '13º Salário Proporcional', valor: verbasRescisorias.decimoTerceiro },
     { descricao: 'Férias Proporcionais', valor: verbasRescisorias.ferias },
     { descricao: '1/3 Constitucional', valor: verbasRescisorias.tercoConstitucional },
+  ].filter(item => item.valor > 0);
+
+  // Valores do FGTS
+  const valoresFgts = [
     { descricao: 'FGTS sobre verbas', valor: verbasRescisorias.fgts },
     { descricao: 'Multa FGTS (40%)', valor: verbasRescisorias.multaFgts },
   ].filter(item => item.valor > 0);
@@ -36,7 +52,9 @@ const TabelaVerbaRescisoria: React.FC<TabelaVerbaRescisoriasProps> = ({
   // Verificar se há desconto de aviso prévio
   const temDescontoAvisoPrevio = verbasRescisorias.descontoAvisoPrevio && verbasRescisorias.descontoAvisoPrevio > 0;
 
-  if (itensVerbaRescisoria.length === 0 && !temDescontoAvisoPrevio) {
+  // Se não há nenhum valor para exibir
+  if (itensVerbaRescisoria.length === 0 && valoresAvisoPrevia.length === 0 && 
+      valoresProporcionaisGerais.length === 0 && valoresFgts.length === 0 && !temDescontoAvisoPrevio) {
     return null;
   }
 
@@ -54,8 +72,33 @@ const TabelaVerbaRescisoria: React.FC<TabelaVerbaRescisoriasProps> = ({
           </TableRow>
         </TableHeader>
         <TableBody>
+          {/* Verbas principais */}
           {itensVerbaRescisoria.map((item, index) => (
-            <TableRow key={`verbas-${index}`}>
+            <TableRow key={`verbas-principais-${index}`}>
+              <TableCell>{item.descricao}</TableCell>
+              <TableCell className="text-right">{formatarMoeda(item.valor)}</TableCell>
+            </TableRow>
+          ))}
+          
+          {/* Valores proporcionais ao aviso prévio */}
+          {valoresAvisoPrevia.map((item, index) => (
+            <TableRow key={`aviso-previa-${index}`} className="bg-blue-50">
+              <TableCell className="pl-8 italic">{item.descricao}</TableCell>
+              <TableCell className="text-right">{formatarMoeda(item.valor)}</TableCell>
+            </TableRow>
+          ))}
+          
+          {/* Valores proporcionais gerais */}
+          {valoresProporcionaisGerais.map((item, index) => (
+            <TableRow key={`proporcionais-gerais-${index}`}>
+              <TableCell>{item.descricao}</TableCell>
+              <TableCell className="text-right">{formatarMoeda(item.valor)}</TableCell>
+            </TableRow>
+          ))}
+          
+          {/* Valores do FGTS */}
+          {valoresFgts.map((item, index) => (
+            <TableRow key={`fgts-${index}`}>
               <TableCell>{item.descricao}</TableCell>
               <TableCell className="text-right">{formatarMoeda(item.valor)}</TableCell>
             </TableRow>

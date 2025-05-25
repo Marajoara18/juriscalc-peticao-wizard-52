@@ -8,10 +8,9 @@ import { calcularAvisoPrevia } from "./avisoPrevioUtils";
 import { calcularDecimoTerceiro } from "./decimoTerceiroUtils";
 import { calcularFerias, calcularTercoConstitucional } from "./feriasUtils";
 import { calcularFGTS, calcularMultaFGTS } from "./fgtsUtils";
-import { ajustarMesesPorDias } from "../verbasRescisoriasUtils";
 
 /**
- * Calculates all rescission values
+ * Calculates all rescission values with separate notice period values
  * @param dadosContrato Contract data
  * @returns Object with all rescission values and total
  */
@@ -24,7 +23,6 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato): Rescisi
   // Cálculo individual das verbas
   const saldoSalario = calcularSaldoSalario(salarioBase, diasTrabalhados);
   
-  // Passando os meses trabalhados para calcular o aviso prévio proporcional na rescisão indireta
   const avisoPrevia = calcularAvisoPrevia(
     salarioBase, 
     dadosContrato.tipoRescisao, 
@@ -32,7 +30,18 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato): Rescisi
     mesesTrabalhados
   );
   
-  // Usando nova implementação do décimo terceiro baseada nos meses trabalhados no ano corrente
+  // Cálculo dos valores proporcionais ao aviso prévio (quando não cumprido)
+  let feriasAvisoPrevia = 0;
+  let decimoTerceiroAvisoPrevia = 0;
+  
+  if (!avisoPrevioCumprido && (dadosContrato.tipoRescisao === 'sem_justa_causa' || dadosContrato.tipoRescisao === 'rescisao_indireta')) {
+    // Férias proporcionais ao aviso prévio (1/12 do salário)
+    feriasAvisoPrevia = salarioBase / 12;
+    // 13º proporcional ao aviso prévio (1/12 do salário)
+    decimoTerceiroAvisoPrevia = salarioBase / 12;
+  }
+  
+  // Cálculo dos valores proporcionais gerais (baseados no tempo trabalhado)
   const decimoTerceiro = calcularDecimoTerceiro(
     salarioBase, 
     dadosContrato.dataAdmissao, 
@@ -40,7 +49,6 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato): Rescisi
     dadosContrato.tipoRescisao
   );
   
-  // Usamos a nova função de férias que considera o período desde o último período aquisitivo
   const ferias = calcularFerias(
     salarioBase, 
     dadosContrato.dataAdmissao, 
@@ -48,34 +56,36 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato): Rescisi
     dadosContrato.tipoRescisao
   );
   
-  const tercoConstitucional = calcularTercoConstitucional(ferias);
+  const tercoConstitucional = calcularTercoConstitucional(ferias + feriasAvisoPrevia);
   
-  // Cálculo do FGTS e multa com a regra de 15 dias
-  // Aplicamos a regra dos 15 dias para mesesTrabalhados
+  // Cálculo do FGTS e multa
   const fgts = calcularFGTS(salarioBase, mesesTrabalhados, diasTrabalhados);
   const multaFgts = calcularMultaFGTS(fgts, dadosContrato.tipoRescisao);
   
-  // Para o cálculo do total e a visualização, tratamos o aviso prévio diferentemente
-  // dependendo do tipo de rescisão
+  // Tratamento do aviso prévio para pedido de demissão
   let avisoPrevia_ajustado = avisoPrevia;
   let descontoAvisoPrevio = 0;
   
-  // No caso de pedido de demissão, o aviso prévio é um desconto (valor negativo)
-  // se não for cumprido, mas precisamos armazenar isso separadamente
   if (dadosContrato.tipoRescisao === 'pedido_demissao' && !avisoPrevioCumprido) {
-    avisoPrevia_ajustado = 0; // Não aparece como verba positiva
-    descontoAvisoPrevio = Math.abs(avisoPrevia); // Armazena como desconto
+    avisoPrevia_ajustado = 0;
+    descontoAvisoPrevio = Math.abs(avisoPrevia);
+    // No pedido de demissão não há valores proporcionais ao aviso prévio
+    feriasAvisoPrevia = 0;
+    decimoTerceiroAvisoPrevia = 0;
   }
   
-  // Cálculo do total (excluindo descontos)
-  const total = saldoSalario + avisoPrevia_ajustado + decimoTerceiro + ferias + tercoConstitucional + fgts + multaFgts;
+  // Cálculo do total
+  const total = saldoSalario + avisoPrevia_ajustado + feriasAvisoPrevia + decimoTerceiroAvisoPrevia + 
+                decimoTerceiro + ferias + tercoConstitucional + fgts + multaFgts;
   
   return {
     saldoSalario,
-    avisoPrevia: avisoPrevia_ajustado, // Armazena apenas o valor positivo para exibição
-    descontoAvisoPrevio, // Novo campo para armazenar o desconto do aviso prévio
+    avisoPrevia: avisoPrevia_ajustado,
+    descontoAvisoPrevio,
+    feriasAvisoPrevia,
+    decimoTerceiroAvisoPrevia,
     decimoTerceiro,
-    ferias, // Agora férias proporcionais baseadas no último período aquisitivo
+    ferias,
     tercoConstitucional,
     fgts,
     multaFgts,

@@ -25,6 +25,18 @@ const PrintVerbasRescisorias: React.FC<PrintVerbasRescisoriasProps> = ({ verbas 
             <span>{formatarMoeda(verbas.avisoPrevia)}</span>
           </div>
         )}
+        {verbas.decimoTerceiroAvisoPrevia > 0 && (
+          <div className="flex justify-between">
+            <span className="pl-4 italic text-blue-600">13º salário proporcional ao aviso prévio</span>
+            <span>{formatarMoeda(verbas.decimoTerceiroAvisoPrevia)}</span>
+          </div>
+        )}
+        {verbas.feriasAvisoPrevia > 0 && (
+          <div className="flex justify-between">
+            <span className="pl-4 italic text-blue-600">Férias proporcionais ao aviso prévio</span>
+            <span>{formatarMoeda(verbas.feriasAvisoPrevia)}</span>
+          </div>
+        )}
         {verbas.decimoTerceiro > 0 && (
           <div className="flex justify-between">
             <span>13º Salário Proporcional</span>
@@ -55,9 +67,15 @@ const PrintVerbasRescisorias: React.FC<PrintVerbasRescisoriasProps> = ({ verbas 
             <span>{formatarMoeda(verbas.multaFgts)}</span>
           </div>
         )}
+        {verbas.descontoAvisoPrevio > 0 && (
+          <div className="flex justify-between text-red-600">
+            <span>Desconto Aviso Prévio não cumprido</span>
+            <span>- {formatarMoeda(verbas.descontoAvisoPrevio)}</span>
+          </div>
+        )}
         <div className="flex justify-between font-bold border-t pt-1">
           <span>Total Verbas Rescisórias</span>
-          <span>{formatarMoeda(verbas.total || 0)}</span>
+          <span>{formatarMoeda((verbas.total || 0) - (verbas.descontoAvisoPrevio || 0))}</span>
         </div>
       </div>
     </div>
