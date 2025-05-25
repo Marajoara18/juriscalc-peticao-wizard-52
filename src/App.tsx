@@ -7,9 +7,12 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { StrictMode } from "react";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
+import SupabaseLogin from "./pages/SupabaseLogin";
+import AdminPage from "./pages/AdminPage";
 import Calculadora from "./pages/Calculadora";
 import Peticoes from "./pages/Peticoes";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 import MasterPasswordReset from "./components/auth/MasterPasswordReset";
 import PasswordResetRequest from "./components/auth/PasswordResetRequest";
 import PasswordReset from "./components/auth/PasswordReset";
@@ -26,10 +29,36 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Login />} />
-              <Route path="/home" element={<Index />} />
-              <Route path="/calculadora" element={<Calculadora />} />
-              <Route path="/peticoes" element={<Peticoes />} />
+              <Route path="/" element={<SupabaseLogin />} />
+              <Route path="/login-old" element={<Login />} />
+              <Route 
+                path="/home" 
+                element={
+                  <ProtectedRoute requireAuth={true}>
+                    <Index />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/calculadora" 
+                element={
+                  <ProtectedRoute requireAuth={true}>
+                    <Calculadora />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/peticoes" 
+                element={
+                  <ProtectedRoute requireAuth={true}>
+                    <Peticoes />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin" 
+                element={<AdminPage />} 
+              />
               <Route path="/reset-password" element={<MasterPasswordReset />} />
               {/* Novas rotas para redefinição de senha */}
               <Route path="/esqueci-senha" element={<PasswordResetRequest />} />
