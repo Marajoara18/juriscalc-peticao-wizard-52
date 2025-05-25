@@ -56,7 +56,8 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato): Rescisi
     dadosContrato.tipoRescisao
   );
   
-  const tercoConstitucional = calcularTercoConstitucional(ferias + feriasAvisoPrevia);
+  // Corrigir: 1/3 constitucional deve considerar apenas as férias proporcionais
+  const tercoConstitucional = calcularTercoConstitucional(ferias);
   
   // Cálculo do FGTS e multa
   const fgts = calcularFGTS(salarioBase, mesesTrabalhados, diasTrabalhados);
