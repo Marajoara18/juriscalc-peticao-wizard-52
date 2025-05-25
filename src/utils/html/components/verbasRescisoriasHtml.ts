@@ -23,7 +23,7 @@ export function renderVerbasRescisoriasHTML(verbas: any) {
   
   if (verbas.feriasAvisoPrevia > 0) {
     valoresAvisoPrevia.push({
-      descricao: 'Férias Indenizadas do Aviso Prévio',
+      descricao: 'Férias Indenizadas do Aviso Prévio + 1/3',
       valor: verbas.feriasAvisoPrevia
     });
   }

@@ -42,7 +42,7 @@ const TabelaVerbaRescisoria: React.FC<TabelaVerbaRescisoriasProps> = ({
   
   if (verbasRescisorias.feriasAvisoPrevia > 0) {
     valoresAvisoPrevia.push({
-      descricao: 'Férias Indenizadas do Aviso Prévio',
+      descricao: 'Férias Indenizadas do Aviso Prévio + 1/3',
       valor: verbasRescisorias.feriasAvisoPrevia
     });
   }

@@ -35,7 +35,7 @@ const PrintVerbasRescisorias: React.FC<PrintVerbasRescisoriasProps> = ({ verbas 
         )}
         {verbas.feriasAvisoPrevia > 0 && (
           <div className="flex justify-between">
-            <span>Férias Indenizadas do Aviso Prévio</span>
+            <span>Férias Indenizadas do Aviso Prévio + 1/3</span>
             <span>{formatarMoeda(verbas.feriasAvisoPrevia)}</span>
           </div>
         )}

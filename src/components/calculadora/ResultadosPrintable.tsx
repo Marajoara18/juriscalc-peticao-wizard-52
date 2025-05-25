@@ -48,6 +48,8 @@ const ResultadosPrintable: React.FC<ResultadosPrintableProps> = ({ resultados })
               <span className="result-label">
                 {chave === 'saldoSalario' && 'Saldo de Salário'}
                 {chave === 'avisoPrevia' && 'Aviso Prévio'}
+                {chave === 'feriasAvisoPrevia' && 'Férias Indenizadas do Aviso Prévio + 1/3'}
+                {chave === 'decimoTerceiroAvisoPrevia' && '13º Proporcional do Aviso Prévio'}
                 {chave === 'decimoTerceiro' && '13º Salário Proporcional'}
                 {chave === 'ferias' && 'Férias Proporcionais'}
                 {chave === 'tercoConstitucional' && '1/3 Constitucional'}

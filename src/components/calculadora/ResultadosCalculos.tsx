@@ -53,7 +53,7 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
   if (verbas.feriasAvisoPrevia > 0) {
     valoresAvisoPrevia.push({
       chave: 'feriasAvisoPrevia',
-      nome: 'Férias Indenizadas do Aviso Prévio',
+      nome: 'Férias Indenizadas do Aviso Prévio + 1/3',
       valor: verbas.feriasAvisoPrevia
     });
   }
