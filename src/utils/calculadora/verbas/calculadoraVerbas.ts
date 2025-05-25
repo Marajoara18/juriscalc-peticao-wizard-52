@@ -77,13 +77,30 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato): Rescisi
   // Corrigir: 1/3 constitucional deve considerar apenas as férias proporcionais
   const tercoConstitucional = calcularTercoConstitucional(ferias);
   
-  // Cálculo do FGTS e multa - só calcular se não foi depositado
-  const fgts = fgtsDepositado ? 0 : calcularFGTS(salarioBase, mesesTrabalhados, diasTrabalhados);
-  
-  // Para contrato por tempo determinado, não há multa de 40% do FGTS
+  // Cálculo do FGTS - lógica atualizada baseada nas opções
+  let fgts = 0;
   let multaFgts = 0;
-  if (!contratoTempoDeterminado) {
-    multaFgts = fgtsDepositado ? 0 : calcularMultaFGTS(fgts, dadosContrato.tipoRescisao);
+  
+  if (contratoTempoDeterminado) {
+    // Para contrato por tempo determinado, sempre calcular FGTS
+    fgts = calcularFGTS(salarioBase, mesesTrabalhados, diasTrabalhados);
+    // Para contrato por tempo determinado, não há multa de 40% do FGTS
+    multaFgts = 0;
+    console.log('Contrato por tempo determinado: FGTS calculado, sem multa 40%');
+  } else {
+    // Para contrato por prazo indeterminado
+    if (fgtsDepositado) {
+      // Se FGTS foi depositado, não incluir FGTS mas incluir a multa de 40%
+      fgts = 0;
+      const fgtsParaMulta = calcularFGTS(salarioBase, mesesTrabalhados, diasTrabalhados);
+      multaFgts = calcularMultaFGTS(fgtsParaMulta, dadosContrato.tipoRescisao);
+      console.log('FGTS depositado: FGTS = 0, Multa 40% calculada sobre valor teórico');
+    } else {
+      // Se FGTS não foi depositado, incluir FGTS e a multa de 40%
+      fgts = calcularFGTS(salarioBase, mesesTrabalhados, diasTrabalhados);
+      multaFgts = calcularMultaFGTS(fgts, dadosContrato.tipoRescisao);
+      console.log('FGTS não depositado: FGTS e Multa 40% incluídos');
+    }
   }
   
   // Cálculo da indenização por quebra de contrato (só para contrato por tempo determinado)
@@ -118,7 +135,9 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato): Rescisi
     fgts,
     multaFgts,
     indenizacaoQuebraContrato,
-    total
+    total,
+    fgtsDepositado,
+    contratoTempoDeterminado
   });
   
   return {

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -167,14 +166,25 @@ const DadosContratoForm: React.FC<DadosContratoFormProps> = ({
             </div>
           )}
           
-          {/* FGTS Depositado */}
+          {/* FGTS Depositado - desabilitado quando contrato por tempo determinado */}
           <div className="flex items-center space-x-2">
             <Switch 
               id="fgts_depositado"
               checked={dadosContrato.fgts_depositado}
+              disabled={dadosContrato.contrato_tempo_determinado}
               onCheckedChange={(checked) => onCheckboxChange("fgts_depositado", checked)}
             />
-            <Label htmlFor="fgts_depositado">FGTS Depositado</Label>
+            <Label 
+              htmlFor="fgts_depositado" 
+              className={dadosContrato.contrato_tempo_determinado ? "text-gray-400" : ""}
+            >
+              FGTS Depositado
+              {dadosContrato.contrato_tempo_determinado && (
+                <span className="text-xs text-gray-500 block">
+                  (Desabilitado para contratos por tempo determinado)
+                </span>
+              )}
+            </Label>
           </div>
         </div>
       </CardContent>
