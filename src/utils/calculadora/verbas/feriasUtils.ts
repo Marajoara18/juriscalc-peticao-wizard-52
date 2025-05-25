@@ -5,7 +5,8 @@
 import { DadosContrato } from "@/types/calculadora";
 
 /**
- * Calculates the proportional vacation value based on time worked since the last vacation period
+ * Calculates the proportional vacation value based on time worked
+ * Formula: (Salário Mensal / 12) × Meses Trabalhados
  * @param salarioBase Base salary
  * @param dataAdmissao Admission date
  * @param dataDemissao Termination date
@@ -21,29 +22,26 @@ export const calcularFerias = (salarioBase: number, dataAdmissao: string, dataDe
   const dataAdmissaoObj = new Date(dataAdmissao);
   const dataDemissaoObj = new Date(dataDemissao);
   
-  // Consideramos a quantidade de meses como o mês da demissão (1-indexed)
-  const meses = dataDemissaoObj.getMonth() + 1;
+  let mesesTrabalhados = 0;
   
-  // Se admissão ocorreu no mesmo ano, ajustar para não contar meses antes da contratação
+  // Se admissão ocorreu no mesmo ano da demissão
   if (dataAdmissaoObj.getFullYear() === dataDemissaoObj.getFullYear()) {
-    const mesesAdmissao = dataAdmissaoObj.getMonth() + 1;
-    // Se meses da demissão for maior, subtrair meses antes da admissão e adicionar 1 para incluir o mês de admissão
-    if (meses > mesesAdmissao) {
-      const mesesTrabalhados = meses - mesesAdmissao + 1;
-      // Cada mês trabalhado dá direito a 1/12 de 30 dias de férias
-      const diasDeFerias = (mesesTrabalhados * 30) / 12;
-      // Valor das férias proporcionais = dias de férias * (salário / 30)
-      return diasDeFerias * (salarioBase / 30);
-    }
-    // Se for igual ou menor, considerar apenas um mês
-    return (30 / 12) * (salarioBase / 30); // Pelo menos 1 mês
+    // Calcular meses trabalhados dentro do ano
+    const mesAdmissao = dataAdmissaoObj.getMonth() + 1; // 1-indexed
+    const mesDemissao = dataDemissaoObj.getMonth() + 1; // 1-indexed
+    mesesTrabalhados = mesDemissao - mesAdmissao + 1;
+  } else {
+    // Se foi contratado em ano anterior, considerar todos os meses do ano da demissão
+    mesesTrabalhados = dataDemissaoObj.getMonth() + 1;
   }
   
-  // Cada mês trabalhado dá direito a 1/12 de 30 dias de férias
-  const diasDeFerias = (meses * 30) / 12;
+  // Garantir que não seja negativo ou zero
+  if (mesesTrabalhados <= 0) {
+    mesesTrabalhados = 1;
+  }
   
-  // Valor das férias proporcionais = dias de férias * (salário / 30)
-  return diasDeFerias * (salarioBase / 30);
+  // Fórmula: (Salário Mensal / 12) × Meses Trabalhados
+  return (salarioBase / 12) * mesesTrabalhados;
 };
 
 /**

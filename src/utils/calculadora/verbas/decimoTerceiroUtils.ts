@@ -6,6 +6,7 @@ import { DadosContrato } from "@/types/calculadora";
 
 /**
  * Calculates the thirteenth salary proportional value based on months worked in the current year
+ * Formula: (Salário Bruto / 12) × Meses Trabalhados
  * @param salarioBase Base salary
  * @param dataAdmissao Admission date
  * @param dataDemissao Termination date
@@ -26,20 +27,24 @@ export const calcularDecimoTerceiro = (
   const dataAdmissaoObj = new Date(dataAdmissao);
   const dataDemissaoObj = new Date(dataDemissao);
   
-  // Consideramos a quantidade de meses como o mês da demissão (1-indexed)
-  const meses = dataDemissaoObj.getMonth() + 1;
+  let mesesTrabalhados = 0;
   
-  // Se admissão ocorreu no mesmo ano, ajustar para não contar meses antes da contratação
+  // Se admissão ocorreu no mesmo ano da demissão
   if (dataAdmissaoObj.getFullYear() === dataDemissaoObj.getFullYear()) {
-    const mesesAdmissao = dataAdmissaoObj.getMonth() + 1;
-    // Se meses da demissão for maior, subtrair meses antes da admissão e adicionar 1 para incluir o mês de admissão
-    if (meses > mesesAdmissao) {
-      return (salarioBase / 12) * (meses - mesesAdmissao + 1);
-    }
-    // Se for igual ou menor, considerar apenas meses trabalhados
-    return (salarioBase / 12) * 1; // Pelo menos 1 mês
+    // Calcular meses trabalhados dentro do ano
+    const mesAdmissao = dataAdmissaoObj.getMonth() + 1; // 1-indexed
+    const mesDemissao = dataDemissaoObj.getMonth() + 1; // 1-indexed
+    mesesTrabalhados = mesDemissao - mesAdmissao + 1;
+  } else {
+    // Se foi contratado em ano anterior, considerar todos os meses do ano da demissão
+    mesesTrabalhados = dataDemissaoObj.getMonth() + 1;
   }
   
-  // Valor do 13º proporcional (1/12 do salário para cada mês trabalhado)
-  return (salarioBase / 12) * meses;
+  // Garantir que não seja negativo ou zero
+  if (mesesTrabalhados <= 0) {
+    mesesTrabalhados = 1;
+  }
+  
+  // Fórmula: (Salário Bruto / 12) × Meses Trabalhados
+  return (salarioBase / 12) * mesesTrabalhados;
 };
