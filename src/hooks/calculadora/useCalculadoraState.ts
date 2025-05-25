@@ -1,4 +1,3 @@
-
 import { DadosContrato, Adicionais, Resultados } from '@/types/calculadora';
 import { resultadosIniciais } from '@/utils/calculadoraConstants';
 
@@ -18,6 +17,9 @@ const useCalculadoraState = {
       diasTrabalhados: '',
       mesesTrabalhados: '',
       aviso_previo_cumprido: false,
+      fgts_depositado: false,
+      contrato_tempo_determinado: false,
+      meses_restantes_contrato: '',
     });
     
     // Reiniciar campos de adicionais
@@ -92,6 +94,9 @@ const useCalculadoraState = {
         diasTrabalhados: calculo.dadosContrato.diasTrabalhados || '',
         mesesTrabalhados: calculo.dadosContrato.mesesTrabalhados || '',
         aviso_previo_cumprido: calculo.dadosContrato.aviso_previo_cumprido || false,
+        fgts_depositado: calculo.dadosContrato.fgts_depositado || false,
+        contrato_tempo_determinado: calculo.dadosContrato.contrato_tempo_determinado || false,
+        meses_restantes_contrato: calculo.dadosContrato.meses_restantes_contrato || '',
       });
     }
     

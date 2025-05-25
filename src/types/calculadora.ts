@@ -12,6 +12,8 @@ export type RescisionValues = {
   tercoConstitucional: number;
   fgts: number;
   multaFgts: number;
+  // Valores específicos para contrato por tempo determinado
+  indenizacaoQuebraContrato: number;
   total: number;
 };
 
@@ -44,7 +46,8 @@ export type DadosContrato = {
   mesesTrabalhados: string;
   aviso_previo_cumprido: boolean; // Indicates if notice period was fulfilled
   fgts_depositado: boolean; // Indicates if FGTS was deposited
-  // Removed ferias_vencidas field
+  contrato_tempo_determinado: boolean; // Indicates if it's a fixed-term contract
+  meses_restantes_contrato: string; // Remaining months of the contract (for fixed-term)
 };
 
 export type CustomCalculo = {

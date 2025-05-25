@@ -18,6 +18,8 @@ const useCalculadora = () => {
     mesesTrabalhados: '',
     aviso_previo_cumprido: false,
     fgts_depositado: false,
+    contrato_tempo_determinado: false,
+    meses_restantes_contrato: '',
   });
 
   // Estado para calcular adicionais

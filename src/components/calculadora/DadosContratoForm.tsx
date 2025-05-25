@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -121,18 +122,50 @@ const DadosContratoForm: React.FC<DadosContratoFormProps> = ({
             />
           </div>
         </div>
+
+        {/* Meses Restantes do Contrato - só aparece se contrato por tempo determinado */}
+        {dadosContrato.contrato_tempo_determinado && (
+          <div>
+            <Label htmlFor="meses_restantes_contrato" className="juriscalc-label">
+              Meses Restantes do Contrato
+            </Label>
+            <Input 
+              id="meses_restantes_contrato" 
+              name="meses_restantes_contrato"
+              value={dadosContrato.meses_restantes_contrato}
+              onChange={onChange}
+              className="juriscalc-input" 
+              type="number"
+              min="0"
+              step="1"
+              placeholder="0"
+            />
+          </div>
+        )}
         
         {/* Switches para opções adicionais */}
         <div className="space-y-3 pt-2">
-          {/* Aviso Prévio Cumprido */}
+          {/* Contrato por Tempo Determinado */}
           <div className="flex items-center space-x-2">
             <Switch 
-              id="aviso_previo_cumprido"
-              checked={dadosContrato.aviso_previo_cumprido}
-              onCheckedChange={(checked) => onCheckboxChange("aviso_previo_cumprido", checked)}
+              id="contrato_tempo_determinado"
+              checked={dadosContrato.contrato_tempo_determinado}
+              onCheckedChange={(checked) => onCheckboxChange("contrato_tempo_determinado", checked)}
             />
-            <Label htmlFor="aviso_previo_cumprido">Aviso Prévio Cumprido</Label>
+            <Label htmlFor="contrato_tempo_determinado">Contrato por Tempo Determinado</Label>
           </div>
+
+          {/* Aviso Prévio Cumprido - só aparece se não for contrato por tempo determinado */}
+          {!dadosContrato.contrato_tempo_determinado && (
+            <div className="flex items-center space-x-2">
+              <Switch 
+                id="aviso_previo_cumprido"
+                checked={dadosContrato.aviso_previo_cumprido}
+                onCheckedChange={(checked) => onCheckboxChange("aviso_previo_cumprido", checked)}
+              />
+              <Label htmlFor="aviso_previo_cumprido">Aviso Prévio Cumprido</Label>
+            </div>
+          )}
           
           {/* FGTS Depositado */}
           <div className="flex items-center space-x-2">
