@@ -67,7 +67,15 @@ export const useSupabaseAuth = () => {
         .single();
 
       if (error) throw error;
-      setProfile(data);
+      
+      // Type assertion to ensure data matches our interface
+      const typedProfile = {
+        ...data,
+        tipo_plano: data.tipo_plano as 'padrao' | 'premium',
+        tipo_usuario: data.tipo_usuario as 'usuario' | 'admin_mestre'
+      };
+      
+      setProfile(typedProfile);
     } catch (error) {
       console.error('Error fetching profile:', error);
     }
@@ -158,9 +166,16 @@ export const useSupabaseAuth = () => {
 
       if (error) throw error;
 
-      setProfile(data);
+      // Type assertion to ensure data matches our interface
+      const typedProfile = {
+        ...data,
+        tipo_plano: data.tipo_plano as 'padrao' | 'premium',
+        tipo_usuario: data.tipo_usuario as 'usuario' | 'admin_mestre'
+      };
+
+      setProfile(typedProfile);
       toast.success('Perfil atualizado com sucesso!');
-      return { data, error: null };
+      return { data: typedProfile, error: null };
     } catch (error: any) {
       toast.error(error.message || 'Erro ao atualizar perfil');
       return { data: null, error };

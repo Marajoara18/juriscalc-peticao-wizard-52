@@ -27,7 +27,15 @@ export const useAdminManagement = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setProfiles(data || []);
+      
+      // Type assertion to ensure data matches our interface
+      const typedData = (data || []).map(profile => ({
+        ...profile,
+        tipo_plano: profile.tipo_plano as 'padrao' | 'premium',
+        tipo_usuario: profile.tipo_usuario as 'usuario' | 'admin_mestre'
+      }));
+      
+      setProfiles(typedData);
     } catch (error: any) {
       toast.error('Erro ao carregar usuários: ' + error.message);
     } finally {
