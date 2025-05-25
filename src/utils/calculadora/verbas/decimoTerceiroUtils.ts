@@ -5,14 +5,24 @@
 import { DadosContrato } from "@/types/calculadora";
 
 /**
- * Calculates the thirteenth salary proportional value based on months worked in the current year
- * Formula: (Salário Bruto / 12) × Meses Trabalhados
- * Always applies proportional calculation based on months worked in the year
+ * Calculates the thirteenth salary proportional value based on months worked
+ * Formula: (Salário Base / 12) × Meses Trabalhados
+ * 
+ * Steps:
+ * 1. Divide the base salary by 12 to get the monthly 13th salary value
+ * 2. Multiply this monthly value by the number of months worked
+ * 
+ * Example:
+ * - Base Salary: R$ 1,000.00
+ * - Months Worked: 7 months
+ * - Calculation: (1000 / 12) × 7 = 583.33
+ * - Result: R$ 583.33
+ * 
  * @param salarioBase Base salary
  * @param dataAdmissao Admission date
  * @param dataDemissao Termination date
  * @param tipoRescisao Contract termination type
- * @returns Thirteenth salary value
+ * @returns Thirteenth salary proportional value
  */
 export const calcularDecimoTerceiro = (
   salarioBase: number, 
@@ -46,6 +56,11 @@ export const calcularDecimoTerceiro = (
     mesesTrabalhados = 1;
   }
   
-  // Aplicar sempre a fórmula proporcional: (Salário Bruto / 12) × Meses Trabalhados
-  return (salarioBase / 12) * mesesTrabalhados;
+  // Aplicar a fórmula: (Salário Base / 12) × Meses Trabalhados
+  const valorMensal13 = salarioBase / 12;
+  const decimoTerceiroProporcional = valorMensal13 * mesesTrabalhados;
+  
+  console.log(`Cálculo 13º salário: Salário Base (${salarioBase}) / 12 = ${valorMensal13.toFixed(2)} × ${mesesTrabalhados} meses = ${decimoTerceiroProporcional.toFixed(2)}`);
+  
+  return decimoTerceiroProporcional;
 };
