@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card } from '@/components/ui/card';
@@ -34,9 +35,56 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
   const verbas = resultados.verbasRescisorias || {};
   const adicionaisResultado = resultados.adicionais || {};
   
-  const verbasAMostrar = Object.entries(verbas).filter(([key, value]) => 
-    typeof value === 'number' && value > 0 && key !== 'total' && key !== 'descontoAvisoPrevio'
-  );
+  // Verbas principais
+  const verbasPrincipais = [
+    { chave: 'saldoSalario', nome: 'Saldo de Salário', valor: verbas.saldoSalario },
+    { chave: 'avisoPrevia', nome: 'Aviso Prévio Indenizado', valor: verbas.avisoPrevia },
+  ].filter(item => item.valor > 0);
+  
+  // Valores proporcionais ao aviso prévio com descrições
+  const valoresAvisoPrevia = [];
+  if (verbas.decimoTerceiroAvisoPrevia > 0) {
+    valoresAvisoPrevia.push({
+      chave: 'decimoTerceiroAvisoPrevia',
+      nome: '13º salário proporcional ao aviso prévio',
+      descricao: '13º Proporcional do Aviso Prévio: Valor referente ao 13º salário proporcional ao período do aviso prévio.',
+      valor: verbas.decimoTerceiroAvisoPrevia
+    });
+  }
+  if (verbas.feriasAvisoPrevia > 0) {
+    valoresAvisoPrevia.push({
+      chave: 'feriasAvisoPrevia',
+      nome: 'Férias proporcionais ao aviso prévio',
+      descricao: 'Férias Indenizadas do Aviso Prévio: Valor referente às férias proporcionais ao período do aviso prévio.',
+      valor: verbas.feriasAvisoPrevia
+    });
+  }
+  
+  // Valores proporcionais gerais com descrições
+  const valoresGerais = [];
+  if (verbas.decimoTerceiro > 0) {
+    valoresGerais.push({
+      chave: 'decimoTerceiro',
+      nome: '13º Salário Proporcional',
+      descricao: '13º Salário Proporcional: Valor referente ao 13º salário proporcional, sem considerar o aviso prévio.',
+      valor: verbas.decimoTerceiro
+    });
+  }
+  if (verbas.ferias > 0) {
+    valoresGerais.push({
+      chave: 'ferias',
+      nome: 'Férias Proporcionais',
+      descricao: 'Férias Proporcionais: Valor referente às férias proporcionais, sem considerar o aviso prévio.',
+      valor: verbas.ferias
+    });
+  }
+  
+  // Outros valores
+  const outrosValores = [
+    { chave: 'tercoConstitucional', nome: '1/3 Constitucional', valor: verbas.tercoConstitucional },
+    { chave: 'fgts', nome: 'FGTS sobre verbas', valor: verbas.fgts },
+    { chave: 'multaFgts', nome: 'Multa FGTS (40%)', valor: verbas.multaFgts },
+  ].filter(item => item.valor > 0);
   
   const adicionaisAMostrar = Object.entries(adicionaisResultado).filter(([key, value]) => 
     typeof value === 'number' && value > 0 && key !== 'total' && key !== 'honorariosAdvocaticios'
@@ -83,19 +131,46 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
             Verbas Rescisórias
           </AccordionTrigger>
           <AccordionContent>
-            <div className="space-y-2">
-              {verbasAMostrar.map(([chave, valor]) => (
-                <div key={chave} className="flex justify-between">
-                  <span className="font-medium">
-                    {chave === 'saldoSalario' && 'Saldo de Salário'}
-                    {chave === 'avisoPrevia' && 'Aviso Prévio'}
-                    {chave === 'decimoTerceiro' && '13º Salário Proporcional'}
-                    {chave === 'ferias' && 'Férias Proporcionais'}
-                    {chave === 'tercoConstitucional' && '1/3 Constitucional'}
-                    {chave === 'fgts' && 'FGTS sobre verbas'}
-                    {chave === 'multaFgts' && 'Multa FGTS (40%)'}
-                  </span>
-                  <span className="font-medium">{formatarMoeda(valor as number)}</span>
+            <div className="space-y-3">
+              {/* Verbas principais */}
+              {verbasPrincipais.map((item) => (
+                <div key={item.chave} className="flex justify-between">
+                  <span className="font-medium">{item.nome}</span>
+                  <span className="font-medium">{formatarMoeda(item.valor)}</span>
+                </div>
+              ))}
+              
+              {/* Valores proporcionais ao aviso prévio com descrições */}
+              {valoresAvisoPrevia.map((item) => (
+                <div key={item.chave} className="ml-4 space-y-1">
+                  <div className="text-sm text-blue-600 italic">
+                    {item.descricao}
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium italic text-blue-600">{item.nome}</span>
+                    <span className="font-medium">{formatarMoeda(item.valor)}</span>
+                  </div>
+                </div>
+              ))}
+              
+              {/* Valores proporcionais gerais com descrições */}
+              {valoresGerais.map((item) => (
+                <div key={item.chave} className="space-y-1">
+                  <div className="text-sm text-gray-600 italic">
+                    {item.descricao}
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">{item.nome}</span>
+                    <span className="font-medium">{formatarMoeda(item.valor)}</span>
+                  </div>
+                </div>
+              ))}
+              
+              {/* Outros valores */}
+              {outrosValores.map((item) => (
+                <div key={item.chave} className="flex justify-between">
+                  <span className="font-medium">{item.nome}</span>
+                  <span className="font-medium">{formatarMoeda(item.valor)}</span>
                 </div>
               ))}
               
@@ -103,7 +178,7 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
               {temDescontoAvisoPrevio && (
                 <div className="flex justify-between text-red-600">
                   <span className="font-medium">Desconto Aviso Prévio não cumprido</span>
-                  <span className="font-medium">- {formatarMoeda(verbas.descontoAvisoPrevio as number)}</span>
+                  <span className="font-medium">- {formatarMoeda(verbas.descontoAvisoPrevio)}</span>
                 </div>
               )}
 

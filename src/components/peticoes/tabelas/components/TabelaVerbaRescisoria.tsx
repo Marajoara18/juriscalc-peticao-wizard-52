@@ -27,24 +27,52 @@ const TabelaVerbaRescisoria: React.FC<TabelaVerbaRescisoriasProps> = ({
   // Itens das verbas principais
   const itensVerbaRescisoria = [
     { descricao: 'Saldo de Salário', valor: verbasRescisorias.saldoSalario },
-    { descricao: 'Aviso Prévio', valor: verbasRescisorias.avisoPrevia },
+    { descricao: 'Aviso Prévio Indenizado', valor: verbasRescisorias.avisoPrevia },
   ].filter(item => item.valor > 0);
 
-  // Valores proporcionais ao aviso prévio
-  const valoresAvisoPrevia = [
-    { descricao: '13º salário proporcional ao aviso prévio', valor: verbasRescisorias.decimoTerceiroAvisoPrevia },
-    { descricao: 'Férias proporcionais ao aviso prévio', valor: verbasRescisorias.feriasAvisoPrevia },
-  ].filter(item => item.valor > 0);
+  // Valores proporcionais ao aviso prévio com descrições detalhadas
+  const valoresAvisoPrevia = [];
+  
+  if (verbasRescisorias.decimoTerceiroAvisoPrevia > 0) {
+    valoresAvisoPrevia.push({
+      descricao: '13º Proporcional do Aviso Prévio',
+      descricaoDetalhada: 'Valor referente ao 13º salário proporcional ao período do aviso prévio.',
+      itemDescricao: '13º salário proporcional ao aviso prévio',
+      valor: verbasRescisorias.decimoTerceiroAvisoPrevia
+    });
+  }
+  
+  if (verbasRescisorias.feriasAvisoPrevia > 0) {
+    valoresAvisoPrevia.push({
+      descricao: 'Férias Indenizadas do Aviso Prévio',
+      descricaoDetalhada: 'Valor referente às férias proporcionais ao período do aviso prévio.',
+      itemDescricao: 'Férias proporcionais ao aviso prévio',
+      valor: verbasRescisorias.feriasAvisoPrevia
+    });
+  }
 
-  // Valores proporcionais gerais
-  const valoresProporcionaisGerais = [
-    { descricao: '13º Salário Proporcional', valor: verbasRescisorias.decimoTerceiro },
-    { descricao: 'Férias Proporcionais', valor: verbasRescisorias.ferias },
-    { descricao: '1/3 Constitucional', valor: verbasRescisorias.tercoConstitucional },
-  ].filter(item => item.valor > 0);
+  // Valores proporcionais gerais com descrições detalhadas
+  const valoresProporcionaisGerais = [];
+  
+  if (verbasRescisorias.decimoTerceiro > 0) {
+    valoresProporcionaisGerais.push({
+      descricao: '13º Salário Proporcional',
+      descricaoDetalhada: 'Valor referente ao 13º salário proporcional, sem considerar o aviso prévio.',
+      valor: verbasRescisorias.decimoTerceiro
+    });
+  }
+  
+  if (verbasRescisorias.ferias > 0) {
+    valoresProporcionaisGerais.push({
+      descricao: 'Férias Proporcionais',
+      descricaoDetalhada: 'Valor referente às férias proporcionais, sem considerar o aviso prévio.',
+      valor: verbasRescisorias.ferias
+    });
+  }
 
   // Valores do FGTS
   const valoresFgts = [
+    { descricao: '1/3 Constitucional', valor: verbasRescisorias.tercoConstitucional },
     { descricao: 'FGTS sobre verbas', valor: verbasRescisorias.fgts },
     { descricao: 'Multa FGTS (40%)', valor: verbasRescisorias.multaFgts },
   ].filter(item => item.valor > 0);
@@ -80,20 +108,34 @@ const TabelaVerbaRescisoria: React.FC<TabelaVerbaRescisoriasProps> = ({
             </TableRow>
           ))}
           
-          {/* Valores proporcionais ao aviso prévio */}
+          {/* Valores proporcionais ao aviso prévio com descrições detalhadas */}
           {valoresAvisoPrevia.map((item, index) => (
-            <TableRow key={`aviso-previa-${index}`} className="bg-blue-50">
-              <TableCell className="pl-8 italic">{item.descricao}</TableCell>
-              <TableCell className="text-right">{formatarMoeda(item.valor)}</TableCell>
-            </TableRow>
+            <React.Fragment key={`aviso-previa-${index}`}>
+              <TableRow className="bg-blue-50">
+                <TableCell colSpan={2} className="text-sm italic text-blue-600 font-medium">
+                  {item.descricao}: {item.descricaoDetalhada}
+                </TableCell>
+              </TableRow>
+              <TableRow className="bg-blue-50">
+                <TableCell className="pl-8 italic">{item.itemDescricao}</TableCell>
+                <TableCell className="text-right">{formatarMoeda(item.valor)}</TableCell>
+              </TableRow>
+            </React.Fragment>
           ))}
           
-          {/* Valores proporcionais gerais */}
+          {/* Valores proporcionais gerais com descrições detalhadas */}
           {valoresProporcionaisGerais.map((item, index) => (
-            <TableRow key={`proporcionais-gerais-${index}`}>
-              <TableCell>{item.descricao}</TableCell>
-              <TableCell className="text-right">{formatarMoeda(item.valor)}</TableCell>
-            </TableRow>
+            <React.Fragment key={`proporcionais-gerais-${index}`}>
+              <TableRow className="bg-gray-50">
+                <TableCell colSpan={2} className="text-sm italic text-gray-600 font-medium">
+                  {item.descricao}: {item.descricaoDetalhada}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>{item.descricao}</TableCell>
+                <TableCell className="text-right">{formatarMoeda(item.valor)}</TableCell>
+              </TableRow>
+            </React.Fragment>
           ))}
           
           {/* Valores do FGTS */}
