@@ -36,6 +36,7 @@ const useCalculadoraState = {
       calcularHorasExtras: false,
       quantidadeHorasExtras: '',
       percentualHorasExtras: '50',
+      horasExtrasCalculos: [], // Added missing property
       calcularFeriasVencidas: false,
       periodosFeriasVencidas: '1',
       calcularIndenizacaoDemissao: false,
