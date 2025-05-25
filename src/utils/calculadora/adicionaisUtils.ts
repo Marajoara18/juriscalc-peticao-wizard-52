@@ -1,3 +1,4 @@
+
 /**
  * Main utilities file for calculating additional labor values
  */
@@ -8,6 +9,7 @@ import { calcularMulta467 as multa467Calc, calcularMulta477 as multa477Calc } fr
 import { 
   calcularAdicionalNoturno as adicionalNoturnoCalc,
   calcularHorasExtras as horasExtrasCalc,
+  calcularHorasExtrasMultiplas as horasExtrasMultiplasCalc,
   calcularFeriasVencidas as feriasVencidasCalc,
   calcularIndenizacaoDemissao as indenizacaoDemissaoCalc,
   calcularAdicionalTransferencia as adicionalTransferenciaCalc
@@ -271,16 +273,26 @@ export function calcularAdicionais(
     );
   }
   
-  // Calculate overtime
+  // Calculate overtime - Use new multiple calculation system
   if (adicionais.calcularHorasExtras) {
-    const quantidadeHorasExtras = parseFloat(adicionais.quantidadeHorasExtras) || 0;
-    const percentualHorasExtras = parseFloat(adicionais.percentualHorasExtras) || 0;
-    horasExtras = horasExtrasCalc(
-      adicionais.calcularHorasExtras,
-      adicionais.percentualHorasExtras,
-      adicionais.quantidadeHorasExtras,
-      salarioBase
-    );
+    if (adicionais.horasExtrasCalculos && adicionais.horasExtrasCalculos.length > 0) {
+      // Use new multiple calculation system
+      horasExtras = horasExtrasMultiplasCalc(
+        adicionais.calcularHorasExtras,
+        adicionais.horasExtrasCalculos,
+        salarioBase
+      );
+    } else {
+      // Fallback to legacy calculation for backward compatibility
+      const quantidadeHorasExtras = parseFloat(adicionais.quantidadeHorasExtras) || 0;
+      const percentualHorasExtras = parseFloat(adicionais.percentualHorasExtras) || 0;
+      horasExtras = horasExtrasCalc(
+        adicionais.calcularHorasExtras,
+        adicionais.percentualHorasExtras,
+        adicionais.quantidadeHorasExtras,
+        salarioBase
+      );
+    }
   }
   
   // Calculate vacation pay

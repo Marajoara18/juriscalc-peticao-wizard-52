@@ -5,10 +5,11 @@ import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Adicionais } from '@/types/calculadora';
+import { HorasExtrasMultiplas } from './HorasExtrasMultiplas';
 
 interface OutrosAdicionaisProps {
   adicionais: Adicionais;
-  onChange: (name: string, value: string | boolean) => void;
+  onChange: (name: string, value: string | boolean | any) => void;
 }
 
 export const OutrosAdicionais: React.FC<OutrosAdicionaisProps> = ({ adicionais, onChange }) => {
@@ -66,40 +67,26 @@ export const OutrosAdicionais: React.FC<OutrosAdicionaisProps> = ({ adicionais, 
           <Switch 
             id="calcularHorasExtras"
             checked={adicionais.calcularHorasExtras}
-            onCheckedChange={(checked) => onChange("calcularHorasExtras", checked)}
+            onCheckedChange={(checked) => {
+              onChange("calcularHorasExtras", checked);
+              if (checked && (!adicionais.horasExtrasCalculos || adicionais.horasExtrasCalculos.length === 0)) {
+                // Inicializar com um cálculo padrão
+                onChange("horasExtrasCalculos", [{
+                  id: Date.now().toString(),
+                  percentual: '50',
+                  quantidade: ''
+                }]);
+              }
+            }}
           />
         </div>
         
         {adicionais.calcularHorasExtras && (
           <div className="pl-4 border-l-2 border-gray-200 space-y-3">
-            <div>
-              <Label htmlFor="percentualHorasExtras" className="juriscalc-label">Adicional de Horas Extras (%)</Label>
-              <Select
-                value={adicionais.percentualHorasExtras}
-                onValueChange={(value) => onChange("percentualHorasExtras", value)}
-              >
-                <SelectTrigger className="juriscalc-input">
-                  <SelectValue placeholder="Selecione o percentual" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="50">50%</SelectItem>
-                  <SelectItem value="60">60%</SelectItem>
-                  <SelectItem value="100">100%</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div>
-              <Label htmlFor="quantidadeHorasExtras" className="juriscalc-label">Quantidade de Horas Extras</Label>
-              <Input 
-                id="quantidadeHorasExtras" 
-                value={adicionais.quantidadeHorasExtras}
-                onChange={(e) => onChange("quantidadeHorasExtras", e.target.value)}
-                className="juriscalc-input" 
-                type="number"
-                min="0"
-              />
-            </div>
+            <HorasExtrasMultiplas
+              horasExtrasCalculos={adicionais.horasExtrasCalculos || []}
+              onChange={(horasExtrasCalculos) => onChange("horasExtrasCalculos", horasExtrasCalculos)}
+            />
           </div>
         )}
       </div>

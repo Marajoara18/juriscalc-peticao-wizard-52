@@ -3,6 +3,7 @@
  * Utilities for calculating additional values related to work hours
  */
 import { ajustarMesesPorDias } from "../verbasRescisoriasUtils";
+import { HorasExtrasCalculo } from '@/types/calculadora';
 
 /**
  * Calculates night shift premium
@@ -38,6 +39,29 @@ export const calcularHorasExtras = (
   const valorHoraNormal = salarioBase / 220; // 220 horas mensais padrão
   
   return valorHoraNormal * (1 + percentualAdicional) * qtdHoras;
+};
+
+/**
+ * Calculates multiple overtime calculations
+ */
+export const calcularHorasExtrasMultiplas = (
+  calcular: boolean,
+  horasExtrasCalculos: HorasExtrasCalculo[],
+  salarioBase: number
+): number => {
+  if (!calcular || !horasExtrasCalculos || horasExtrasCalculos.length === 0) return 0;
+  
+  const valorHoraNormal = salarioBase / 220; // 220 horas mensais padrão
+  
+  return horasExtrasCalculos.reduce((total, calculo) => {
+    const percentualAdicional = parseFloat(calculo.percentual) / 100 || 0.5;
+    const qtdHoras = parseFloat(calculo.quantidade) || 0;
+    const valorCalculo = valorHoraNormal * (1 + percentualAdicional) * qtdHoras;
+    
+    console.log(`Calculando horas extras: ${qtdHoras}h a ${calculo.percentual}% = R$ ${valorCalculo.toFixed(2)}`);
+    
+    return total + valorCalculo;
+  }, 0);
 };
 
 /**

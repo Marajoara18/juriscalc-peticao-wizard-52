@@ -48,6 +48,12 @@ export type CustomCalculo = {
   valor: string;
 };
 
+export type HorasExtrasCalculo = {
+  id: string;
+  percentual: string;
+  quantidade: string;
+};
+
 export type Adicionais = {
   calcularInsalubridade: boolean;
   grauInsalubridade: 'minimo' | 'medio' | 'maximo';
@@ -63,6 +69,7 @@ export type Adicionais = {
   calcularHorasExtras: boolean;
   quantidadeHorasExtras: string;
   percentualHorasExtras: string;
+  horasExtrasCalculos: HorasExtrasCalculo[];
   calcularFeriasVencidas: boolean;
   periodosFeriasVencidas: string;
   calcularIndenizacaoDemissao: boolean;
