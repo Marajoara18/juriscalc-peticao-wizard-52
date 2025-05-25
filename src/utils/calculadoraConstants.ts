@@ -1,19 +1,18 @@
 
 import { Resultados } from '@/types/calculadora';
 
+// Resultados iniciais vazios
 export const resultadosIniciais: Resultados = {
   verbasRescisorias: {
     saldoSalario: 0,
     avisoPrevia: 0,
-    descontoAvisoPrevio: 0,
-    feriasIndenizadas: 0, // Added new field
-    decimoTerceiroIndenizado: 0, // Added new field
+    descontoAvisoPrevio: 0, // Added new field
     decimoTerceiro: 0,
     ferias: 0,
     tercoConstitucional: 0,
     fgts: 0,
     multaFgts: 0,
-    total: 0
+    total: 0,
   },
   adicionais: {
     adicionalInsalubridade: 0,
@@ -32,37 +31,20 @@ export const resultadosIniciais: Resultados = {
     customCalculo: 0,
     seguroDesemprego: 0,
     salarioFamilia: 0,
-    honorariosAdvocaticios: 0
+    honorariosAdvocaticios: 0,
   }
 };
 
-// Valores de exemplo para salário mínimo (pode ser atualizado conforme necessário)
-export const SALARIO_MINIMO = 1320.00; // 2024
+// Valor do salário mínimo atual (atualizado em 2025 conforme solicitado)
+export const SALARIO_MINIMO = 1518;
 
-// Constantes para cálculos de insalubridade
-export const PERCENTUAIS_INSALUBRIDADE = {
-  minimo: 10,
-  medio: 20,
-  maximo: 40
-};
+// Constantes para o cálculo do seguro-desemprego (atualizadas para 2025)
+export const VALOR_MAXIMO_SEGURO_DESEMPREGO = 2424.11; // Valor máximo da parcela em 2025
+export const FAIXA_1_SEGURO_DESEMPREGO = 2138.76; // Primeira faixa salarial
+export const FAIXA_2_SEGURO_DESEMPREGO = 3564.96; // Segunda faixa salarial
+export const VALOR_SALARIO_MINIMO_2025 = 1518.00; // Salário mínimo em 2025
+export const VALOR_ADICIONAL_FAIXA_2 = 1711.01; // Valor adicional para o cálculo da segunda faixa
 
-// Constantes para cálculos de FGTS
-export const PERCENTUAL_FGTS = 8;
-export const PERCENTUAL_MULTA_FGTS = 40;
-
-// Dias considerados para um mês completo
-export const DIAS_MES = 30;
-
-// Meses do ano
-export const MESES_ANO = 12;
-
-// Constantes para seguro-desemprego 2025
-export const VALOR_SALARIO_MINIMO_2025 = 1518.00;
-export const FAIXA_1_SEGURO_DESEMPREGO = 2138.76;
-export const FAIXA_2_SEGURO_DESEMPREGO = 3564.96;
-export const VALOR_MAXIMO_SEGURO_DESEMPREGO = 2313.74;
-export const VALOR_ADICIONAL_FAIXA_2 = 1711.01;
-
-// Constantes para salário-família
-export const VALOR_SALARIO_FAMILIA = 62.04;
-export const LIMITE_SALARIO_FAMILIA = 1819.26;
+// Constantes para o cálculo do salário-família
+export const VALOR_SALARIO_FAMILIA = 59.82; // Valor do salário-família por dependente em 2024
+export const LIMITE_SALARIO_FAMILIA = 1754.18; // Limite salarial para ter direito ao salário-família

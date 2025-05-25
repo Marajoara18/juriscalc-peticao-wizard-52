@@ -3,8 +3,6 @@ export type RescisionValues = {
   saldoSalario: number;
   avisoPrevia: number;
   descontoAvisoPrevio: number; // Added for tracking prior notice deduction
-  feriasIndenizadas: number; // Added for indemnified vacation when notice not fulfilled
-  decimoTerceiroIndenizado: number; // Added for indemnified 13th salary when notice not fulfilled
   decimoTerceiro: number;
   ferias: number;
   tercoConstitucional: number;

@@ -8,8 +8,6 @@ interface TabelaVerbaRescisoriasProps {
     saldoSalario: number;
     avisoPrevia: number;
     descontoAvisoPrevio?: number; // Added new optional field
-    feriasIndenizadas?: number; // Added for indemnified vacation
-    decimoTerceiroIndenizado?: number; // Added for indemnified 13th salary
     decimoTerceiro: number;
     ferias: number;
     tercoConstitucional: number;
@@ -28,8 +26,6 @@ const TabelaVerbaRescisoria: React.FC<TabelaVerbaRescisoriasProps> = ({
   const itensVerbaRescisoria = [
     { descricao: 'Saldo de Salário', valor: verbasRescisorias.saldoSalario },
     { descricao: 'Aviso Prévio', valor: verbasRescisorias.avisoPrevia },
-    { descricao: 'Férias Indenizadas do Aviso Prévio', valor: verbasRescisorias.feriasIndenizadas || 0 },
-    { descricao: '13º proporcional do Aviso Prévio', valor: verbasRescisorias.decimoTerceiroIndenizado || 0 },
     { descricao: '13º Salário Proporcional', valor: verbasRescisorias.decimoTerceiro },
     { descricao: 'Férias Proporcionais', valor: verbasRescisorias.ferias },
     { descricao: '1/3 Constitucional', valor: verbasRescisorias.tercoConstitucional },

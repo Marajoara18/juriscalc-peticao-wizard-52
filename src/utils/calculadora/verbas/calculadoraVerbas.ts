@@ -11,34 +11,6 @@ import { calcularFGTS, calcularMultaFGTS } from "./fgtsUtils";
 import { ajustarMesesPorDias } from "../verbasRescisoriasUtils";
 
 /**
- * Calculates indemnified vacation when prior notice is not fulfilled
- * @param salarioBase Base salary
- * @param avisoPrevioCumprido Whether prior notice was fulfilled
- * @returns Indemnified vacation value
- */
-const calcularFeriasIndenizadas = (salarioBase: number, avisoPrevioCumprido: boolean): number => {
-  if (avisoPrevioCumprido) {
-    return 0;
-  }
-  // 1/12 of monthly salary for indemnified vacation
-  return salarioBase / 12;
-};
-
-/**
- * Calculates indemnified 13th salary when prior notice is not fulfilled
- * @param salarioBase Base salary
- * @param avisoPrevioCumprido Whether prior notice was fulfilled
- * @returns Indemnified 13th salary value
- */
-const calcularDecimoTerceiroIndenizado = (salarioBase: number, avisoPrevioCumprido: boolean): number => {
-  if (avisoPrevioCumprido) {
-    return 0;
-  }
-  // 1/12 of monthly salary for indemnified 13th salary
-  return salarioBase / 12;
-};
-
-/**
  * Calculates all rescission values
  * @param dadosContrato Contract data
  * @returns Object with all rescission values and total
@@ -59,10 +31,6 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato): Rescisi
     avisoPrevioCumprido,
     mesesTrabalhados
   );
-  
-  // Calcular férias e 13º indenizados quando aviso prévio não for cumprido
-  const feriasIndenizadas = calcularFeriasIndenizadas(salarioBase, avisoPrevioCumprido);
-  const decimoTerceiroIndenizado = calcularDecimoTerceiroIndenizado(salarioBase, avisoPrevioCumprido);
   
   // Usando nova implementação do décimo terceiro baseada nos meses trabalhados no ano corrente
   const decimoTerceiro = calcularDecimoTerceiro(
@@ -99,16 +67,13 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato): Rescisi
     descontoAvisoPrevio = Math.abs(avisoPrevia); // Armazena como desconto
   }
   
-  // Cálculo do total (incluindo férias e 13º indenizados quando aplicáveis)
-  const total = saldoSalario + avisoPrevia_ajustado + feriasIndenizadas + decimoTerceiroIndenizado + 
-                decimoTerceiro + ferias + tercoConstitucional + fgts + multaFgts;
+  // Cálculo do total (excluindo descontos)
+  const total = saldoSalario + avisoPrevia_ajustado + decimoTerceiro + ferias + tercoConstitucional + fgts + multaFgts;
   
   return {
     saldoSalario,
     avisoPrevia: avisoPrevia_ajustado, // Armazena apenas o valor positivo para exibição
     descontoAvisoPrevio, // Novo campo para armazenar o desconto do aviso prévio
-    feriasIndenizadas, // Novo campo para férias indenizadas
-    decimoTerceiroIndenizado, // Novo campo para 13º indenizado
     decimoTerceiro,
     ferias, // Agora férias proporcionais baseadas no último período aquisitivo
     tercoConstitucional,
