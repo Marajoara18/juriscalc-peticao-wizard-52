@@ -30,14 +30,12 @@ const TabelaVerbaRescisoria: React.FC<TabelaVerbaRescisoriasProps> = ({
     { descricao: 'Aviso Prévio Indenizado', valor: verbasRescisorias.avisoPrevia },
   ].filter(item => item.valor > 0);
 
-  // Valores proporcionais ao aviso prévio com descrições detalhadas
+  // Valores proporcionais ao aviso prévio
   const valoresAvisoPrevia = [];
   
   if (verbasRescisorias.decimoTerceiroAvisoPrevia > 0) {
     valoresAvisoPrevia.push({
       descricao: '13º Proporcional do Aviso Prévio',
-      descricaoDetalhada: 'Valor referente ao 13º salário proporcional ao período do aviso prévio.',
-      itemDescricao: '13º salário proporcional ao aviso prévio',
       valor: verbasRescisorias.decimoTerceiroAvisoPrevia
     });
   }
@@ -45,19 +43,16 @@ const TabelaVerbaRescisoria: React.FC<TabelaVerbaRescisoriasProps> = ({
   if (verbasRescisorias.feriasAvisoPrevia > 0) {
     valoresAvisoPrevia.push({
       descricao: 'Férias Indenizadas do Aviso Prévio',
-      descricaoDetalhada: 'Valor referente às férias proporcionais ao período do aviso prévio.',
-      itemDescricao: 'Férias proporcionais ao aviso prévio',
       valor: verbasRescisorias.feriasAvisoPrevia
     });
   }
 
-  // Valores proporcionais gerais com descrições detalhadas
+  // Valores proporcionais gerais
   const valoresProporcionaisGerais = [];
   
   if (verbasRescisorias.decimoTerceiro > 0) {
     valoresProporcionaisGerais.push({
       descricao: '13º Salário Proporcional',
-      descricaoDetalhada: 'Valor referente ao 13º salário proporcional, sem considerar o aviso prévio.',
       valor: verbasRescisorias.decimoTerceiro
     });
   }
@@ -65,7 +60,6 @@ const TabelaVerbaRescisoria: React.FC<TabelaVerbaRescisoriasProps> = ({
   if (verbasRescisorias.ferias > 0) {
     valoresProporcionaisGerais.push({
       descricao: 'Férias Proporcionais',
-      descricaoDetalhada: 'Valor referente às férias proporcionais, sem considerar o aviso prévio.',
       valor: verbasRescisorias.ferias
     });
   }
@@ -108,34 +102,20 @@ const TabelaVerbaRescisoria: React.FC<TabelaVerbaRescisoriasProps> = ({
             </TableRow>
           ))}
           
-          {/* Valores proporcionais ao aviso prévio com descrições detalhadas */}
+          {/* Valores proporcionais ao aviso prévio */}
           {valoresAvisoPrevia.map((item, index) => (
-            <React.Fragment key={`aviso-previa-${index}`}>
-              <TableRow className="bg-blue-50">
-                <TableCell colSpan={2} className="text-sm italic text-blue-600 font-medium">
-                  {item.descricao}: {item.descricaoDetalhada}
-                </TableCell>
-              </TableRow>
-              <TableRow className="bg-blue-50">
-                <TableCell className="pl-8 italic">{item.itemDescricao}</TableCell>
-                <TableCell className="text-right">{formatarMoeda(item.valor)}</TableCell>
-              </TableRow>
-            </React.Fragment>
+            <TableRow key={`aviso-previa-${index}`}>
+              <TableCell>{item.descricao}</TableCell>
+              <TableCell className="text-right">{formatarMoeda(item.valor)}</TableCell>
+            </TableRow>
           ))}
           
-          {/* Valores proporcionais gerais com descrições detalhadas */}
+          {/* Valores proporcionais gerais */}
           {valoresProporcionaisGerais.map((item, index) => (
-            <React.Fragment key={`proporcionais-gerais-${index}`}>
-              <TableRow className="bg-gray-50">
-                <TableCell colSpan={2} className="text-sm italic text-gray-600 font-medium">
-                  {item.descricao}: {item.descricaoDetalhada}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{item.descricao}</TableCell>
-                <TableCell className="text-right">{formatarMoeda(item.valor)}</TableCell>
-              </TableRow>
-            </React.Fragment>
+            <TableRow key={`proporcionais-gerais-${index}`}>
+              <TableCell>{item.descricao}</TableCell>
+              <TableCell className="text-right">{formatarMoeda(item.valor)}</TableCell>
+            </TableRow>
           ))}
           
           {/* Valores do FGTS */}

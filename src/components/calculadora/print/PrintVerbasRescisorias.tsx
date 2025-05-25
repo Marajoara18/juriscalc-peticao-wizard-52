@@ -28,49 +28,29 @@ const PrintVerbasRescisorias: React.FC<PrintVerbasRescisoriasProps> = ({ verbas 
         
         {/* Valores proporcionais ao Aviso Prévio */}
         {verbas.decimoTerceiroAvisoPrevia > 0 && (
-          <div className="ml-4 space-y-1">
-            <div className="text-sm text-blue-600 italic">
-              13º Proporcional do Aviso Prévio: Valor referente ao 13º salário proporcional ao período do aviso prévio.
-            </div>
-            <div className="flex justify-between">
-              <span className="pl-4 italic text-blue-600">13º salário proporcional ao aviso prévio</span>
-              <span>{formatarMoeda(verbas.decimoTerceiroAvisoPrevia)}</span>
-            </div>
+          <div className="flex justify-between">
+            <span>13º Proporcional do Aviso Prévio</span>
+            <span>{formatarMoeda(verbas.decimoTerceiroAvisoPrevia)}</span>
           </div>
         )}
         {verbas.feriasAvisoPrevia > 0 && (
-          <div className="ml-4 space-y-1">
-            <div className="text-sm text-blue-600 italic">
-              Férias Indenizadas do Aviso Prévio: Valor referente às férias proporcionais ao período do aviso prévio.
-            </div>
-            <div className="flex justify-between">
-              <span className="pl-4 italic text-blue-600">Férias proporcionais ao aviso prévio</span>
-              <span>{formatarMoeda(verbas.feriasAvisoPrevia)}</span>
-            </div>
+          <div className="flex justify-between">
+            <span>Férias Indenizadas do Aviso Prévio</span>
+            <span>{formatarMoeda(verbas.feriasAvisoPrevia)}</span>
           </div>
         )}
         
         {/* Valores proporcionais gerais (sem considerar aviso prévio) */}
         {verbas.decimoTerceiro > 0 && (
-          <div className="space-y-1">
-            <div className="text-sm text-gray-600 italic">
-              13º Salário Proporcional: Valor referente ao 13º salário proporcional, sem considerar o aviso prévio.
-            </div>
-            <div className="flex justify-between">
-              <span>13º Salário Proporcional</span>
-              <span>{formatarMoeda(verbas.decimoTerceiro)}</span>
-            </div>
+          <div className="flex justify-between">
+            <span>13º Salário Proporcional</span>
+            <span>{formatarMoeda(verbas.decimoTerceiro)}</span>
           </div>
         )}
         {verbas.ferias > 0 && (
-          <div className="space-y-1">
-            <div className="text-sm text-gray-600 italic">
-              Férias Proporcionais: Valor referente às férias proporcionais, sem considerar o aviso prévio.
-            </div>
-            <div className="flex justify-between">
-              <span>Férias Proporcionais</span>
-              <span>{formatarMoeda(verbas.ferias)}</span>
-            </div>
+          <div className="flex justify-between">
+            <span>Férias Proporcionais</span>
+            <span>{formatarMoeda(verbas.ferias)}</span>
           </div>
         )}
         

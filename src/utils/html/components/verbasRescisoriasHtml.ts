@@ -11,14 +11,12 @@ export function renderVerbasRescisoriasHTML(verbas: any) {
     { descricao: 'Aviso Prévio Indenizado', valor: verbas.avisoPrevia },
   ].filter(item => item.valor > 0);
 
-  // Valores proporcionais ao aviso prévio com descrições detalhadas
+  // Valores proporcionais ao aviso prévio
   const valoresAvisoPrevia = [];
   
   if (verbas.decimoTerceiroAvisoPrevia > 0) {
     valoresAvisoPrevia.push({
       descricao: '13º Proporcional do Aviso Prévio',
-      descricaoDetalhada: 'Valor referente ao 13º salário proporcional ao período do aviso prévio.',
-      itemDescricao: '13º salário proporcional ao aviso prévio',
       valor: verbas.decimoTerceiroAvisoPrevia
     });
   }
@@ -26,19 +24,16 @@ export function renderVerbasRescisoriasHTML(verbas: any) {
   if (verbas.feriasAvisoPrevia > 0) {
     valoresAvisoPrevia.push({
       descricao: 'Férias Indenizadas do Aviso Prévio',
-      descricaoDetalhada: 'Valor referente às férias proporcionais ao período do aviso prévio.',
-      itemDescricao: 'Férias proporcionais ao aviso prévio',
       valor: verbas.feriasAvisoPrevia
     });
   }
 
-  // Valores proporcionais gerais com descrições detalhadas
+  // Valores proporcionais gerais
   const valoresGerais = [];
   
   if (verbas.decimoTerceiro > 0) {
     valoresGerais.push({
       descricao: '13º Salário Proporcional',
-      descricaoDetalhada: 'Valor referente ao 13º salário proporcional, sem considerar o aviso prévio.',
       valor: verbas.decimoTerceiro
     });
   }
@@ -46,7 +41,6 @@ export function renderVerbasRescisoriasHTML(verbas: any) {
   if (verbas.ferias > 0) {
     valoresGerais.push({
       descricao: 'Férias Proporcionais',
-      descricaoDetalhada: 'Valor referente às férias proporcionais, sem considerar o aviso prévio.',
       valor: verbas.ferias
     });
   }
@@ -80,18 +74,12 @@ export function renderVerbasRescisoriasHTML(verbas: any) {
             </tr>
           `).join('')}
           ${valoresAvisoPrevia.map(item => `
-            <tr style="background-color: #eff6ff;">
-              <td style="border: 1px solid #d1d5db; padding: 0.5rem; font-style: italic; font-weight: 500; color: #2563eb;" colspan="2">${item.descricao}: ${item.descricaoDetalhada}</td>
-            </tr>
-            <tr style="background-color: #eff6ff;">
-              <td style="border: 1px solid #d1d5db; padding: 0.5rem; padding-left: 1.5rem; font-style: italic;">${item.itemDescricao}</td>
+            <tr>
+              <td style="border: 1px solid #d1d5db; padding: 0.5rem;">${item.descricao}</td>
               <td style="border: 1px solid #d1d5db; padding: 0.5rem; text-align: right;">${formatarValor(item.valor)}</td>
             </tr>
           `).join('')}
           ${valoresGerais.map(item => `
-            <tr style="background-color: #f9fafb;">
-              <td style="border: 1px solid #d1d5db; padding: 0.5rem; font-style: italic; font-weight: 500; color: #6b7280;" colspan="2">${item.descricao}: ${item.descricaoDetalhada}</td>
-            </tr>
             <tr>
               <td style="border: 1px solid #d1d5db; padding: 0.5rem;">${item.descricao}</td>
               <td style="border: 1px solid #d1d5db; padding: 0.5rem; text-align: right;">${formatarValor(item.valor)}</td>

@@ -41,32 +41,29 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
     { chave: 'avisoPrevia', nome: 'Aviso Prévio Indenizado', valor: verbas.avisoPrevia },
   ].filter(item => item.valor > 0);
   
-  // Valores proporcionais ao aviso prévio com descrições
+  // Valores proporcionais ao aviso prévio
   const valoresAvisoPrevia = [];
   if (verbas.decimoTerceiroAvisoPrevia > 0) {
     valoresAvisoPrevia.push({
       chave: 'decimoTerceiroAvisoPrevia',
-      nome: '13º salário proporcional ao aviso prévio',
-      descricao: '13º Proporcional do Aviso Prévio: Valor referente ao 13º salário proporcional ao período do aviso prévio.',
+      nome: '13º Proporcional do Aviso Prévio',
       valor: verbas.decimoTerceiroAvisoPrevia
     });
   }
   if (verbas.feriasAvisoPrevia > 0) {
     valoresAvisoPrevia.push({
       chave: 'feriasAvisoPrevia',
-      nome: 'Férias proporcionais ao aviso prévio',
-      descricao: 'Férias Indenizadas do Aviso Prévio: Valor referente às férias proporcionais ao período do aviso prévio.',
+      nome: 'Férias Indenizadas do Aviso Prévio',
       valor: verbas.feriasAvisoPrevia
     });
   }
   
-  // Valores proporcionais gerais com descrições
+  // Valores proporcionais gerais
   const valoresGerais = [];
   if (verbas.decimoTerceiro > 0) {
     valoresGerais.push({
       chave: 'decimoTerceiro',
       nome: '13º Salário Proporcional',
-      descricao: '13º Salário Proporcional: Valor referente ao 13º salário proporcional, sem considerar o aviso prévio.',
       valor: verbas.decimoTerceiro
     });
   }
@@ -74,7 +71,6 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
     valoresGerais.push({
       chave: 'ferias',
       nome: 'Férias Proporcionais',
-      descricao: 'Férias Proporcionais: Valor referente às férias proporcionais, sem considerar o aviso prévio.',
       valor: verbas.ferias
     });
   }
@@ -140,29 +136,19 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
                 </div>
               ))}
               
-              {/* Valores proporcionais ao aviso prévio com descrições */}
+              {/* Valores proporcionais ao aviso prévio */}
               {valoresAvisoPrevia.map((item) => (
-                <div key={item.chave} className="ml-4 space-y-1">
-                  <div className="text-sm text-blue-600 italic">
-                    {item.descricao}
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium italic text-blue-600">{item.nome}</span>
-                    <span className="font-medium">{formatarMoeda(item.valor)}</span>
-                  </div>
+                <div key={item.chave} className="flex justify-between">
+                  <span className="font-medium">{item.nome}</span>
+                  <span className="font-medium">{formatarMoeda(item.valor)}</span>
                 </div>
               ))}
               
-              {/* Valores proporcionais gerais com descrições */}
+              {/* Valores proporcionais gerais */}
               {valoresGerais.map((item) => (
-                <div key={item.chave} className="space-y-1">
-                  <div className="text-sm text-gray-600 italic">
-                    {item.descricao}
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">{item.nome}</span>
-                    <span className="font-medium">{formatarMoeda(item.valor)}</span>
-                  </div>
+                <div key={item.chave} className="flex justify-between">
+                  <span className="font-medium">{item.nome}</span>
+                  <span className="font-medium">{formatarMoeda(item.valor)}</span>
                 </div>
               ))}
               
