@@ -35,8 +35,8 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato): Rescisi
   let decimoTerceiroAvisoPrevia = 0;
   
   if (!avisoPrevioCumprido && (dadosContrato.tipoRescisao === 'sem_justa_causa' || dadosContrato.tipoRescisao === 'rescisao_indireta')) {
-    // Férias proporcionais ao aviso prévio (1/12 do salário)
-    feriasAvisoPrevia = salarioBase / 12;
+    // Férias proporcionais ao aviso prévio (salário completo)
+    feriasAvisoPrevia = salarioBase;
     // 13º proporcional ao aviso prévio (1/12 do salário)
     decimoTerceiroAvisoPrevia = salarioBase / 12;
   }
