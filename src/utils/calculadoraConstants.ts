@@ -55,3 +55,14 @@ export const DIAS_MES = 30;
 
 // Meses do ano
 export const MESES_ANO = 12;
+
+// Constantes para seguro-desemprego 2025
+export const VALOR_SALARIO_MINIMO_2025 = 1518.00;
+export const FAIXA_1_SEGURO_DESEMPREGO = 2138.76;
+export const FAIXA_2_SEGURO_DESEMPREGO = 3564.96;
+export const VALOR_MAXIMO_SEGURO_DESEMPREGO = 2313.74;
+export const VALOR_ADICIONAL_FAIXA_2 = 1711.01;
+
+// Constantes para salário-família
+export const VALOR_SALARIO_FAMILIA = 62.04;
+export const LIMITE_SALARIO_FAMILIA = 1819.26;
