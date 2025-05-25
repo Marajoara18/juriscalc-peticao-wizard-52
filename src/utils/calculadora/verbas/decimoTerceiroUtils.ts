@@ -5,16 +5,18 @@
 import { DadosContrato } from "@/types/calculadora";
 
 /**
- * Calculates the thirteenth salary proportional value based on months worked
- * Formula: (Salário Base / 12) × Meses Trabalhados
+ * Calculates the thirteenth salary proportional value based on complete months worked
+ * Formula: (Salário Base / 12) × Meses Completos Trabalhados
  * 
  * Steps:
- * 1. Divide the base salary by 12 to get the monthly 13th salary value
- * 2. Multiply this monthly value by the number of months worked
+ * 1. Count complete months worked from admission to termination date
+ * 2. For each complete month, add 1/12 of the monthly 13th salary
+ * 3. Calculate: (Base Salary / 12) × Complete Months Worked
  * 
  * Example:
  * - Base Salary: R$ 1,000.00
- * - Months Worked: 7 months
+ * - Admission: 2024-01-15, Termination: 2024-08-20
+ * - Complete Months: 7 months (Jan, Feb, Mar, Apr, May, Jun, Jul)
  * - Calculation: (1000 / 12) × 7 = 583.33
  * - Result: R$ 583.33
  * 
@@ -38,29 +40,61 @@ export const calcularDecimoTerceiro = (
   const dataAdmissaoObj = new Date(dataAdmissao);
   const dataDemissaoObj = new Date(dataDemissao);
   
-  let mesesTrabalhados = 0;
+  // Contar meses completos trabalhados
+  let mesesCompletos = 0;
   
-  // Se admissão ocorreu no mesmo ano da demissão
-  if (dataAdmissaoObj.getFullYear() === dataDemissaoObj.getFullYear()) {
-    // Calcular meses trabalhados dentro do ano
-    const mesAdmissao = dataAdmissaoObj.getMonth() + 1; // 1-indexed
-    const mesDemissao = dataDemissaoObj.getMonth() + 1; // 1-indexed
-    mesesTrabalhados = mesDemissao - mesAdmissao + 1;
-  } else {
-    // Se foi contratado em ano anterior, considerar todos os meses do ano da demissão
-    mesesTrabalhados = dataDemissaoObj.getMonth() + 1;
+  // Criar data atual para iterar mês a mês
+  const dataAtual = new Date(dataAdmissaoObj.getFullYear(), dataAdmissaoObj.getMonth(), 1);
+  const dataFim = new Date(dataDemissaoObj.getFullYear(), dataDemissaoObj.getMonth(), 1);
+  
+  // Iterar mês a mês contando os meses completos
+  while (dataAtual <= dataFim) {
+    const ultimoDiaDoMes = new Date(dataAtual.getFullYear(), dataAtual.getMonth() + 1, 0).getDate();
+    
+    // Verificar se o mês foi trabalhado completamente
+    let inicioMes: Date;
+    let fimMes: Date;
+    
+    if (dataAtual.getTime() === new Date(dataAdmissaoObj.getFullYear(), dataAdmissaoObj.getMonth(), 1).getTime()) {
+      // Primeiro mês - começar da data de admissão
+      inicioMes = dataAdmissaoObj;
+    } else {
+      // Outros meses - começar do dia 1
+      inicioMes = new Date(dataAtual.getFullYear(), dataAtual.getMonth(), 1);
+    }
+    
+    if (dataAtual.getTime() === dataFim.getTime()) {
+      // Último mês - terminar na data de demissão
+      fimMes = dataDemissaoObj;
+    } else {
+      // Outros meses - terminar no último dia do mês
+      fimMes = new Date(dataAtual.getFullYear(), dataAtual.getMonth(), ultimoDiaDoMes);
+    }
+    
+    // Calcular dias trabalhados no mês
+    const diasTrabalhados = Math.floor((fimMes.getTime() - inicioMes.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    
+    // Considerar mês completo se trabalhou mais de 15 dias
+    if (diasTrabalhados > 15) {
+      mesesCompletos++;
+    }
+    
+    console.log(`Mês ${dataAtual.getMonth() + 1}/${dataAtual.getFullYear()}: ${diasTrabalhados} dias trabalhados ${diasTrabalhados > 15 ? '(mês completo)' : '(mês incompleto)'}`);
+    
+    // Avançar para o próximo mês
+    dataAtual.setMonth(dataAtual.getMonth() + 1);
   }
   
   // Garantir que não seja negativo ou zero
-  if (mesesTrabalhados <= 0) {
-    mesesTrabalhados = 1;
+  if (mesesCompletos <= 0) {
+    mesesCompletos = 1;
   }
   
-  // Aplicar a fórmula: (Salário Base / 12) × Meses Trabalhados
+  // Aplicar a fórmula: (Salário Base / 12) × Meses Completos Trabalhados
   const valorMensal13 = salarioBase / 12;
-  const decimoTerceiroProporcional = valorMensal13 * mesesTrabalhados;
+  const decimoTerceiroProporcional = valorMensal13 * mesesCompletos;
   
-  console.log(`Cálculo 13º salário: Salário Base (${salarioBase}) / 12 = ${valorMensal13.toFixed(2)} × ${mesesTrabalhados} meses = ${decimoTerceiroProporcional.toFixed(2)}`);
+  console.log(`Cálculo 13º salário: Salário Base (${salarioBase}) / 12 = ${valorMensal13.toFixed(2)} × ${mesesCompletos} meses completos = ${decimoTerceiroProporcional.toFixed(2)}`);
   
   return decimoTerceiroProporcional;
 };
