@@ -19,6 +19,7 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato): Rescisi
   const diasTrabalhados = parseInt(dadosContrato.diasTrabalhados) || 0;
   const mesesTrabalhados = parseInt(dadosContrato.mesesTrabalhados) || 0;
   const avisoPrevioCumprido = dadosContrato.aviso_previo_cumprido || false;
+  const fgtsDepositado = dadosContrato.fgts_depositado || false;
   
   // Cálculo individual das verbas
   const saldoSalario = calcularSaldoSalario(salarioBase, diasTrabalhados);
@@ -59,9 +60,9 @@ export const calcularVerbasRescisorias = (dadosContrato: DadosContrato): Rescisi
   // Corrigir: 1/3 constitucional deve considerar apenas as férias proporcionais
   const tercoConstitucional = calcularTercoConstitucional(ferias);
   
-  // Cálculo do FGTS e multa
-  const fgts = calcularFGTS(salarioBase, mesesTrabalhados, diasTrabalhados);
-  const multaFgts = calcularMultaFGTS(fgts, dadosContrato.tipoRescisao);
+  // Cálculo do FGTS e multa - só calcular se não foi depositado
+  const fgts = fgtsDepositado ? 0 : calcularFGTS(salarioBase, mesesTrabalhados, diasTrabalhados);
+  const multaFgts = fgtsDepositado ? 0 : calcularMultaFGTS(fgts, dadosContrato.tipoRescisao);
   
   // Tratamento do aviso prévio para pedido de demissão
   let avisoPrevia_ajustado = avisoPrevia;

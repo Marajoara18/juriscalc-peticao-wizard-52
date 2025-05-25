@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { DadosContrato, Adicionais, Resultados } from '@/types/calculadora';
 import { resultadosIniciais } from '@/utils/calculadoraConstants';
@@ -18,6 +17,7 @@ const useCalculadora = () => {
     diasTrabalhados: '',
     mesesTrabalhados: '',
     aviso_previo_cumprido: false,
+    fgts_depositado: false,
   });
 
   // Estado para calcular adicionais

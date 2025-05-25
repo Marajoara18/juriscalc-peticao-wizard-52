@@ -43,6 +43,7 @@ export type DadosContrato = {
   diasTrabalhados: string;
   mesesTrabalhados: string;
   aviso_previo_cumprido: boolean; // Indicates if notice period was fulfilled
+  fgts_depositado: boolean; // Indicates if FGTS was deposited
   // Removed ferias_vencidas field
 };
 

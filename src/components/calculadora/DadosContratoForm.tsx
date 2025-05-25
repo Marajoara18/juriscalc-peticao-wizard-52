@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -123,14 +122,27 @@ const DadosContratoForm: React.FC<DadosContratoFormProps> = ({
           </div>
         </div>
         
-        {/* Aviso Prévio Cumprido */}
-        <div className="flex items-center space-x-2 pt-2">
-          <Switch 
-            id="aviso_previo_cumprido"
-            checked={dadosContrato.aviso_previo_cumprido}
-            onCheckedChange={(checked) => onCheckboxChange("aviso_previo_cumprido", checked)}
-          />
-          <Label htmlFor="aviso_previo_cumprido">Aviso Prévio Cumprido</Label>
+        {/* Switches para opções adicionais */}
+        <div className="space-y-3 pt-2">
+          {/* Aviso Prévio Cumprido */}
+          <div className="flex items-center space-x-2">
+            <Switch 
+              id="aviso_previo_cumprido"
+              checked={dadosContrato.aviso_previo_cumprido}
+              onCheckedChange={(checked) => onCheckboxChange("aviso_previo_cumprido", checked)}
+            />
+            <Label htmlFor="aviso_previo_cumprido">Aviso Prévio Cumprido</Label>
+          </div>
+          
+          {/* FGTS Depositado */}
+          <div className="flex items-center space-x-2">
+            <Switch 
+              id="fgts_depositado"
+              checked={dadosContrato.fgts_depositado}
+              onCheckedChange={(checked) => onCheckboxChange("fgts_depositado", checked)}
+            />
+            <Label htmlFor="fgts_depositado">FGTS Depositado</Label>
+          </div>
         </div>
       </CardContent>
     </Card>
