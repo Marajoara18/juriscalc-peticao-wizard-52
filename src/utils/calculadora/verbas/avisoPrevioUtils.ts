@@ -23,7 +23,7 @@ const calcularDiasAdicionais = (mesesTrabalhados: number): number => {
  * @param salarioBase Base salary
  * @param tipoRescisao Contract termination type
  * @param avisoPrevioCumprido Whether the prior notice was fulfilled
- * @param mesesTrabalhados Months worked (needed for rescisão indireta calculation)
+ * @param mesesTrabalhados Months worked (needed for calculating additional days)
  * @returns Prior notice value
  */
 export const calcularAvisoPrevia = (
@@ -34,16 +34,24 @@ export const calcularAvisoPrevia = (
 ): number => {
   // Sem justa causa (empregador) ou rescisão indireta: empregador deve pagar se não cumpriu
   if ((tipoRescisao === 'sem_justa_causa' || tipoRescisao === 'rescisao_indireta') && !avisoPrevioCumprido) {
-    // Para rescisão indireta, calcular com dias adicionais
-    if (tipoRescisao === 'rescisao_indireta') {
-      // Base de 30 dias + adicionais (até 90 dias no total)
-      const diasAdicionais = calcularDiasAdicionais(mesesTrabalhados);
-      const totalDias = 30 + diasAdicionais;
-      // Valor diário x dias totais
-      return (salarioBase / 30) * totalDias;
-    }
-    // Para sem justa causa, continua com valor normal
-    return salarioBase;
+    // Base de 30 dias + adicionais (até 90 dias no total)
+    const diasAdicionais = calcularDiasAdicionais(mesesTrabalhados);
+    const totalDias = 30 + diasAdicionais;
+    
+    console.log(`Cálculo Aviso Prévio:`);
+    console.log(`- Meses trabalhados: ${mesesTrabalhados}`);
+    console.log(`- Anos completos: ${Math.floor(mesesTrabalhados / 12)}`);
+    console.log(`- Dias adicionais: ${diasAdicionais}`);
+    console.log(`- Total de dias: ${totalDias}`);
+    
+    // Valor diário x dias totais
+    const valorDiario = salarioBase / 30;
+    const valorTotal = valorDiario * totalDias;
+    
+    console.log(`- Valor diário: R$ ${valorDiario.toFixed(2)}`);
+    console.log(`- Valor total aviso prévio: R$ ${valorTotal.toFixed(2)}`);
+    
+    return valorTotal;
   }
   // Pedido de demissão: empregado deve pagar se não cumprir
   else if (tipoRescisao === 'pedido_demissao' && !avisoPrevioCumprido) {
