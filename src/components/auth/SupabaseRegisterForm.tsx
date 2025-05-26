@@ -18,10 +18,10 @@ const SupabaseRegisterForm = () => {
     e.preventDefault();
     
     if (password !== confirmPassword) {
-      alert('As senhas não conferem');
+      console.error('As senhas não conferem');
       return;
     }
-    
+
     setLoading(true);
     
     await signUp(email, password, nome);
@@ -54,11 +54,11 @@ const SupabaseRegisterForm = () => {
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="email-register" className="block text-sm font-medium">
+            <label htmlFor="email-cadastro" className="block text-sm font-medium">
               E-mail
             </label>
             <Input
-              id="email-register"
+              id="email-cadastro"
               type="email"
               placeholder="seu@email.com"
               value={email}
@@ -68,17 +68,18 @@ const SupabaseRegisterForm = () => {
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="password-register" className="block text-sm font-medium">
+            <label htmlFor="password-cadastro" className="block text-sm font-medium">
               Senha
             </label>
             <Input
-              id="password-register"
+              id="password-cadastro"
               type="password"
               placeholder="Crie uma senha"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               disabled={loading}
+              minLength={6}
             />
           </div>
           <div className="space-y-2">
@@ -93,6 +94,7 @@ const SupabaseRegisterForm = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               disabled={loading}
+              minLength={6}
             />
           </div>
         </CardContent>

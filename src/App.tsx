@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +15,7 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import MasterPasswordReset from "./components/auth/MasterPasswordReset";
 import PasswordResetRequest from "./components/auth/PasswordResetRequest";
 import PasswordReset from "./components/auth/PasswordReset";
+import AdminPanel from "./pages/AdminPanel";
 
 const App = () => {
   // Create a client inside the component function
@@ -57,7 +57,11 @@ const App = () => {
               />
               <Route 
                 path="/admin" 
-                element={<AdminPage />} 
+                element={
+                  <ProtectedRoute requireAuth={true}>
+                    <AdminPanel />
+                  </ProtectedRoute>
+                } 
               />
               <Route path="/reset-password" element={<MasterPasswordReset />} />
               {/* Novas rotas para redefinição de senha */}
