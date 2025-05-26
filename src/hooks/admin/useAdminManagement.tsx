@@ -71,23 +71,36 @@ export const useAdminManagement = () => {
     }
   };
 
-  const deleteUser = async (userId: string) => {
+  const updateUserType = async (userId: string, newType: 'usuario' | 'admin_mestre') => {
     try {
-      // First delete the profile
-      const { error: profileError } = await supabase
+      const { error } = await supabase
         .from('profiles')
-        .delete()
+        .update({ tipo_usuario: newType })
         .eq('id', userId);
 
-      if (profileError) throw profileError;
+      if (error) throw error;
 
-      // Then delete the auth user (this requires admin privileges)
+      // Update local state
+      setProfiles(prev => 
+        prev.map(profile => 
+          profile.id === userId 
+            ? { ...profile, tipo_usuario: newType }
+            : profile
+        )
+      );
+
+      toast.success('Tipo de usuário atualizado com sucesso!');
+    } catch (error: any) {
+      toast.error('Erro ao atualizar tipo de usuário: ' + error.message);
+    }
+  };
+
+  const deleteUser = async (userId: string) => {
+    try {
+      // Delete the auth user (this will cascade to delete the profile via RLS)
       const { error: authError } = await supabase.auth.admin.deleteUser(userId);
       
-      if (authError) {
-        console.warn('Could not delete auth user:', authError);
-        // Continue anyway as the profile was deleted
-      }
+      if (authError) throw authError;
 
       // Update local state
       setProfiles(prev => prev.filter(profile => profile.id !== userId));
@@ -134,6 +147,7 @@ export const useAdminManagement = () => {
     loading,
     fetchAllProfiles,
     updateUserPlan,
+    updateUserType,
     deleteUser,
     createMasterAdmin
   };

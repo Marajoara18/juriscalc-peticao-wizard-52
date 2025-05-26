@@ -1,10 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import { toast } from "sonner";
 import { useNavigate } from 'react-router-dom';
 import { CalculoSalvo } from '@/types/calculoSalvo';
-
-// Constante para limitar o número de cálculos salvos (para todos os usuários)
-const LIMITE_CALCULOS_SALVOS = 3;
+import { useSupabaseCalculos } from './useSupabaseCalculos';
+import { useSupabaseAuth } from './auth/useSupabaseAuth';
 
 export const useCalculosSalvos = (
   resultados: any, 
@@ -13,7 +13,16 @@ export const useCalculosSalvos = (
   onLoadCalculo: (calculo: CalculoSalvo) => void
 ) => {
   const navigate = useNavigate();
-  const [calculosSalvos, setCalculosSalvos] = useState<CalculoSalvo[]>([]);
+  const { user, profile } = useSupabaseAuth();
+  const { 
+    calculosSalvos, 
+    loading, 
+    salvarCalculo, 
+    atualizarCalculo, 
+    excluirCalculo,
+    recarregarCalculos
+  } = useSupabaseCalculos();
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [nomeCalculo, setNomeCalculo] = useState('');
   const [editandoId, setEditandoId] = useState<string | null>(null);
@@ -24,80 +33,25 @@ export const useCalculosSalvos = (
   const [verifyDialogOpen, setVerifyDialogOpen] = useState(false);
   const [selectedCalculoForVerify, setSelectedCalculoForVerify] = useState<CalculoSalvo | null>(null);
 
-  // Função para carregar cálculos salvos do localStorage
-  const carregarCalculosSalvos = () => {
-    console.log('Carregando cálculos salvos do localStorage');
-    const salvos = localStorage.getItem('calculosSalvos');
-    if (salvos) {
-      try {
-        const parsedSalvos = JSON.parse(salvos);
-        console.log('Cálculos carregados:', parsedSalvos.length);
-        setCalculosSalvos(parsedSalvos);
-      } catch (error) {
-        console.error('Erro ao carregar cálculos salvos:', error);
-      }
-    } else {
-      console.log('Nenhum cálculo salvo encontrado no localStorage');
-    }
-  };
-
-  // Função para exportar que permite recarregar os cálculos sob demanda
-  const recarregarCalculosSalvos = () => {
-    carregarCalculosSalvos();
-  };
-
-  // Carregar cálculos salvos quando o componente é montado
-  useEffect(() => {
-    console.log('useCalculosSalvos - Efeito de montagem');
-    carregarCalculosSalvos();
-    
-    // Adicionar um event listener para atualizar os cálculos salvos quando o localStorage mudar
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'calculosSalvos') {
-        console.log('Evento storage: calculosSalvos alterado');
-        carregarCalculosSalvos();
-      }
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    
-    // Criar um intervalo para verificar periodicamente se há novos cálculos
-    const intervalId = setInterval(carregarCalculosSalvos, 2000);
-    
-    // Limpar o event listener e o intervalo quando o componente desmontar
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      clearInterval(intervalId);
-    };
-  }, []);
-
-  // Adicionar um efeito para detectar eventos personalizados de atualização
-  useEffect(() => {
-    const handleCustomEvent = () => {
-      console.log('Evento customizado: calculosSalvosUpdated');
-      carregarCalculosSalvos();
-    };
-
-    window.addEventListener('calculosSalvosUpdated', handleCustomEvent);
-    
-    return () => {
-      window.removeEventListener('calculosSalvosUpdated', handleCustomEvent);
-    };
-  }, []);
+  // Constante para limitar o número de cálculos salvos (apenas para usuários não premium)
+  const LIMITE_CALCULOS_SALVOS = 3;
 
   const salvarCalculos = () => {
+    if (!user) {
+      toast.error('Você precisa estar logado para salvar cálculos.');
+      return;
+    }
+
     if (resultados.verbasRescisorias.total === 0 && Object.values(resultados.adicionais).every(valor => valor === 0)) {
       toast.error('Não há cálculos para salvar. Faça um cálculo primeiro.');
       return;
     }
     
-    // Verificar se o usuário já atingiu o limite de cálculos salvos
-    // Este limite se aplica a todos os usuários, premium ou não
-    const userId = localStorage.getItem('userId') || 'anonymous';
-    const calculosDoUsuario = calculosSalvos.filter(c => c.userId === userId);
+    // Verificar se o usuário atingiu o limite de cálculos salvos (apenas para usuários não premium)
+    const isPremium = profile?.tipo_plano === 'premium' || profile?.tipo_usuario === 'admin_mestre';
     
-    if (calculosDoUsuario.length >= LIMITE_CALCULOS_SALVOS && !editandoId) {
-      toast.error(`Você atingiu o limite de ${LIMITE_CALCULOS_SALVOS} cálculos salvos. Apague algum cálculo para adicionar um novo.`);
+    if (!isPremium && calculosSalvos.length >= LIMITE_CALCULOS_SALVOS && !editandoId) {
+      toast.error(`Você atingiu o limite de ${LIMITE_CALCULOS_SALVOS} cálculos salvos. Apague algum cálculo para adicionar um novo ou faça upgrade para o plano premium.`);
       return;
     }
     
@@ -106,61 +60,65 @@ export const useCalculosSalvos = (
     setDialogOpen(true);
   };
 
-  const handleSalvar = () => {
+  const handleSalvar = async () => {
     if (!nomeCalculo.trim()) {
       toast.error('Digite um nome para o cálculo');
       return;
     }
 
-    const userId = localStorage.getItem('userId') || 'anonymous';
-    const calculosDoUsuario = calculosSalvos.filter(c => c.userId === userId);
+    if (!user) {
+      toast.error('Você precisa estar logado para salvar cálculos.');
+      return;
+    }
+
+    // Verificar novamente o limite (para caso de edições concorrentes) - apenas para usuários não premium
+    const isPremium = profile?.tipo_plano === 'premium' || profile?.tipo_usuario === 'admin_mestre';
     
-    // Verificar novamente o limite (para caso de edições concorrentes)
-    // Este limite se aplica a todos os usuários, premium ou não
-    if (calculosDoUsuario.length >= LIMITE_CALCULOS_SALVOS && !editandoId) {
-      toast.error(`Você atingiu o limite de ${LIMITE_CALCULOS_SALVOS} cálculos salvos. Apague algum cálculo para adicionar um novo.`);
+    if (!isPremium && calculosSalvos.length >= LIMITE_CALCULOS_SALVOS && !editandoId) {
+      toast.error(`Você atingiu o limite de ${LIMITE_CALCULOS_SALVOS} cálculos salvos. Apague algum cálculo para adicionar um novo ou faça upgrade para o plano premium.`);
       setDialogOpen(false);
       return;
     }
     
-    const nomeEscritorio = localStorage.getItem('userName') || undefined;
-    
-    const novoCalculo: CalculoSalvo = {
-      id: editandoId || Date.now().toString(),
-      nome: nomeCalculo,
-      timestamp: new Date().toISOString(),
-      verbasRescisorias: resultados.verbasRescisorias,
-      adicionais: resultados.adicionais,
-      totalGeral: totalGeral,
-      userId: localStorage.getItem('userId') || undefined,
-      nomeEscritorio,
-      dadosContrato: {
-        dataAdmissao: dadosContrato.dataAdmissao,
-        dataDemissao: dadosContrato.dataDemissao,
-        salarioBase: dadosContrato.salarioBase,
-        tipoRescisao: dadosContrato.tipoRescisao,
-        diasTrabalhados: dadosContrato.diasTrabalhados,
-        mesesTrabalhados: dadosContrato.mesesTrabalhados,
-      }
-    };
-
-    let novosCalculos: CalculoSalvo[];
+    const nomeEscritorio = profile?.nome || 'Usuário';
     
     if (editandoId) {
-      novosCalculos = calculosSalvos.map(calc => 
-        calc.id === editandoId ? novoCalculo : calc
-      );
-      toast.success('Cálculo atualizado com sucesso!');
+      // Atualizar cálculo existente
+      await atualizarCalculo(editandoId, {
+        nome: nomeCalculo,
+        verbasRescisorias: resultados.verbasRescisorias,
+        adicionais: resultados.adicionais,
+        totalGeral: totalGeral,
+        nomeEscritorio,
+        dadosContrato: {
+          dataAdmissao: dadosContrato.dataAdmissao,
+          dataDemissao: dadosContrato.dataDemissao,
+          salarioBase: dadosContrato.salarioBase,
+          tipoRescisao: dadosContrato.tipoRescisao,
+          diasTrabalhados: dadosContrato.diasTrabalhados,
+          mesesTrabalhados: dadosContrato.mesesTrabalhados,
+        }
+      });
     } else {
-      novosCalculos = [novoCalculo, ...calculosSalvos];
-      toast.success('Cálculo salvo com sucesso!');
+      // Criar novo cálculo
+      await salvarCalculo({
+        nome: nomeCalculo,
+        timestamp: new Date().toISOString(),
+        verbasRescisorias: resultados.verbasRescisorias,
+        adicionais: resultados.adicionais,
+        totalGeral: totalGeral,
+        userId: user.id,
+        nomeEscritorio,
+        dadosContrato: {
+          dataAdmissao: dadosContrato.dataAdmissao,
+          dataDemissao: dadosContrato.dataDemissao,
+          salarioBase: dadosContrato.salarioBase,
+          tipoRescisao: dadosContrato.tipoRescisao,
+          diasTrabalhados: dadosContrato.diasTrabalhados,
+          mesesTrabalhados: dadosContrato.mesesTrabalhados,
+        }
+      });
     }
-    
-    setCalculosSalvos(novosCalculos);
-    localStorage.setItem('calculosSalvos', JSON.stringify(novosCalculos));
-    
-    // Disparar um evento customizado para notificar outros componentes
-    window.dispatchEvent(new Event('calculosSalvosUpdated'));
     
     setDialogOpen(false);
   };
@@ -176,15 +134,8 @@ export const useCalculosSalvos = (
     toast.success(`Cálculo "${calculo.nome}" reaberto para edição!`);
   };
 
-  const handleApagar = (id: string) => {
-    const novosCalculos = calculosSalvos.filter(calc => calc.id !== id);
-    setCalculosSalvos(novosCalculos);
-    localStorage.setItem('calculosSalvos', JSON.stringify(novosCalculos));
-    
-    // Disparar um evento customizado para notificar outros componentes
-    window.dispatchEvent(new Event('calculosSalvosUpdated'));
-    
-    toast.success('Cálculo removido com sucesso!');
+  const handleApagar = async (id: string) => {
+    await excluirCalculo(id);
   };
 
   const handleUsarCalculo = (calculo: CalculoSalvo) => {
@@ -215,7 +166,7 @@ export const useCalculosSalvos = (
         totalGeral: selectedCalculoForPeticao.totalGeral,
         timestamp: selectedCalculoForPeticao.timestamp,
         nome: selectedCalculoForPeticao.nome,
-        nomeEscritorio: selectedCalculoForPeticao.nomeEscritorio || localStorage.getItem('userName')
+        nomeEscritorio: selectedCalculoForPeticao.nomeEscritorio || profile?.nome || 'Usuário'
       }));
       
       setConfirmDialogOpen(false);
@@ -229,11 +180,12 @@ export const useCalculosSalvos = (
     }
   };
 
-  // Filtrar cálculos do usuário atual
-  const userId = localStorage.getItem('userId');
-  const calculosFiltrados = userId 
-    ? calculosSalvos.filter(calc => !calc.userId || calc.userId === userId)
-    : calculosSalvos;
+  const recarregarCalculosSalvos = () => {
+    recarregarCalculos();
+  };
+
+  // Filtrar cálculos já é feito pelo Supabase com RLS
+  const calculosFiltrados = calculosSalvos;
 
   return {
     calculosFiltrados,
@@ -245,6 +197,7 @@ export const useCalculosSalvos = (
     selectedCalculoForPeticao,
     selectedCalculoForPreview,
     selectedCalculoForVerify,
+    loading,
     salvarCalculos,
     handleSalvar,
     handleEditar,
@@ -260,7 +213,7 @@ export const useCalculosSalvos = (
     setConfirmDialogOpen,
     setPreviewDialogOpen,
     setVerifyDialogOpen,
-    recarregarCalculosSalvos, // Exportando a função para recarregar cálculos
+    recarregarCalculosSalvos,
   };
 };
 

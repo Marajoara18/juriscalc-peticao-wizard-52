@@ -3,7 +3,8 @@ import React from 'react';
 import { CalculoSalvo } from '@/types/calculoSalvo';
 import CalculoItem from './CalculoItem';
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Crown } from "lucide-react";
+import { useSupabaseAuth } from '@/hooks/auth/useSupabaseAuth';
 
 interface CalculosListProps {
   calculosFiltrados: CalculoSalvo[];
@@ -26,19 +27,34 @@ const CalculosList: React.FC<CalculosListProps> = ({
   onVerify,
   onUsePeticao
 }) => {
-  // Constante para o limite máximo de cálculos
+  const { profile } = useSupabaseAuth();
+  
+  // Constante para o limite máximo de cálculos para usuários não premium
   const LIMITE_CALCULOS = 3;
-  const calculosRestantes = Math.max(0, LIMITE_CALCULOS - calculosFiltrados.length);
+  const isPremium = profile?.tipo_plano === 'premium' || profile?.tipo_usuario === 'admin_mestre';
+  const calculosRestantes = isPremium ? 'Ilimitado' : Math.max(0, LIMITE_CALCULOS - calculosFiltrados.length);
 
   return (
     <div>
-      <Alert className="mb-4 bg-blue-50 text-blue-800 border-blue-200">
-        <AlertCircle className="h-4 w-4 text-blue-600" />
+      <Alert className={`mb-4 ${isPremium ? 'bg-yellow-50 text-yellow-800 border-yellow-200' : 'bg-blue-50 text-blue-800 border-blue-200'}`}>
+        <div className="flex items-center">
+          {isPremium && <Crown className="h-4 w-4 text-yellow-600 mr-2" />}
+          <AlertCircle className={`h-4 w-4 ${isPremium ? 'text-yellow-600' : 'text-blue-600'}`} />
+        </div>
         <AlertDescription className="text-sm">
-          Você está utilizando {calculosFiltrados.length} de {LIMITE_CALCULOS} cálculos disponíveis. 
-          {calculosRestantes > 0 
-            ? ` Você ainda pode salvar ${calculosRestantes} cálculo${calculosRestantes !== 1 ? 's' : ''}.` 
-            : ' Você atingiu o limite de cálculos salvos. Para adicionar novos, apague algum existente.'}
+          {isPremium ? (
+            <>
+              <strong>Plano Premium:</strong> Você está utilizando {calculosFiltrados.length} cálculos salvos. 
+              Com o plano premium, você pode salvar quantos cálculos quiser!
+            </>
+          ) : (
+            <>
+              Você está utilizando {calculosFiltrados.length} de {LIMITE_CALCULOS} cálculos disponíveis. 
+              {typeof calculosRestantes === 'number' && calculosRestantes > 0 
+                ? ` Você ainda pode salvar ${calculosRestantes} cálculo${calculosRestantes !== 1 ? 's' : ''}.` 
+                : ' Você atingiu o limite de cálculos salvos. Para adicionar novos, apague algum existente ou faça upgrade para o plano premium.'}
+            </>
+          )}
         </AlertDescription>
       </Alert>
 
