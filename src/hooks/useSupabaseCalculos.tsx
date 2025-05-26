@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from './auth/useSupabaseAuth';
@@ -32,7 +31,7 @@ export const useSupabaseCalculos = () => {
         totalGeral: Number(calculo.total_geral),
         userId: calculo.user_id,
         nomeEscritorio: calculo.nome_escritorio,
-        dadosContrato: calculo.dados_contrato
+        dadosContrato: calculo.dados_contrato as CalculoSalvo['dadosContrato']
       }));
 
       setCalculosSalvos(calculosTransformados);
@@ -77,7 +76,7 @@ export const useSupabaseCalculos = () => {
         totalGeral: Number(data.total_geral),
         userId: data.user_id,
         nomeEscritorio: data.nome_escritorio,
-        dadosContrato: data.dados_contrato
+        dadosContrato: data.dados_contrato as CalculoSalvo['dadosContrato']
       };
 
       setCalculosSalvos(prev => [novoCalculo, ...prev]);
@@ -125,7 +124,7 @@ export const useSupabaseCalculos = () => {
         totalGeral: Number(data.total_geral),
         userId: data.user_id,
         nomeEscritorio: data.nome_escritorio,
-        dadosContrato: data.dados_contrato
+        dadosContrato: data.dados_contrato as CalculoSalvo['dadosContrato']
       };
 
       setCalculosSalvos(prev => 
