@@ -9,6 +9,56 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      calculos_salvos: {
+        Row: {
+          adicionais: Json
+          created_at: string | null
+          dados_contrato: Json | null
+          id: string
+          nome: string
+          nome_escritorio: string | null
+          timestamp: string | null
+          total_geral: number
+          updated_at: string | null
+          user_id: string
+          verbas_rescisorias: Json
+        }
+        Insert: {
+          adicionais: Json
+          created_at?: string | null
+          dados_contrato?: Json | null
+          id?: string
+          nome: string
+          nome_escritorio?: string | null
+          timestamp?: string | null
+          total_geral: number
+          updated_at?: string | null
+          user_id: string
+          verbas_rescisorias: Json
+        }
+        Update: {
+          adicionais?: Json
+          created_at?: string | null
+          dados_contrato?: Json | null
+          id?: string
+          nome?: string
+          nome_escritorio?: string | null
+          timestamp?: string | null
+          total_geral?: number
+          updated_at?: string | null
+          user_id?: string
+          verbas_rescisorias?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calculos_salvos_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
