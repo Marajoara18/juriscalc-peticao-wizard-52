@@ -4,19 +4,31 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import CalculadoraContainer from '@/components/calculadora/CalculadoraContainer';
 import useCalculadora from '@/hooks/useCalculadora';
+import { useSupabaseAuth } from '@/hooks/auth/useSupabaseAuth';
 
 const Calculadora = () => {
   const navigate = useNavigate();
+  const { user, loading } = useSupabaseAuth();
   const { resultados, dadosContrato } = useCalculadora();
   const calculosSalvosRef = useRef<HTMLDivElement>(null);
 
   // Verificar se o usuário está logado
-  React.useEffect(() => {
-    const userId = localStorage.getItem('userId');
-    if (!userId) {
+  useEffect(() => {
+    if (!loading && !user) {
       navigate('/');
     }
-  }, [navigate]);
+  }, [user, loading, navigate]);
+
+  // Show loading while checking authentication
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-juriscalc-navy"></div>
+        </div>
+      </Layout>
+    );
+  }
 
   // Função para rolar até a seção de cálculos salvos
   const scrollToCalculosSalvos = () => {

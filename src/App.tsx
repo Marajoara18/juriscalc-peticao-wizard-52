@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -58,18 +59,17 @@ const App = () => {
               <Route 
                 path="/admin" 
                 element={
-                  <ProtectedRoute requireAuth={true}>
+                  <ProtectedRoute requireAuth={true} requireAdmin={true}>
                     <AdminPanel />
                   </ProtectedRoute>
                 } 
               />
               <Route path="/reset-password" element={<MasterPasswordReset />} />
-              {/* Novas rotas para redefinição de senha */}
               <Route path="/esqueci-senha" element={<PasswordResetRequest />} />
               <Route path="/reset-senha" element={<PasswordReset />} />
-              {/* Redirecionar a página index antiga para o login */}
+              {/* Redirect index to home for authenticated users */}
               <Route path="/index" element={<Navigate to="/home" replace />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              {/* Catch all other routes */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
