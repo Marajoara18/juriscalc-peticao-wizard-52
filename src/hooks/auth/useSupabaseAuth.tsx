@@ -9,8 +9,8 @@ interface Profile {
   id: string;
   nome: string;
   email: string;
-  tipo_usuario: 'usuario_comum' | 'admin_mestre';
-  tipo_plano: 'gratuito' | 'premium';
+  tipo_usuario: 'usuario' | 'admin_mestre';
+  tipo_plano: 'padrao' | 'premium';
   created_at: string;
   updated_at: string;
 }
@@ -40,8 +40,8 @@ export const useSupabaseAuth = () => {
             id: userId,
             nome: user?.email?.split('@')[0] || 'Usuário',
             email: user?.email || '',
-            tipo_usuario: 'usuario_comum' as const,
-            tipo_plano: 'gratuito' as const
+            tipo_usuario: 'usuario' as const,
+            tipo_plano: 'padrao' as const
           };
           
           const { data: createdProfile, error: createError } = await supabase
