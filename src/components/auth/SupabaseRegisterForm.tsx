@@ -48,11 +48,33 @@ const SupabaseRegisterForm = () => {
       
       if (result?.error) {
         console.error('Sign up error:', result.error);
-        toast.error('Erro ao criar conta. Tente novamente.');
+        
+        // Mensagens de erro mais específicas baseadas no código do erro
+        if (result.error.code === 'user_already_exists' || result.error.message === 'User already registered') {
+          toast.error('Este e-mail já está cadastrado. Faça login ou use outro e-mail.');
+        } else if (result.error.message?.includes('weak_password')) {
+          toast.error('A senha é muito fraca. Use uma senha mais forte.');
+        } else if (result.error.message?.includes('invalid_email')) {
+          toast.error('E-mail inválido. Verifique o formato do e-mail.');
+        } else if (result.error.message?.includes('email_address_not_authorized')) {
+          toast.error('Este e-mail não está autorizado para cadastro.');
+        } else {
+          toast.error('Erro ao criar conta: ' + (result.error.message || 'Erro desconhecido'));
+        }
+      } else {
+        // Cadastro bem-sucedido
+        console.log('Account creation successful');
+        toast.success('Conta criada com sucesso! Verifique seu e-mail para confirmar.');
+        
+        // Limpar campos após sucesso
+        setNome('');
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
       }
     } catch (error) {
       console.error('Erro no cadastro:', error);
-      toast.error('Erro inesperado no cadastro');
+      toast.error('Erro inesperado no cadastro. Tente novamente.');
     } finally {
       setIsLoading(false);
     }

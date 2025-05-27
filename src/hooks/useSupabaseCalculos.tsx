@@ -11,8 +11,12 @@ export const useSupabaseCalculos = () => {
   const [loading, setLoading] = useState(false);
 
   const fetchCalculos = async () => {
-    if (!user) return;
+    if (!user) {
+      console.log('fetchCalculos: No user authenticated');
+      return;
+    }
     
+    console.log('fetchCalculos: Starting fetch for user:', user.id);
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -20,7 +24,12 @@ export const useSupabaseCalculos = () => {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('fetchCalculos: Supabase error:', error);
+        throw error;
+      }
+
+      console.log('fetchCalculos: Successfully fetched', data?.length || 0, 'calculations');
 
       // Transform Supabase data to match our CalculoSalvo interface
       const calculosTransformados = data.map(calculo => ({
@@ -37,8 +46,8 @@ export const useSupabaseCalculos = () => {
 
       setCalculosSalvos(calculosTransformados);
     } catch (error: any) {
-      console.error('Erro ao carregar cálculos:', error);
-      toast.error('Erro ao carregar cálculos salvos');
+      console.error('fetchCalculos: Error loading calculations:', error);
+      toast.error('Erro ao carregar cálculos salvos: ' + (error.message || 'Erro desconhecido'));
     } finally {
       setLoading(false);
     }
@@ -46,27 +55,39 @@ export const useSupabaseCalculos = () => {
 
   const salvarCalculo = async (calculo: Omit<CalculoSalvo, 'id'>) => {
     if (!user) {
+      console.error('salvarCalculo: User not authenticated');
       toast.error('Usuário não autenticado');
       return null;
     }
 
+    console.log('salvarCalculo: Starting save process for user:', user.id);
+
     try {
+      const calculoData = {
+        nome: calculo.nome,
+        verbas_rescisorias: calculo.verbasRescisorias,
+        adicionais: calculo.adicionais,
+        total_geral: calculo.totalGeral,
+        user_id: user.id,
+        nome_escritorio: calculo.nomeEscritorio,
+        timestamp: calculo.timestamp,
+        dados_contrato: calculo.dadosContrato
+      };
+
+      console.log('salvarCalculo: Inserting data:', calculoData);
+
       const { data, error } = await supabase
         .from('calculos_salvos')
-        .insert({
-          nome: calculo.nome,
-          verbas_rescisorias: calculo.verbasRescisorias,
-          adicionais: calculo.adicionais,
-          total_geral: calculo.totalGeral,
-          user_id: user.id,
-          nome_escritorio: calculo.nomeEscritorio,
-          timestamp: calculo.timestamp,
-          dados_contrato: calculo.dadosContrato
-        })
+        .insert(calculoData)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('salvarCalculo: Supabase error:', error);
+        throw error;
+      }
+
+      console.log('salvarCalculo: Successfully saved calculation:', data);
 
       const novoCalculo: CalculoSalvo = {
         id: data.id,
@@ -84,17 +105,28 @@ export const useSupabaseCalculos = () => {
       toast.success('Cálculo salvo com sucesso!');
       return novoCalculo;
     } catch (error: any) {
-      console.error('Erro ao salvar cálculo:', error);
-      toast.error('Erro ao salvar cálculo');
+      console.error('salvarCalculo: Error saving calculation:', error);
+      
+      // Mensagens de erro mais específicas
+      if (error.code === 'PGRST301') {
+        toast.error('Erro de permissão ao salvar cálculo. Verifique se você está logado.');
+      } else if (error.code === '23505') {
+        toast.error('Já existe um cálculo com este nome.');
+      } else {
+        toast.error('Erro ao salvar cálculo: ' + (error.message || 'Erro desconhecido'));
+      }
       return null;
     }
   };
 
   const atualizarCalculo = async (id: string, updates: Partial<CalculoSalvo>) => {
     if (!user) {
+      console.error('atualizarCalculo: User not authenticated');
       toast.error('Usuário não autenticado');
       return null;
     }
+
+    console.log('atualizarCalculo: Starting update for calculation:', id);
 
     try {
       const updateData: any = {};
@@ -107,6 +139,8 @@ export const useSupabaseCalculos = () => {
       if (updates.timestamp !== undefined) updateData.timestamp = updates.timestamp;
       if (updates.dadosContrato !== undefined) updateData.dados_contrato = updates.dadosContrato;
 
+      console.log('atualizarCalculo: Update data:', updateData);
+
       const { data, error } = await supabase
         .from('calculos_salvos')
         .update(updateData)
@@ -114,7 +148,12 @@ export const useSupabaseCalculos = () => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('atualizarCalculo: Supabase error:', error);
+        throw error;
+      }
+
+      console.log('atualizarCalculo: Successfully updated calculation:', data);
 
       const calculoAtualizado: CalculoSalvo = {
         id: data.id,
@@ -135,17 +174,20 @@ export const useSupabaseCalculos = () => {
       toast.success('Cálculo atualizado com sucesso!');
       return calculoAtualizado;
     } catch (error: any) {
-      console.error('Erro ao atualizar cálculo:', error);
-      toast.error('Erro ao atualizar cálculo');
+      console.error('atualizarCalculo: Error updating calculation:', error);
+      toast.error('Erro ao atualizar cálculo: ' + (error.message || 'Erro desconhecido'));
       return null;
     }
   };
 
   const excluirCalculo = async (id: string) => {
     if (!user) {
+      console.error('excluirCalculo: User not authenticated');
       toast.error('Usuário não autenticado');
       return false;
     }
+
+    console.log('excluirCalculo: Starting delete for calculation:', id);
 
     try {
       const { error } = await supabase
@@ -153,22 +195,29 @@ export const useSupabaseCalculos = () => {
         .delete()
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('excluirCalculo: Supabase error:', error);
+        throw error;
+      }
+
+      console.log('excluirCalculo: Successfully deleted calculation:', id);
 
       setCalculosSalvos(prev => prev.filter(calc => calc.id !== id));
       toast.success('Cálculo excluído com sucesso!');
       return true;
     } catch (error: any) {
-      console.error('Erro ao excluir cálculo:', error);
-      toast.error('Erro ao excluir cálculo');
+      console.error('excluirCalculo: Error deleting calculation:', error);
+      toast.error('Erro ao excluir cálculo: ' + (error.message || 'Erro desconhecido'));
       return false;
     }
   };
 
   useEffect(() => {
     if (user) {
+      console.log('useSupabaseCalculos: User authenticated, fetching calculations');
       fetchCalculos();
     } else {
+      console.log('useSupabaseCalculos: User not authenticated, clearing calculations');
       setCalculosSalvos([]);
     }
   }, [user]);
