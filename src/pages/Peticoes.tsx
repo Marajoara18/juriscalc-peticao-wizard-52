@@ -13,44 +13,63 @@ const Peticoes = () => {
   const navigate = useNavigate();
   const { user, loading } = useSupabaseAuth();
 
-  // Verificar se o usuário está logado
+  // Verificar se o usuário está logado com logs detalhados
   useEffect(() => {
-    console.log('Peticoes page - Auth state check:', { 
+    console.log('PETICOES: Auth state check started:', { 
       user: !!user, 
-      loading, 
       userId: user?.id,
-      currentPath: window.location.pathname 
+      userEmail: user?.email,
+      loading, 
+      currentPath: window.location.pathname,
+      timestamp: new Date().toISOString()
     });
     
     if (!loading && !user) {
-      console.log('User not authenticated, redirecting to login from Peticoes');
+      console.log('PETICOES: User not authenticated, redirecting to login');
+      console.log('PETICOES: Redirect details:', {
+        from: window.location.pathname,
+        to: '/',
+        reason: 'no_user_authenticated'
+      });
       navigate('/', { replace: true });
     } else if (user) {
-      console.log('User authenticated, allowing access to Peticoes');
+      console.log('PETICOES: User authenticated successfully:', {
+        userId: user.id,
+        email: user.email,
+        accessGranted: true
+      });
+    } else if (loading) {
+      console.log('PETICOES: Still loading auth state, waiting...');
     }
   }, [user, loading, navigate]);
 
   // Show loading while checking authentication
   if (loading) {
-    console.log('Peticoes page - showing loading state');
+    console.log('PETICOES: Showing loading state while checking auth');
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-juriscalc-navy"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-juriscalc-navy mx-auto"></div>
+          <p className="mt-4 text-juriscalc-navy">Verificando autenticação...</p>
+        </div>
       </div>
     );
   }
 
   // If user is not authenticated, show loading (redirect will happen)
   if (!user) {
-    console.log('Peticoes page - no user, showing loading while redirecting');
+    console.log('PETICOES: No user found, showing loading while redirecting');
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-juriscalc-navy"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-juriscalc-navy mx-auto"></div>
+          <p className="mt-4 text-juriscalc-navy">Redirecionando para login...</p>
+        </div>
       </div>
     );
   }
 
-  console.log('Peticoes page - rendering PeticoesManager for authenticated user');
+  console.log('PETICOES: Rendering PeticoesManager for authenticated user:', user.id);
   return <PeticoesManager />;
 };
 

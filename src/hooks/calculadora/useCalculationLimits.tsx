@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { toast } from "sonner";
 import { useSupabaseAuth } from '@/hooks/auth/useSupabaseAuth';
 
-const LIMITE_CALCULOS_GRATUITOS = 3; // Confirmando o limite correto de 3 cálculos
+const LIMITE_CALCULOS_GRATUITOS = 3; // Limite correto de 3 cálculos
 const KEY_CONTADOR_CALCULOS = 'calculosRealizados';
 
 export const useCalculationLimits = () => {
@@ -18,7 +18,7 @@ export const useCalculationLimits = () => {
   // Verificar número de cálculos realizados pelo usuário
   useEffect(() => {
     if (!user) {
-      console.log('useCalculationLimits: No user authenticated');
+      console.log('LIMITS: No user authenticated');
       setPodeCalcular(false);
       return;
     }
@@ -34,32 +34,34 @@ export const useCalculationLimits = () => {
     // Verificar se o usuário é premium
     const isPremium = profile?.tipo_plano === 'premium' || profile?.tipo_usuario === 'admin_mestre';
     
-    console.log('useCalculationLimits: Calculation limits check:', {
+    console.log('LIMITS: Calculation limits check:', {
       userId,
       calculosRealizados,
       isPremium,
       limite: LIMITE_CALCULOS_GRATUITOS,
       userType: profile?.tipo_usuario,
-      planType: profile?.tipo_plano
+      planType: profile?.tipo_plano,
+      remainingCalculations: isPremium ? 'unlimited' : Math.max(0, LIMITE_CALCULOS_GRATUITOS - calculosRealizados)
     });
     
     // Para usuários premium, sempre permitir calcular
     if (isPremium) {
-      console.log('useCalculationLimits: Premium user - unlimited calculations');
+      console.log('LIMITS: Premium user - unlimited calculations');
       setPodeCalcular(true);
       return;
     }
     
     // Para usuários não premium, verificar limite de cálculos
     const podeCalcularNovo = calculosRealizados < LIMITE_CALCULOS_GRATUITOS;
-    console.log('useCalculationLimits: Setting podeCalcular to:', podeCalcularNovo);
+    console.log('LIMITS: Setting podeCalcular to:', podeCalcularNovo, 
+      `(${calculosRealizados}/${LIMITE_CALCULOS_GRATUITOS} used)`);
     setPodeCalcular(podeCalcularNovo);
   }, [user, profile]);
 
   // Função para verificar e incrementar contador de cálculos
   const verificarLimiteCalculos = (originalCalc: () => void) => {
     if (!user) {
-      console.error('verificarLimiteCalculos: No user authenticated');
+      console.error('LIMITS: No user authenticated');
       toast.error('Você precisa estar logado para realizar cálculos');
       return;
     }
@@ -67,11 +69,16 @@ export const useCalculationLimits = () => {
     const userId = user.id;
     const isPremium = profile?.tipo_plano === 'premium' || profile?.tipo_usuario === 'admin_mestre';
     
-    console.log('verificarLimiteCalculos: Checking calculation limits:', { userId, isPremium });
+    console.log('LIMITS: Checking calculation limits before execution:', { 
+      userId, 
+      isPremium,
+      userType: profile?.tipo_usuario,
+      planType: profile?.tipo_plano
+    });
     
     // Para usuários premium, não há limitação
     if (isPremium) {
-      console.log('verificarLimiteCalculos: Premium user - executing calculation without limits');
+      console.log('LIMITS: Premium user - executing calculation without limits');
       return originalCalc();
     }
     
@@ -81,12 +88,12 @@ export const useCalculationLimits = () => {
       ? parseInt(localStorage.getItem(calculosKey) || '0', 10) 
       : 0;
     
-    console.log('verificarLimiteCalculos: Current calculations count:', calculosRealizados, 'of', LIMITE_CALCULOS_GRATUITOS);
+    console.log('LIMITS: Current calculations count:', calculosRealizados, 'of', LIMITE_CALCULOS_GRATUITOS);
     
     // Se atingiu o limite, mostrar modal de assinatura
     if (calculosRealizados >= LIMITE_CALCULOS_GRATUITOS) {
-      console.log('verificarLimiteCalculos: Calculation limit reached');
-      toast.error(`Você atingiu o limite de ${LIMITE_CALCULOS_GRATUITOS} cálculos. Assine o plano premium para continuar.`);
+      console.log('LIMITS: Calculation limit reached - showing subscription modal');
+      toast.error(`Você atingiu o limite de ${LIMITE_CALCULOS_GRATUITOS} cálculos gratuitos. Assine o plano premium para continuar.`);
       setShowSubscriptionModal(true);
       return;
     }
@@ -94,10 +101,12 @@ export const useCalculationLimits = () => {
     // Incrementar contador e salvar
     const novoValor = calculosRealizados + 1;
     localStorage.setItem(calculosKey, novoValor.toString());
-    console.log('verificarLimiteCalculos: Updated calculation count to:', novoValor);
+    console.log('LIMITS: Updated calculation count to:', novoValor, 
+      `(${LIMITE_CALCULOS_GRATUITOS - novoValor} calculations remaining)`);
     
     // Atualizar estado se necessário
     if (novoValor >= LIMITE_CALCULOS_GRATUITOS) {
+      console.log('LIMITS: Limit reached after this calculation');
       setPodeCalcular(false);
     }
     
