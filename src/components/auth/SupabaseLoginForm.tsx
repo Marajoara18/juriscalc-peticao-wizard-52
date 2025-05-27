@@ -15,27 +15,33 @@ const SupabaseLoginForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted with:', { email, password: password ? '***' : 'empty' });
+    console.log('LOGIN_FORM: Form submitted with:', { email, password: password ? '***' : 'empty' });
     
     if (!email || !password) {
+      console.log('LOGIN_FORM: Missing email or password');
       toast.error('Preencha todos os campos');
       return;
     }
 
     if (!email.includes('@')) {
+      console.log('LOGIN_FORM: Invalid email format');
       toast.error('Digite um e-mail válido');
       return;
     }
 
     setIsLoading(true);
-    console.log('Starting sign in process...');
+    console.log('LOGIN_FORM: Starting sign in process for:', email);
     
     try {
       const result = await signIn(email, password);
-      console.log('Sign in result:', result);
+      console.log('LOGIN_FORM: Sign in result received:', { 
+        hasData: !!result?.data, 
+        hasError: !!result?.error,
+        errorMessage: result?.error?.message 
+      });
       
       if (result?.error) {
-        console.error('Sign in error:', result.error);
+        console.error('LOGIN_FORM: Authentication failed:', result.error);
         
         // Mensagens de erro mais específicas
         if (result.error.message === 'Invalid login credentials') {
@@ -47,14 +53,20 @@ const SupabaseLoginForm = () => {
         } else {
           toast.error('Erro ao fazer login: ' + result.error.message);
         }
+      } else if (result?.data) {
+        // Login bem-sucedido - mostrar mensagem de sucesso
+        console.log('LOGIN_FORM: Login successful, user should be redirected automatically');
+        toast.success('Login realizado com sucesso!');
+        // O redirecionamento é feito automaticamente pelo useSupabaseAuth
       } else {
-        // Login bem-sucedido - o redirecionamento é feito no useSupabaseAuth
-        console.log('Login successful, user should be redirected');
+        console.error('LOGIN_FORM: Unexpected result format:', result);
+        toast.error('Erro inesperado no login. Tente novamente.');
       }
     } catch (error) {
-      console.error('Erro no login:', error);
+      console.error('LOGIN_FORM: Unexpected error during login:', error);
       toast.error('Erro inesperado no login. Tente novamente.');
     } finally {
+      console.log('LOGIN_FORM: Setting loading to false');
       setIsLoading(false);
     }
   };
@@ -79,7 +91,7 @@ const SupabaseLoginForm = () => {
               placeholder="seu@email.com"
               value={email}
               onChange={(e) => {
-                console.log('Email changed:', e.target.value);
+                console.log('LOGIN_FORM: Email changed:', e.target.value);
                 setEmail(e.target.value);
               }}
               required
@@ -97,7 +109,7 @@ const SupabaseLoginForm = () => {
               placeholder="Sua senha"
               value={password}
               onChange={(e) => {
-                console.log('Password changed');
+                console.log('LOGIN_FORM: Password changed');
                 setPassword(e.target.value);
               }}
               required

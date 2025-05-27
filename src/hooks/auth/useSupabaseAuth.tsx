@@ -22,7 +22,7 @@ export const useSupabaseAuth = () => {
 
   // Função para buscar o perfil do usuário com controle de cache
   const fetchProfile = useCallback(async (userId: string) => {
-    console.log('Fetching profile for user:', userId);
+    console.log('AUTH: Fetching profile for user:', userId);
     
     try {
       const { data, error } = await supabase
@@ -32,7 +32,7 @@ export const useSupabaseAuth = () => {
         .single();
 
       if (error) {
-        console.error('Error fetching profile:', error);
+        console.error('AUTH: Error fetching profile:', error);
         // Se o perfil não existe, criar um novo
         if (error.code === 'PGRST116') {
           const newProfile = {
@@ -50,45 +50,49 @@ export const useSupabaseAuth = () => {
             .single();
             
           if (createError) {
-            console.error('Error creating profile:', createError);
+            console.error('AUTH: Error creating profile:', createError);
             return;
           }
           
+          console.log('AUTH: Profile created successfully:', createdProfile);
           setProfile(createdProfile);
           return;
         }
         return;
       }
 
+      console.log('AUTH: Profile fetched successfully:', data);
       setProfile(data);
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error('AUTH: Error fetching profile:', error);
     }
   }, [user?.email]);
 
   // Função para verificar a sessão atual
   const checkSession = useCallback(async () => {
     try {
+      console.log('AUTH: Checking current session...');
       const { data: { session }, error } = await supabase.auth.getSession();
       
       if (error) {
-        console.error('Error getting session:', error);
+        console.error('AUTH: Error getting session:', error);
         setLoading(false);
         return;
       }
 
       if (session?.user) {
-        console.log('Initial session check:', session.user.id);
+        console.log('AUTH: Session found for user:', session.user.id);
         setUser(session.user);
         await fetchProfile(session.user.id);
       } else {
+        console.log('AUTH: No active session found');
         setUser(null);
         setProfile(null);
       }
       
       setLoading(false);
     } catch (error) {
-      console.error('Error in checkSession:', error);
+      console.error('AUTH: Error in checkSession:', error);
       setLoading(false);
     }
   }, [fetchProfile]);
@@ -100,12 +104,26 @@ export const useSupabaseAuth = () => {
     // Escutar mudanças na autenticação
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.id);
+        console.log('AUTH: Auth state changed:', event, session?.user?.id);
         
-        if (session?.user) {
+        if (event === 'SIGNED_IN' && session?.user) {
+          console.log('AUTH: User signed in, setting user and fetching profile');
+          setUser(session.user);
+          await fetchProfile(session.user.id);
+          
+          // Redirecionamento imediato após login bem-sucedido
+          console.log('AUTH: Redirecting to /home after successful login');
+          navigate('/home', { replace: true });
+        } else if (event === 'SIGNED_OUT') {
+          console.log('AUTH: User signed out, clearing state');
+          setUser(null);
+          setProfile(null);
+        } else if (session?.user) {
+          console.log('AUTH: Session updated, setting user');
           setUser(session.user);
           await fetchProfile(session.user.id);
         } else {
+          console.log('AUTH: No session, clearing state');
           setUser(null);
           setProfile(null);
         }
@@ -115,45 +133,44 @@ export const useSupabaseAuth = () => {
     );
 
     return () => subscription.unsubscribe();
-  }, [checkSession, fetchProfile]);
+  }, [checkSession, fetchProfile, navigate]);
 
   const signIn = async (email: string, password: string) => {
     try {
-      console.log('SignIn attempt for:', email);
-      setLoading(true);
+      console.log('AUTH: SignIn attempt for:', email);
       
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      console.log('SignIn response:', { data: !!data, error: error?.message });
+      console.log('AUTH: SignIn response:', { 
+        hasUser: !!data.user, 
+        hasSession: !!data.session,
+        error: error?.message 
+      });
 
       if (error) {
-        console.error('SignIn error details:', error);
-        toast.error('Erro ao fazer login: ' + error.message);
-        setLoading(false);
+        console.error('AUTH: SignIn error details:', error);
         return { error };
       }
 
-      if (data.user) {
-        console.log('SignIn successful, redirecting to /home');
-        toast.success('Login realizado com sucesso!');
-        navigate('/home');
+      if (data.user && data.session) {
+        console.log('AUTH: SignIn successful for user:', data.user.id);
+        // O redirecionamento será feito pelo onAuthStateChange
+        return { data };
       }
       
       return { data };
     } catch (error) {
-      console.error('Erro inesperado no login:', error);
-      toast.error('Erro inesperado no login');
-      setLoading(false);
+      console.error('AUTH: Unexpected error in signIn:', error);
       return { error };
     }
   };
 
   const signUp = async (email: string, password: string, nome: string) => {
     try {
-      console.log('SignUp attempt for:', email);
+      console.log('AUTH: SignUp attempt for:', email);
       setLoading(true);
       
       const { data, error } = await supabase.auth.signUp({
@@ -166,20 +183,18 @@ export const useSupabaseAuth = () => {
         }
       });
 
-      console.log('SignUp response:', { data: !!data, error: error?.message });
+      console.log('AUTH: SignUp response:', { data: !!data, error: error?.message });
 
       if (error) {
-        console.error('SignUp error details:', error);
-        toast.error('Erro ao criar conta: ' + error.message);
+        console.error('AUTH: SignUp error details:', error);
         setLoading(false);
         return { error };
       }
 
-      toast.success('Conta criada com sucesso! Verifique seu email para confirmar.');
+      setLoading(false);
       return { data };
     } catch (error) {
-      console.error('Erro inesperado no registro:', error);
-      toast.error('Erro inesperado no registro');
+      console.error('AUTH: Unexpected error in signUp:', error);
       setLoading(false);
       return { error };
     }
@@ -199,7 +214,7 @@ export const useSupabaseAuth = () => {
       toast.success('Logout realizado com sucesso!');
       navigate('/');
     } catch (error) {
-      console.error('Erro no logout:', error);
+      console.error('AUTH: Erro no logout:', error);
       toast.error('Erro inesperado no logout');
     }
   };
@@ -218,7 +233,7 @@ export const useSupabaseAuth = () => {
       toast.success('Email de recuperação enviado!');
       return { data: 'success' };
     } catch (error) {
-      console.error('Erro na recuperação de senha:', error);
+      console.error('AUTH: Erro na recuperação de senha:', error);
       toast.error('Erro inesperado na recuperação de senha');
       return { error };
     }
@@ -238,7 +253,7 @@ export const useSupabaseAuth = () => {
       toast.success('Senha atualizada com sucesso!');
       return { data: 'success' };
     } catch (error) {
-      console.error('Erro ao atualizar senha:', error);
+      console.error('AUTH: Erro ao atualizar senha:', error);
       toast.error('Erro inesperado ao atualizar senha');
       return { error };
     }
