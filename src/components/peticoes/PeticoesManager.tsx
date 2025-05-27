@@ -12,13 +12,27 @@ const PeticoesContent = () => {
   const location = useLocation();
   
   useEffect(() => {
+    console.log('PETICOES_MANAGER: Verificando localização e estado inicial:', {
+      currentPath: location.pathname,
+      currentView: view,
+      locationState: location.state
+    });
+
+    // Se estamos na rota /minha-conta, definir a view como 'user'
+    if (location.pathname === '/minha-conta') {
+      console.log('PETICOES_MANAGER: Definindo view como user para rota /minha-conta');
+      setView('user');
+    }
     // Check if we have an initial view set in location state
-    if (location.state && location.state.initialView) {
+    else if (location.state && location.state.initialView) {
+      console.log('PETICOES_MANAGER: Definindo view inicial do state:', location.state.initialView);
       setView(location.state.initialView);
       // Clean up the location state
       window.history.replaceState({}, document.title);
     }
   }, [location, setView]);
+  
+  console.log('PETICOES_MANAGER: Renderizando view:', view);
   
   if (view === 'user') {
     return <UserAccountView />;
@@ -34,6 +48,7 @@ const PeticoesContent = () => {
 
 // This is the main component that wraps everything with the context provider
 const PeticoesManager = () => {
+  console.log('PETICOES_MANAGER: Inicializando PeticoesManager');
   return (
     <PeticoesProvider>
       <PeticoesContent />

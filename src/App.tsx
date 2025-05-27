@@ -62,6 +62,16 @@ const App = () => {
                 } 
               />
               
+              {/* Rota dedicada para Minha Conta */}
+              <Route 
+                path="/minha-conta" 
+                element={
+                  <ProtectedRoute requireAuth={true}>
+                    <Peticoes />
+                  </ProtectedRoute>
+                } 
+              />
+              
               {/* Admin routes - require authentication and admin role */}
               <Route 
                 path="/admin" 
