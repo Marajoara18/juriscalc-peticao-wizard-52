@@ -12,10 +12,9 @@ const PeticoesContent = () => {
   const location = useLocation();
   
   useEffect(() => {
-    console.log('PETICOES_MANAGER: Verificando localização e estado inicial:', {
+    console.log('PETICOES_MANAGER: Verificando localização:', {
       currentPath: location.pathname,
-      currentView: view,
-      locationState: location.state
+      currentView: view
     });
 
     // Se estamos na rota /minha-conta, definir a view como 'user'

@@ -7,7 +7,7 @@ import FeaturesSection from '@/components/home/FeaturesSection';
 import CTASection from '@/components/home/CTASection';
 
 const Index = () => {
-  console.log('INDEX: Renderizando conteúdo principal da home');
+  console.log('INDEX: Renderizando página home');
   return (
     <Layout>
       <HeroSection />

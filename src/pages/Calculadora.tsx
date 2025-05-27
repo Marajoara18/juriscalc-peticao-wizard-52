@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import Layout from '@/components/Layout';
 import CalculadoraContainer from '@/components/calculadora/CalculadoraContainer';
 import useCalculadora from '@/hooks/useCalculadora';
@@ -15,23 +15,7 @@ const Calculadora = () => {
     }
   };
 
-  // Forçar atualização da lista de cálculos salvos ao montar o componente e periodicamente
-  useEffect(() => {
-    // Carregar cálculos salvos imediatamente ao montar o componente
-    window.dispatchEvent(new Event('calculosSalvosUpdated'));
-    
-    // Log para debug
-    console.log('CALCULADORA: Componente montado, disparando evento calculosSalvosUpdated');
-    
-    // Configurar intervalo para verificar se há novos cálculos
-    const intervalId = setInterval(() => {
-      window.dispatchEvent(new Event('calculosSalvosUpdated'));
-    }, 2000);
-    
-    return () => clearInterval(intervalId);
-  }, []);
-
-  console.log('CALCULADORA: Renderizando componente principal');
+  console.log('CALCULADORA: Renderizando página da calculadora');
   return (
     <Layout>
       <div className="container mx-auto py-10 px-4">
