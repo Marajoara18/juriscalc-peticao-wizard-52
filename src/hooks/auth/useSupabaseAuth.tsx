@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -120,23 +119,32 @@ export const useSupabaseAuth = () => {
 
   const signIn = async (email: string, password: string) => {
     try {
+      console.log('SignIn attempt for:', email);
       setLoading(true);
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
+      console.log('SignIn response:', { data: !!data, error: error?.message });
+
       if (error) {
+        console.error('SignIn error details:', error);
         toast.error('Erro ao fazer login: ' + error.message);
         setLoading(false);
         return { error };
       }
 
-      toast.success('Login realizado com sucesso!');
-      navigate('/home');
+      if (data.user) {
+        console.log('SignIn successful, redirecting to /home');
+        toast.success('Login realizado com sucesso!');
+        navigate('/home');
+      }
+      
       return { data };
     } catch (error) {
-      console.error('Erro no login:', error);
+      console.error('Erro inesperado no login:', error);
       toast.error('Erro inesperado no login');
       setLoading(false);
       return { error };
@@ -145,7 +153,9 @@ export const useSupabaseAuth = () => {
 
   const signUp = async (email: string, password: string, nome: string) => {
     try {
+      console.log('SignUp attempt for:', email);
       setLoading(true);
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -156,7 +166,10 @@ export const useSupabaseAuth = () => {
         }
       });
 
+      console.log('SignUp response:', { data: !!data, error: error?.message });
+
       if (error) {
+        console.error('SignUp error details:', error);
         toast.error('Erro ao criar conta: ' + error.message);
         setLoading(false);
         return { error };
@@ -165,7 +178,7 @@ export const useSupabaseAuth = () => {
       toast.success('Conta criada com sucesso! Verifique seu email para confirmar.');
       return { data };
     } catch (error) {
-      console.error('Erro no registro:', error);
+      console.error('Erro inesperado no registro:', error);
       toast.error('Erro inesperado no registro');
       setLoading(false);
       return { error };

@@ -21,7 +21,10 @@ const Calculadora = () => {
 
   // Verificar se o usuário está logado - APÓS todos os hooks
   useEffect(() => {
+    console.log('Calculadora page - Auth state:', { user: !!user, loading });
+    
     if (!loading && !user) {
+      console.log('User not authenticated, redirecting to login');
       navigate('/');
     }
   }, [user, loading, navigate]);
@@ -44,6 +47,7 @@ const Calculadora = () => {
 
   // Show loading while checking authentication
   if (loading) {
+    console.log('Calculadora page - showing loading state');
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-screen">
@@ -53,8 +57,9 @@ const Calculadora = () => {
     );
   }
 
-  // Redirect will be handled by the useEffect above
+  // If user is not authenticated, show loading (redirect will happen)
   if (!user) {
+    console.log('Calculadora page - no user, showing loading');
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-screen">
@@ -64,6 +69,7 @@ const Calculadora = () => {
     );
   }
 
+  console.log('Calculadora page - rendering main content');
   return (
     <Layout>
       <div className="container mx-auto py-10 px-4">

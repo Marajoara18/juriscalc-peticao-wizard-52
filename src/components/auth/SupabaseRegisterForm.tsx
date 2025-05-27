@@ -17,9 +17,15 @@ const SupabaseRegisterForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Register form submitted with:', { nome, email, password: password ? '***' : 'empty' });
     
     if (!nome || !email || !password || !confirmPassword) {
       toast.error('Preencha todos os campos');
+      return;
+    }
+
+    if (!email.includes('@')) {
+      toast.error('Digite um e-mail válido');
       return;
     }
     
@@ -34,15 +40,25 @@ const SupabaseRegisterForm = () => {
     }
 
     setIsLoading(true);
+    console.log('Starting sign up process...');
     
     try {
-      await signUp(email, password, nome);
+      const result = await signUp(email, password, nome);
+      console.log('Sign up result:', result);
+      
+      if (result?.error) {
+        console.error('Sign up error:', result.error);
+        toast.error('Erro ao criar conta. Tente novamente.');
+      }
     } catch (error) {
       console.error('Erro no cadastro:', error);
+      toast.error('Erro inesperado no cadastro');
     } finally {
       setIsLoading(false);
     }
   };
+
+  const isFormValid = nome && email && password && confirmPassword && password.length >= 6;
 
   return (
     <Card>
@@ -63,7 +79,10 @@ const SupabaseRegisterForm = () => {
               type="text"
               placeholder="Seu nome completo"
               value={nome}
-              onChange={(e) => setNome(e.target.value)}
+              onChange={(e) => {
+                console.log('Nome changed:', e.target.value);
+                setNome(e.target.value);
+              }}
               required
               disabled={isLoading}
             />
@@ -77,7 +96,10 @@ const SupabaseRegisterForm = () => {
               type="email"
               placeholder="seu@email.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                console.log('Email changed:', e.target.value);
+                setEmail(e.target.value);
+              }}
               required
               disabled={isLoading}
             />
@@ -91,7 +113,10 @@ const SupabaseRegisterForm = () => {
               type="password"
               placeholder="Crie uma senha"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                console.log('Password changed');
+                setPassword(e.target.value);
+              }}
               required
               disabled={isLoading}
               minLength={6}
@@ -106,7 +131,10 @@ const SupabaseRegisterForm = () => {
               type="password"
               placeholder="Confirme sua senha"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) => {
+                console.log('Confirm password changed');
+                setConfirmPassword(e.target.value);
+              }}
               required
               disabled={isLoading}
               minLength={6}
@@ -117,7 +145,11 @@ const SupabaseRegisterForm = () => {
           <Button 
             type="submit" 
             className="w-full bg-juriscalc-gold text-juriscalc-navy hover:bg-opacity-90"
-            disabled={isLoading}
+            disabled={isLoading || !isFormValid}
+            onClick={(e) => {
+              console.log('Register button clicked');
+              // Form onSubmit will handle the logic
+            }}
           >
             <UserPlus className="mr-2 h-4 w-4" />
             {isLoading ? 'Cadastrando...' : 'Cadastrar'}

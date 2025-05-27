@@ -15,18 +15,32 @@ const SupabaseLoginForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Form submitted with:', { email, password: password ? '***' : 'empty' });
     
     if (!email || !password) {
       toast.error('Preencha todos os campos');
       return;
     }
 
+    if (!email.includes('@')) {
+      toast.error('Digite um e-mail válido');
+      return;
+    }
+
     setIsLoading(true);
+    console.log('Starting sign in process...');
     
     try {
-      await signIn(email, password);
+      const result = await signIn(email, password);
+      console.log('Sign in result:', result);
+      
+      if (result?.error) {
+        console.error('Sign in error:', result.error);
+        toast.error('Erro ao fazer login. Verifique suas credenciais.');
+      }
     } catch (error) {
       console.error('Erro no login:', error);
+      toast.error('Erro inesperado no login');
     } finally {
       setIsLoading(false);
     }
@@ -51,7 +65,10 @@ const SupabaseLoginForm = () => {
               type="email"
               placeholder="seu@email.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                console.log('Email changed:', e.target.value);
+                setEmail(e.target.value);
+              }}
               required
               className="bg-white/80"
               disabled={isLoading}
@@ -66,7 +83,10 @@ const SupabaseLoginForm = () => {
               type="password"
               placeholder="Sua senha"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                console.log('Password changed');
+                setPassword(e.target.value);
+              }}
               required
               className="bg-white/80"
               disabled={isLoading}
@@ -77,7 +97,11 @@ const SupabaseLoginForm = () => {
           <Button 
             type="submit" 
             className="w-full bg-juriscalc-navy hover:bg-opacity-90"
-            disabled={isLoading}
+            disabled={isLoading || !email || !password}
+            onClick={(e) => {
+              console.log('Button clicked');
+              // Form onSubmit will handle the logic
+            }}
           >
             <LogIn className="mr-2 h-4 w-4" />
             {isLoading ? 'Entrando...' : 'Entrar'}
