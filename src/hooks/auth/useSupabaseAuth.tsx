@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,7 +20,7 @@ export const useSupabaseAuth = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Função para buscar o perfil do usuário com controle de cache
+  // Função para buscar o perfil do usuário com debounce
   const fetchProfile = useCallback(async (userId: string) => {
     console.log('AUTH: Fetching profile for user:', userId);
     
@@ -69,7 +68,7 @@ export const useSupabaseAuth = () => {
     }
   }, [user?.email]);
 
-  // Função para verificar a sessão atual
+  // Função para verificar a sessão atual (simplificada)
   const checkSession = useCallback(async () => {
     try {
       console.log('AUTH: Checking current session...');
@@ -112,17 +111,16 @@ export const useSupabaseAuth = () => {
           setUser(session.user);
           await fetchProfile(session.user.id);
           
-          // Redirecionamento mais robusto após login bem-sucedido
+          // Redirecionamento simplificado
           console.log('AUTH: Redirecting to /home after successful login');
-          const currentPath = window.location.pathname;
-          if (currentPath === '/' || currentPath === '/login') {
+          setTimeout(() => {
             try {
               navigate('/home', { replace: true });
             } catch (navError) {
               console.error('AUTH: Navigation error, using window.location:', navError);
               window.location.href = '/home';
             }
-          }
+          }, 100);
         } else if (event === 'SIGNED_OUT') {
           console.log('AUTH: User signed out, clearing state');
           setUser(null);
@@ -148,10 +146,6 @@ export const useSupabaseAuth = () => {
     try {
       console.log('AUTH: SignIn attempt for:', email);
       
-      // Verificar conexão com Supabase antes de tentar login
-      const { data: healthCheck } = await supabase.from('profiles').select('count').limit(1);
-      console.log('AUTH: Supabase connection check:', !!healthCheck);
-      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -170,7 +164,6 @@ export const useSupabaseAuth = () => {
 
       if (data.user && data.session) {
         console.log('AUTH: SignIn successful for user:', data.user.id);
-        // O redirecionamento será feito pelo onAuthStateChange
         return { data };
       }
       
