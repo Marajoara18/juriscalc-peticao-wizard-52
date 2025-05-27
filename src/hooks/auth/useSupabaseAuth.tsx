@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -111,9 +112,17 @@ export const useSupabaseAuth = () => {
           setUser(session.user);
           await fetchProfile(session.user.id);
           
-          // Redirecionamento imediato após login bem-sucedido
+          // Redirecionamento mais robusto após login bem-sucedido
           console.log('AUTH: Redirecting to /home after successful login');
-          navigate('/home', { replace: true });
+          const currentPath = window.location.pathname;
+          if (currentPath === '/' || currentPath === '/login') {
+            try {
+              navigate('/home', { replace: true });
+            } catch (navError) {
+              console.error('AUTH: Navigation error, using window.location:', navError);
+              window.location.href = '/home';
+            }
+          }
         } else if (event === 'SIGNED_OUT') {
           console.log('AUTH: User signed out, clearing state');
           setUser(null);
@@ -138,6 +147,10 @@ export const useSupabaseAuth = () => {
   const signIn = async (email: string, password: string) => {
     try {
       console.log('AUTH: SignIn attempt for:', email);
+      
+      // Verificar conexão com Supabase antes de tentar login
+      const { data: healthCheck } = await supabase.from('profiles').select('count').limit(1);
+      console.log('AUTH: Supabase connection check:', !!healthCheck);
       
       const { data, error } = await supabase.auth.signInWithPassword({
         email,

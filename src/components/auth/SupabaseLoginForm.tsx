@@ -33,7 +33,16 @@ const SupabaseLoginForm = () => {
     console.log('LOGIN_FORM: Starting sign in process for:', email);
     
     try {
-      const result = await signIn(email, password);
+      // Adicionar timeout para evitar que o processo fique travado
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout')), 15000)
+      );
+      
+      const result = await Promise.race([
+        signIn(email, password),
+        timeoutPromise
+      ]);
+      
       console.log('LOGIN_FORM: Sign in result received:', { 
         hasData: !!result?.data, 
         hasError: !!result?.error,
@@ -53,18 +62,28 @@ const SupabaseLoginForm = () => {
         } else {
           toast.error('Erro ao fazer login: ' + result.error.message);
         }
-      } else if (result?.data) {
-        // Login bem-sucedido - mostrar mensagem de sucesso
-        console.log('LOGIN_FORM: Login successful, user should be redirected automatically');
+      } else if (result?.data?.user) {
+        console.log('LOGIN_FORM: Login successful, user authenticated:', result.data.user.id);
         toast.success('Login realizado com sucesso!');
-        // O redirecionamento é feito automaticamente pelo useSupabaseAuth
+        
+        // Forçar redirecionamento se não acontecer automaticamente
+        setTimeout(() => {
+          if (window.location.pathname === '/') {
+            console.log('LOGIN_FORM: Forcing redirect to /home');
+            window.location.href = '/home';
+          }
+        }, 2000);
       } else {
         console.error('LOGIN_FORM: Unexpected result format:', result);
         toast.error('Erro inesperado no login. Tente novamente.');
       }
     } catch (error) {
       console.error('LOGIN_FORM: Unexpected error during login:', error);
-      toast.error('Erro inesperado no login. Tente novamente.');
+      if (error.message === 'Timeout') {
+        toast.error('Timeout na autenticação. Verifique sua conexão e tente novamente.');
+      } else {
+        toast.error('Erro inesperado no login. Tente novamente.');
+      }
     } finally {
       console.log('LOGIN_FORM: Setting loading to false');
       setIsLoading(false);
