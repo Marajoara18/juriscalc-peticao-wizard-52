@@ -5,20 +5,31 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { LogIn } from 'lucide-react';
 import { useSupabaseAuth } from '@/hooks/auth/useSupabaseAuth';
+import { toast } from 'sonner';
 
 const SupabaseLoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { signIn } = useSupabaseAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     
-    await signIn(email, password);
+    if (!email || !password) {
+      toast.error('Preencha todos os campos');
+      return;
+    }
+
+    setIsLoading(true);
     
-    setLoading(false);
+    try {
+      await signIn(email, password);
+    } catch (error) {
+      console.error('Erro no login:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -43,7 +54,7 @@ const SupabaseLoginForm = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
               className="bg-white/80"
-              disabled={loading}
+              disabled={isLoading}
             />
           </div>
           <div className="space-y-2">
@@ -58,7 +69,7 @@ const SupabaseLoginForm = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               className="bg-white/80"
-              disabled={loading}
+              disabled={isLoading}
             />
           </div>
         </CardContent>
@@ -66,10 +77,10 @@ const SupabaseLoginForm = () => {
           <Button 
             type="submit" 
             className="w-full bg-juriscalc-navy hover:bg-opacity-90"
-            disabled={loading}
+            disabled={isLoading}
           >
             <LogIn className="mr-2 h-4 w-4" />
-            {loading ? 'Entrando...' : 'Entrar'}
+            {isLoading ? 'Entrando...' : 'Entrar'}
           </Button>
         </CardFooter>
       </form>
