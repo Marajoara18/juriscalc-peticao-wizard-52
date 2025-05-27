@@ -45,7 +45,7 @@ const SaveCalculoDialog: React.FC<SaveCalculoDialogProps> = ({
               </div>
               <div className="ml-3">
                 <p className="text-yellow-700">
-                  Atenção: Você pode salvar no máximo 3 cálculos. Para adicionar novos, você precisará apagar cálculos existentes.
+                  Atenção: Você pode salvar no máximo 3 cálculos. Para adicionar novos, você precisará apagar cálculos existentes ou fazer upgrade para o plano premium.
                 </p>
               </div>
             </div>

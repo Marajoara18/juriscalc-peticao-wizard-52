@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from "sonner";
 
-const LIMITE_CALCULOS_GRATUITOS = 3;
+const LIMITE_CALCULOS_GRATUITOS = 3; // Corrigido de 2 para 3
 const KEY_CONTADOR_CALCULOS = 'calculosRealizados';
 
 export const useCalculationLimits = () => {

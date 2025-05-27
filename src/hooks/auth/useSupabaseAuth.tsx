@@ -1,68 +1,31 @@
 
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
+import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import type { User, Session } from '@supabase/supabase-js';
+import { useNavigate } from 'react-router-dom';
 
 interface Profile {
   id: string;
   nome: string;
   email: string;
-  tipo_plano: 'padrao' | 'premium';
-  tipo_usuario: 'usuario' | 'admin_mestre';
-  avatar_url?: string;
+  tipo_usuario: 'usuario_comum' | 'admin_mestre';
+  tipo_plano: 'gratuito' | 'premium';
   created_at: string;
   updated_at: string;
 }
 
 export const useSupabaseAuth = () => {
-  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.id);
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          // Use setTimeout to defer the profile fetch and avoid potential recursion
-          setTimeout(() => {
-            fetchUserProfile(session.user.id);
-          }, 0);
-        } else {
-          setProfile(null);
-        }
-        
-        setLoading(false);
-      }
-    );
-
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Initial session check:', session?.user?.id);
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        fetchUserProfile(session.user.id);
-      }
-      
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const fetchUserProfile = async (userId: string) => {
+  // Função para buscar o perfil do usuário com controle de cache
+  const fetchProfile = useCallback(async (userId: string) => {
+    console.log('Fetching profile for user:', userId);
+    
     try {
-      console.log('Fetching profile for user:', userId);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -71,136 +34,217 @@ export const useSupabaseAuth = () => {
 
       if (error) {
         console.error('Error fetching profile:', error);
+        // Se o perfil não existe, criar um novo
+        if (error.code === 'PGRST116') {
+          const newProfile = {
+            id: userId,
+            nome: user?.email?.split('@')[0] || 'Usuário',
+            email: user?.email || '',
+            tipo_usuario: 'usuario_comum' as const,
+            tipo_plano: 'gratuito' as const
+          };
+          
+          const { data: createdProfile, error: createError } = await supabase
+            .from('profiles')
+            .insert(newProfile)
+            .select()
+            .single();
+            
+          if (createError) {
+            console.error('Error creating profile:', createError);
+            return;
+          }
+          
+          setProfile(createdProfile);
+          return;
+        }
         return;
       }
-      
-      console.log('Profile fetched successfully:', data);
-      
-      // Type assertion to ensure data matches our interface
-      const typedProfile = {
-        ...data,
-        tipo_plano: data.tipo_plano as 'padrao' | 'premium',
-        tipo_usuario: data.tipo_usuario as 'usuario' | 'admin_mestre'
-      };
-      
-      setProfile(typedProfile);
+
+      setProfile(data);
     } catch (error) {
       console.error('Error fetching profile:', error);
+    }
+  }, [user?.email]);
+
+  // Função para verificar a sessão atual
+  const checkSession = useCallback(async () => {
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (error) {
+        console.error('Error getting session:', error);
+        setLoading(false);
+        return;
+      }
+
+      if (session?.user) {
+        console.log('Initial session check:', session.user.id);
+        setUser(session.user);
+        await fetchProfile(session.user.id);
+      } else {
+        setUser(null);
+        setProfile(null);
+      }
+      
+      setLoading(false);
+    } catch (error) {
+      console.error('Error in checkSession:', error);
+      setLoading(false);
+    }
+  }, [fetchProfile]);
+
+  useEffect(() => {
+    // Verificar sessão inicial
+    checkSession();
+
+    // Escutar mudanças na autenticação
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.id);
+        
+        if (session?.user) {
+          setUser(session.user);
+          await fetchProfile(session.user.id);
+        } else {
+          setUser(null);
+          setProfile(null);
+        }
+        
+        setLoading(false);
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, [checkSession, fetchProfile]);
+
+  const signIn = async (email: string, password: string) => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        toast.error('Erro ao fazer login: ' + error.message);
+        setLoading(false);
+        return { error };
+      }
+
+      toast.success('Login realizado com sucesso!');
+      navigate('/home');
+      return { data };
+    } catch (error) {
+      console.error('Erro no login:', error);
+      toast.error('Erro inesperado no login');
+      setLoading(false);
+      return { error };
     }
   };
 
   const signUp = async (email: string, password: string, nome: string) => {
     try {
+      setLoading(true);
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
-            nome: nome
+            nome: nome,
           }
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        toast.error('Erro ao criar conta: ' + error.message);
+        setLoading(false);
+        return { error };
+      }
 
-      toast.success('Cadastro realizado com sucesso! Verifique seu email para confirmar a conta.');
-      return { data, error: null };
-    } catch (error: any) {
-      toast.error(error.message || 'Erro ao realizar cadastro');
-      return { data: null, error };
-    }
-  };
-
-  const signIn = async (email: string, password: string) => {
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if (error) throw error;
-
-      toast.success('Login realizado com sucesso!');
-      navigate('/home');
-      return { data, error: null };
-    } catch (error: any) {
-      toast.error(error.message || 'Erro ao fazer login');
-      return { data: null, error };
+      toast.success('Conta criada com sucesso! Verifique seu email para confirmar.');
+      return { data };
+    } catch (error) {
+      console.error('Erro no registro:', error);
+      toast.error('Erro inesperado no registro');
+      setLoading(false);
+      return { error };
     }
   };
 
   const signOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-
-      setUser(null);
-      setSession(null);
-      setProfile(null);
       
+      if (error) {
+        toast.error('Erro ao fazer logout');
+        return;
+      }
+      
+      setUser(null);
+      setProfile(null);
       toast.success('Logout realizado com sucesso!');
       navigate('/');
-    } catch (error: any) {
-      toast.error(error.message || 'Erro ao fazer logout');
+    } catch (error) {
+      console.error('Erro no logout:', error);
+      toast.error('Erro inesperado no logout');
     }
   };
 
   const resetPassword = async (email: string) => {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-senha`
+        redirectTo: `${window.location.origin}/reset-senha`,
       });
 
-      if (error) throw error;
+      if (error) {
+        toast.error('Erro ao enviar email de recuperação: ' + error.message);
+        return { error };
+      }
 
-      toast.success('Email de redefinição enviado! Verifique sua caixa de entrada.');
-      return { error: null };
-    } catch (error: any) {
-      toast.error(error.message || 'Erro ao enviar email de redefinição');
+      toast.success('Email de recuperação enviado!');
+      return { data: 'success' };
+    } catch (error) {
+      console.error('Erro na recuperação de senha:', error);
+      toast.error('Erro inesperado na recuperação de senha');
       return { error };
     }
   };
 
-  const updateProfile = async (updates: Partial<Profile>) => {
-    if (!user) return { error: 'Usuário não autenticado' };
-
+  const updatePassword = async (newPassword: string) => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .update(updates)
-        .eq('id', user.id)
-        .select()
-        .single();
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
 
-      if (error) throw error;
+      if (error) {
+        toast.error('Erro ao atualizar senha: ' + error.message);
+        return { error };
+      }
 
-      // Type assertion to ensure data matches our interface
-      const typedProfile = {
-        ...data,
-        tipo_plano: data.tipo_plano as 'padrao' | 'premium',
-        tipo_usuario: data.tipo_usuario as 'usuario' | 'admin_mestre'
-      };
-
-      setProfile(typedProfile);
-      toast.success('Perfil atualizado com sucesso!');
-      return { data: typedProfile, error: null };
-    } catch (error: any) {
-      toast.error(error.message || 'Erro ao atualizar perfil');
-      return { data: null, error };
+      toast.success('Senha atualizada com sucesso!');
+      return { data: 'success' };
+    } catch (error) {
+      console.error('Erro ao atualizar senha:', error);
+      toast.error('Erro inesperado ao atualizar senha');
+      return { error };
     }
   };
 
+  // Derived states
+  const isPremium = profile?.tipo_plano === 'premium' || profile?.tipo_usuario === 'admin_mestre';
+  const isAdmin = profile?.tipo_usuario === 'admin_mestre';
+
   return {
     user,
-    session,
     profile,
     loading,
-    signUp,
+    isPremium,
+    isAdmin,
     signIn,
+    signUp,
     signOut,
     resetPassword,
-    updateProfile,
-    isAdmin: profile?.tipo_usuario === 'admin_mestre',
-    isPremium: profile?.tipo_plano === 'premium' || profile?.tipo_usuario === 'admin_mestre'
+    updatePassword,
   };
 };
