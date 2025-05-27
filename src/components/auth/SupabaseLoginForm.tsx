@@ -36,11 +36,24 @@ const SupabaseLoginForm = () => {
       
       if (result?.error) {
         console.error('Sign in error:', result.error);
-        toast.error('Erro ao fazer login. Verifique suas credenciais.');
+        
+        // Mensagens de erro mais específicas
+        if (result.error.message === 'Invalid login credentials') {
+          toast.error('E-mail ou senha incorretos. Verifique suas credenciais.');
+        } else if (result.error.message?.includes('Email not confirmed')) {
+          toast.error('Por favor, confirme seu e-mail antes de fazer login.');
+        } else if (result.error.message?.includes('too many requests')) {
+          toast.error('Muitas tentativas de login. Tente novamente em alguns minutos.');
+        } else {
+          toast.error('Erro ao fazer login: ' + result.error.message);
+        }
+      } else {
+        // Login bem-sucedido - o redirecionamento é feito no useSupabaseAuth
+        console.log('Login successful, user should be redirected');
       }
     } catch (error) {
       console.error('Erro no login:', error);
-      toast.error('Erro inesperado no login');
+      toast.error('Erro inesperado no login. Tente novamente.');
     } finally {
       setIsLoading(false);
     }
@@ -98,10 +111,6 @@ const SupabaseLoginForm = () => {
             type="submit" 
             className="w-full bg-juriscalc-navy hover:bg-opacity-90"
             disabled={isLoading || !email || !password}
-            onClick={(e) => {
-              console.log('Button clicked');
-              // Form onSubmit will handle the logic
-            }}
           >
             <LogIn className="mr-2 h-4 w-4" />
             {isLoading ? 'Entrando...' : 'Entrar'}

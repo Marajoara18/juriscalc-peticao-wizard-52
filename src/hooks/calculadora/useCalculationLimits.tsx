@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from "sonner";
 
-const LIMITE_CALCULOS_GRATUITOS = 3; // Corrigido de 2 para 3
+const LIMITE_CALCULOS_GRATUITOS = 3; // Mantido correto como 3 cálculos
 const KEY_CONTADOR_CALCULOS = 'calculosRealizados';
 
 export const useCalculationLimits = () => {
@@ -25,6 +25,13 @@ export const useCalculationLimits = () => {
     // Verificar se o usuário é premium
     const isPremium = localStorage.getItem('isPremium') === 'true';
     
+    console.log('Calculation limits check:', {
+      userId,
+      calculosRealizados,
+      isPremium,
+      limite: LIMITE_CALCULOS_GRATUITOS
+    });
+    
     // Para usuários premium, sempre permitir calcular
     if (isPremium) {
       setPodeCalcular(true);
@@ -40,8 +47,11 @@ export const useCalculationLimits = () => {
     const userId = localStorage.getItem('userId') || 'anonymous';
     const isPremium = localStorage.getItem('isPremium') === 'true';
     
+    console.log('Verificando limite de cálculos:', { userId, isPremium });
+    
     // Para usuários premium, não há limitação
     if (isPremium) {
+      console.log('Usuário premium - sem limitação de cálculos');
       return originalCalc();
     }
     
@@ -50,6 +60,8 @@ export const useCalculationLimits = () => {
     const calculosRealizados = localStorage.getItem(calculosKey) 
       ? parseInt(localStorage.getItem(calculosKey) || '0', 10) 
       : 0;
+    
+    console.log('Cálculos já realizados:', calculosRealizados, 'de', LIMITE_CALCULOS_GRATUITOS);
     
     // Se atingiu o limite, mostrar modal de assinatura
     if (calculosRealizados >= LIMITE_CALCULOS_GRATUITOS) {
@@ -61,6 +73,7 @@ export const useCalculationLimits = () => {
     // Incrementar contador e salvar
     const novoValor = calculosRealizados + 1;
     localStorage.setItem(calculosKey, novoValor.toString());
+    console.log('Contador atualizado para:', novoValor);
     
     // Executar o cálculo original
     return originalCalc();

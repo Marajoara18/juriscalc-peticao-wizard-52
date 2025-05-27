@@ -16,19 +16,23 @@ const Header = () => {
   const [showSubscription, setShowSubscription] = useState(false);
   
   const handleNewPeticao = () => {
+    console.log('Navigating to petições');
     navigate('/peticoes');
   };
   
   const handleCalculadora = () => {
+    console.log('Navigating to calculadora');
     navigate('/calculadora');
   };
   
   const handleUserClick = () => {
+    console.log('Navigating to user account');
     // Navigate to the user account view in peticoes with the correct state parameter
     navigate('/peticoes', { state: { initialView: 'user' } });
   };
 
   const handleLogout = async () => {
+    console.log('Attempting logout');
     await signOut();
   };
   
@@ -83,7 +87,10 @@ const Header = () => {
           )}
           {!isPremium && (
             <Button
-              onClick={() => setShowSubscription(true)}
+              onClick={() => {
+                console.log('Opening subscription modal');
+                setShowSubscription(true);
+              }}
               className="bg-juriscalc-gold text-juriscalc-navy hover:bg-opacity-90 flex items-center gap-1"
             >
               <Crown className="h-4 w-4" />
@@ -97,6 +104,7 @@ const Header = () => {
             <DialogTrigger asChild>
               <Button 
                 className="bg-white text-juriscalc-navy hover:bg-gray-100"
+                onClick={() => console.log('Opening manual')}
               >
                 <BookOpen className="mr-2 h-4 w-4" />
                 Manual Rápido IusCalc
