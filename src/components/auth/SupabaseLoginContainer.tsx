@@ -36,19 +36,6 @@ const SupabaseLoginContainer = () => {
         </TabsContent>
       </Tabs>
       
-      {/* Cartão Premium */}
-      <div className="border-t border-gray-200 pt-6 mt-4">
-        <div className="bg-gradient-to-r from-juriscalc-navy to-blue-800 p-5 rounded-lg text-white mb-4 shadow-lg">
-          <div className="flex items-center mb-3">
-            <img 
-              src="/lovable-uploads/0eed6b8a-2bd0-4452-8bc3-d71051203a0a.png" 
-              alt="Plano Premium" 
-              className="w-full h-auto rounded-lg"
-            />
-          </div>
-        </div>
-      </div>
-      
       <ManualRapidoButton />
       
       {showSubscription && (
