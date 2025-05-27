@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -19,10 +20,45 @@ export const useSupabaseAuth = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  
+  // Controle para evitar múltiplas chamadas simultâneas
+  const fetchingProfile = useRef(false);
+  const profileCache = useRef<{ [key: string]: Profile }>({});
+  const lastFetchTime = useRef<{ [key: string]: number }>({});
 
-  // Função para buscar o perfil do usuário com debounce
-  const fetchProfile = useCallback(async (userId: string) => {
-    console.log('AUTH: Fetching profile for user:', userId);
+  // Função para criar um perfil padrão em caso de falha
+  const createDefaultProfile = useCallback((user: User): Profile => {
+    return {
+      id: user.id,
+      nome: user.email?.split('@')[0] || 'Usuário',
+      email: user.email || '',
+      tipo_usuario: 'usuario',
+      tipo_plano: 'padrao',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+  }, []);
+
+  // Função para buscar o perfil com cache e fallback
+  const fetchProfile = useCallback(async (userId: string, retryCount = 0) => {
+    const now = Date.now();
+    const lastFetch = lastFetchTime.current[userId];
+    
+    // Cache por 30 segundos
+    if (lastFetch && (now - lastFetch) < 30000 && profileCache.current[userId]) {
+      console.log('AUTH: Using cached profile for user:', userId);
+      setProfile(profileCache.current[userId]);
+      return;
+    }
+    
+    // Evitar múltiplas chamadas simultâneas
+    if (fetchingProfile.current) {
+      console.log('AUTH: Profile fetch already in progress, skipping');
+      return;
+    }
+    
+    fetchingProfile.current = true;
+    console.log('AUTH: Fetching profile for user:', userId, 'attempt:', retryCount + 1);
     
     try {
       const { data, error } = await supabase
@@ -33,42 +69,70 @@ export const useSupabaseAuth = () => {
 
       if (error) {
         console.error('AUTH: Error fetching profile:', error);
-        // Se o perfil não existe, criar um novo
+        
+        // Se o perfil não existe, tentar criar um novo
         if (error.code === 'PGRST116') {
-          const newProfile = {
-            id: userId,
-            nome: user?.email?.split('@')[0] || 'Usuário',
-            email: user?.email || '',
-            tipo_usuario: 'usuario' as const,
-            tipo_plano: 'padrao' as const
-          };
+          console.log('AUTH: Profile not found, creating default profile');
+          const defaultProfile = createDefaultProfile(user!);
           
-          const { data: createdProfile, error: createError } = await supabase
-            .from('profiles')
-            .insert(newProfile)
-            .select()
-            .single();
+          try {
+            const { data: createdProfile, error: createError } = await supabase
+              .from('profiles')
+              .insert(defaultProfile)
+              .select()
+              .single();
+              
+            if (createError) {
+              console.error('AUTH: Error creating profile:', createError);
+              throw createError;
+            }
             
-          if (createError) {
-            console.error('AUTH: Error creating profile:', createError);
+            console.log('AUTH: Profile created successfully:', createdProfile);
+            profileCache.current[userId] = createdProfile;
+            lastFetchTime.current[userId] = now;
+            setProfile(createdProfile);
+            return;
+          } catch (createError) {
+            console.error('AUTH: Failed to create profile, using default:', createError);
+            // Usar perfil padrão em memória
+            const defaultProfile = createDefaultProfile(user!);
+            setProfile(defaultProfile);
             return;
           }
-          
-          console.log('AUTH: Profile created successfully:', createdProfile);
-          setProfile(createdProfile);
+        }
+        
+        // Para outros erros, tentar retry até 2 vezes
+        if (retryCount < 2) {
+          console.log('AUTH: Retrying profile fetch in 1 second...');
+          setTimeout(() => {
+            fetchProfile(userId, retryCount + 1);
+          }, 1000);
           return;
         }
+        
+        // Se todas as tentativas falharam, usar perfil padrão
+        console.warn('AUTH: All profile fetch attempts failed, using default profile');
+        const defaultProfile = createDefaultProfile(user!);
+        setProfile(defaultProfile);
         return;
       }
 
       console.log('AUTH: Profile fetched successfully:', data);
+      profileCache.current[userId] = data;
+      lastFetchTime.current[userId] = now;
       setProfile(data);
     } catch (error) {
-      console.error('AUTH: Error fetching profile:', error);
+      console.error('AUTH: Unexpected error fetching profile:', error);
+      
+      // Em caso de erro inesperado, usar perfil padrão
+      const defaultProfile = createDefaultProfile(user!);
+      setProfile(defaultProfile);
+    } finally {
+      fetchingProfile.current = false;
     }
-  }, [user?.email]);
+  }, [user, createDefaultProfile]);
 
-  // Função para verificar a sessão atual (simplificada)
+  // Função para verificar a sessão atual
   const checkSession = useCallback(async () => {
     try {
       console.log('AUTH: Checking current session...');
@@ -111,20 +175,26 @@ export const useSupabaseAuth = () => {
           setUser(session.user);
           await fetchProfile(session.user.id);
           
-          // Redirecionamento simplificado
-          console.log('AUTH: Redirecting to /home after successful login');
-          setTimeout(() => {
-            try {
-              navigate('/home', { replace: true });
-            } catch (navError) {
-              console.error('AUTH: Navigation error, using window.location:', navError);
-              window.location.href = '/home';
-            }
-          }, 100);
+          // Redirecionamento apenas se estiver na página de login
+          const currentPath = window.location.pathname;
+          if (currentPath === '/' || currentPath === '/login') {
+            console.log('AUTH: Redirecting to /home after successful login');
+            setTimeout(() => {
+              try {
+                navigate('/home', { replace: true });
+              } catch (navError) {
+                console.error('AUTH: Navigation error, using window.location:', navError);
+                window.location.href = '/home';
+              }
+            }, 100);
+          }
         } else if (event === 'SIGNED_OUT') {
           console.log('AUTH: User signed out, clearing state');
           setUser(null);
           setProfile(null);
+          // Limpar cache
+          profileCache.current = {};
+          lastFetchTime.current = {};
         } else if (session?.user) {
           console.log('AUTH: Session updated, setting user');
           setUser(session.user);
