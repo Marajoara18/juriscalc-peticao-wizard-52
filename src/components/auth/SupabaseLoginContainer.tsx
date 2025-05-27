@@ -6,6 +6,7 @@ import SupabaseLoginForm from './SupabaseLoginForm';
 import SupabaseRegisterForm from './SupabaseRegisterForm';
 import { Link } from 'react-router-dom';
 import ManualRapidoButton from './ManualRapidoButton';
+import PremiumPlanCard from './PremiumPlanCard';
 import SubscriptionManager from '@/components/peticoes/SubscriptionManager';
 
 const SupabaseLoginContainer = () => {
@@ -35,6 +36,8 @@ const SupabaseLoginContainer = () => {
           <SupabaseRegisterForm />
         </TabsContent>
       </Tabs>
+      
+      <PremiumPlanCard onSubscribe={() => setShowSubscription(true)} />
       
       <ManualRapidoButton />
       
