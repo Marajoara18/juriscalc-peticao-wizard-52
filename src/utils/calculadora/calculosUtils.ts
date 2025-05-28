@@ -35,7 +35,7 @@ export const realizarCalculos = (dadosContrato: any, adicionais: any) => {
   const ferias = verbasRescisorias.ferias || 0;
   const tercoConstitucional = verbasRescisorias.tercoConstitucional || 0;
   
-  // Calculate all additionals using the main function
+  // Calculate all additionals using the main function - now passing dadosContrato
   const adicionaisValues = calcularAdicionais(
     salarioBase, 
     adicionais,
@@ -43,7 +43,8 @@ export const realizarCalculos = (dadosContrato: any, adicionais: any) => {
     avisoPrevia,
     decimoTerceiro,
     ferias,
-    tercoConstitucional
+    tercoConstitucional,
+    dadosContrato // Pass contract data for period calculations
   );
   
   // Return the final result

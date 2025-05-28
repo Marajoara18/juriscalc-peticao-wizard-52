@@ -27,6 +27,11 @@ import { calcularSeguroDesemprego, calcularSalarioFamilia } from './adicionais/b
 import { calcularInsalubridade as calcularInsalubridadeUtils } from './adicionais/insalubridadeUtils';
 import { calcularPericulosidade as calcularPericulosidadeUtils } from './adicionais/periculosidadeUtils';
 import { calcularHonorariosAdvocaticios as calcularHonorariosAdvocaticiosUtils } from './adicionais/honorariosAdvocaticiosUtils';
+// Import new period-specific calculations
+import { 
+  calcularInsalubridadeComPeriodo, 
+  calcularPericulosidadeComPeriodo 
+} from './adicionais/periodoUtils';
 
 // Re-export individual calculation functions for direct usage
 export const calcularInsalubridade = calcularInsalubridadeUtils;
@@ -206,7 +211,8 @@ export function calcularAdicionais(
   avisoPrevia: number = 0,
   decimoTerceiro: number = 0,
   ferias: number = 0,
-  tercoConstitucional: number = 0
+  tercoConstitucional: number = 0,
+  dadosContrato?: any
 ) {
   let adicionalInsalubridade = 0;
   let adicionalPericulosidade = 0;
@@ -226,21 +232,31 @@ export function calcularAdicionais(
   let salarioFamilia = 0;
   let honorariosAdvocaticios = 0;
   
-  // Calculate insalubrity
+  // Calculate insalubrity with period consideration
   if (adicionais.calcularInsalubridade) {
-    adicionalInsalubridade = calcularInsalubridade(
-      salarioBase, 
-      adicionais.grauInsalubridade, 
-      adicionais.baseCalculoInsalubridade
+    adicionalInsalubridade = calcularInsalubridadeComPeriodo(
+      salarioBase,
+      adicionais.grauInsalubridade,
+      adicionais.baseCalculoInsalubridade,
+      adicionais.insalubridadePeriodoEspecifico || false,
+      dadosContrato?.dataAdmissao || '',
+      dadosContrato?.dataDemissao || '',
+      adicionais.dataInicioInsalubridade,
+      adicionais.dataFimInsalubridade
     );
   }
   
-  // Calculate perillosity
+  // Calculate perillosity with period consideration
   if (adicionais.calcularPericulosidade) {
-    adicionalPericulosidade = calcularPericulosidade(
-      salarioBase, 
-      parseFloat(adicionais.percentualPericulosidade), 
-      adicionais.baseCalculoPericulosidade
+    adicionalPericulosidade = calcularPericulosidadeComPeriodo(
+      salarioBase,
+      parseFloat(adicionais.percentualPericulosidade),
+      adicionais.baseCalculoPericulosidade,
+      adicionais.periculosidadePeriodoEspecifico || false,
+      dadosContrato?.dataAdmissao || '',
+      dadosContrato?.dataDemissao || '',
+      adicionais.dataInicioPericulosidade,
+      adicionais.dataFimPericulosidade
     );
   }
   

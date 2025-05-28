@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { DadosContrato, Adicionais, Resultados } from '@/types/calculadora';
 import { resultadosIniciais } from '@/utils/calculadoraConstants';
@@ -27,9 +28,19 @@ const useCalculadora = () => {
     calcularInsalubridade: false,
     grauInsalubridade: 'minimo',
     baseCalculoInsalubridade: 'salario_minimo',
+    // Novos campos para período específico de insalubridade
+    insalubridadePeriodoEspecifico: false,
+    dataInicioInsalubridade: '',
+    dataFimInsalubridade: '',
+    
     calcularPericulosidade: false,
     percentualPericulosidade: '30',
     baseCalculoPericulosidade: 'salario_base',
+    // Novos campos para período específico de periculosidade
+    periculosidadePeriodoEspecifico: false,
+    dataInicioPericulosidade: '',
+    dataFimPericulosidade: '',
+    
     calcularMulta467: false,
     calcularMulta477: false,
     calcularAdicionalNoturno: false,
@@ -78,8 +89,6 @@ const useCalculadora = () => {
   // Estado para os resultados
   const [resultados, setResultados] = useState<Resultados>(resultadosIniciais);
   
-  // Removido o estado showCorrecaoMonetaria já que a funcionalidade foi removida
-
   // Hooks específicos
   const { handleDadosContratoChange, handleCheckboxChange, handleTipoRescisaoChange } = useDadosContrato(dadosContrato, setDadosContrato);
   const { handleAdicionaisChange } = useAdicionais(adicionais, setAdicionais);

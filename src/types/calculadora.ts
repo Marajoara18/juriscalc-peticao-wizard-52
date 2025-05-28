@@ -66,9 +66,19 @@ export type Adicionais = {
   calcularInsalubridade: boolean;
   grauInsalubridade: 'minimo' | 'medio' | 'maximo';
   baseCalculoInsalubridade: 'salario_minimo' | 'salario_base';
+  // Novos campos para período específico de insalubridade
+  insalubridadePeriodoEspecifico: boolean;
+  dataInicioInsalubridade: string;
+  dataFimInsalubridade: string;
+  
   calcularPericulosidade: boolean;
   percentualPericulosidade: string;
   baseCalculoPericulosidade: 'salario_base' | 'salario_minimo';
+  // Novos campos para período específico de periculosidade
+  periculosidadePeriodoEspecifico: boolean;
+  dataInicioPericulosidade: string;
+  dataFimPericulosidade: string;
+  
   calcularMulta467: boolean;
   calcularMulta477: boolean;
   calcularAdicionalNoturno: boolean;
