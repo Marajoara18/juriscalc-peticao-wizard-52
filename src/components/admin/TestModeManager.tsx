@@ -5,9 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { TestTube, Shield, Info } from 'lucide-react';
+import { TestTube, Info } from 'lucide-react';
 import { toast } from 'sonner';
 import { 
   isUnlimitedTestMode, 
@@ -18,10 +17,6 @@ import {
 
 const TestModeManager = () => {
   const [isTestMode, setIsTestMode] = useState(false);
-  const [secretCode, setSecretCode] = useState('');
-  const [showSecretActivation, setShowSecretActivation] = useState(false);
-  
-  const SECRET_ACTIVATION_CODE = 'LOVABLE_TEST_2024';
 
   useEffect(() => {
     setIsTestMode(isUnlimitedTestMode());
@@ -39,29 +34,6 @@ const TestModeManager = () => {
     }
   };
 
-  const handleSecretActivation = () => {
-    if (secretCode === SECRET_ACTIVATION_CODE) {
-      activateTestMode();
-      setIsTestMode(true);
-      setSecretCode('');
-      setShowSecretActivation(false);
-      toast.success('🎉 Modo de teste ativado via código secreto!');
-    } else {
-      toast.error('Código secreto incorreto');
-    }
-  };
-
-  const handleURLActivation = () => {
-    // Add URL parameter for test mode activation
-    const url = new URL(window.location.href);
-    url.searchParams.set('test_mode', 'unlimited');
-    window.history.pushState({}, '', url.toString());
-    
-    activateTestMode();
-    setIsTestMode(true);
-    toast.success('Modo de teste ativado via URL');
-  };
-
   return (
     <Card className="w-full max-w-2xl">
       <CardHeader>
@@ -77,7 +49,7 @@ const TestModeManager = () => {
         {/* Status atual */}
         <div className="flex items-center justify-between p-4 border rounded-lg">
           <div className="flex items-center gap-3">
-            <Shield className="h-5 w-5" />
+            <TestTube className="h-5 w-5" />
             <div>
               <p className="font-medium">Status do Modo de Teste</p>
               <p className="text-sm text-gray-600">
@@ -105,57 +77,17 @@ const TestModeManager = () => {
           />
         </div>
 
-        {/* Ativação por código secreto */}
-        <div className="space-y-3">
-          <Button
-            variant="outline"
-            onClick={() => setShowSecretActivation(!showSecretActivation)}
-            className="w-full"
-          >
-            {showSecretActivation ? 'Ocultar' : 'Mostrar'} Ativação por Código Secreto
-          </Button>
-          
-          {showSecretActivation && (
-            <div className="p-4 border rounded-lg space-y-3">
-              <div className="space-y-2">
-                <Label htmlFor="secret-code">Código Secreto</Label>
-                <Input
-                  id="secret-code"
-                  type="password"
-                  value={secretCode}
-                  onChange={(e) => setSecretCode(e.target.value)}
-                  placeholder="Digite o código secreto"
-                />
-              </div>
-              <Button onClick={handleSecretActivation} className="w-full">
-                Ativar com Código Secreto
-              </Button>
-            </div>
-          )}
-        </div>
-
-        {/* Ativação por URL */}
-        <div className="space-y-3">
-          <Button
-            variant="outline"
-            onClick={handleURLActivation}
-            className="w-full"
-          >
-            Ativar via Parâmetro de URL
-          </Button>
-        </div>
-
-        {/* Informações adicionais */}
+        {/* Informações sobre acesso premium para usuários */}
         <Alert>
           <Info className="h-4 w-4" />
           <AlertDescription>
-            <strong>Métodos de ativação disponíveis:</strong>
-            <ul className="list-disc list-inside mt-2 space-y-1">
-              <li>Toggle manual nesta página</li>
-              <li>Código secreto: LOVABLE_TEST_2024</li>
-              <li>Parâmetro URL: ?test_mode=unlimited</li>
-              <li>Combinação de teclas: Ctrl+Shift+T+E+S+T</li>
-            </ul>
+            <strong>Acesso Premium para Usuários:</strong>
+            <p className="mt-2">
+              Para conceder acesso premium permanente a usuários do tipo "usuário", 
+              utilize o painel de administração para ativar o "Acesso Premium" na 
+              conta do usuário desejado. Isso garantirá cálculos ilimitados sem 
+              necessidade do modo de teste.
+            </p>
           </AlertDescription>
         </Alert>
 

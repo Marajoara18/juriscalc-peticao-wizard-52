@@ -10,7 +10,28 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
-  const { isPremium } = useSupabaseAuth();
+  const { user, profile } = useSupabaseAuth();
+  const [showPremiumButton, setShowPremiumButton] = useState(true);
+  
+  useEffect(() => {
+    if (!user) {
+      setShowPremiumButton(true);
+      return;
+    }
+
+    // Verificar acesso premium via Supabase profile
+    const isPremiumProfile = profile?.tipo_plano === 'premium' || profile?.tipo_usuario === 'admin_mestre';
+    
+    // Verificar acesso premium via localStorage (definido pelo admin)
+    const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+    const currentUser = allUsers.find((u: any) => u.email === user.email);
+    const isPremiumLocalStorage = currentUser?.isPremium || currentUser?.isAdmin;
+    
+    // Usuário tem premium se tiver via profile OU via localStorage
+    const hasAnyPremium = isPremiumProfile || isPremiumLocalStorage;
+    
+    setShowPremiumButton(!hasAnyPremium);
+  }, [user, profile]);
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -21,7 +42,7 @@ const Layout = ({ children }: LayoutProps) => {
       <Footer />
       
       {/* Only show the premium button for non-premium users */}
-      {!isPremium && <PremiumSubscriptionButton />}
+      {showPremiumButton && <PremiumSubscriptionButton />}
     </div>
   );
 };

@@ -74,47 +74,8 @@ const PremiumAlert = () => {
     localStorage.setItem('isPremium', 'false');
   }, [user, profile]);
   
-  // Se for premium ou modo de teste, mostrar indicador especial
+  // Se for premium ou modo de teste, não mostrar nenhum alerta
   if (isPremium || isTestMode) {
-    if (isTestMode) {
-      return (
-        <div className="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <TestTube className="h-5 w-5 text-green-400" />
-            </div>
-            <div className="ml-3">
-              <p className="text-sm text-green-700">
-                🧪 <strong>Modo de Teste Ativo:</strong> Você tem acesso ilimitado a cálculos para teste.
-              </p>
-            </div>
-          </div>
-        </div>
-      );
-    }
-    
-    if (isPremium) {
-      return (
-        <div className="bg-gradient-to-r from-juriscalc-gold/10 to-yellow-50 border-l-4 border-juriscalc-gold p-4 mb-6">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <Crown className="h-5 w-5 text-juriscalc-gold" />
-            </div>
-            <div className="ml-3">
-              <p className="text-sm text-juriscalc-navy">
-                👑 <strong>Acesso Premium Ativo:</strong> Você tem cálculos ilimitados disponíveis.
-                {premiumSource === 'admin' && (
-                  <span className="block text-xs text-gray-600 mt-1">
-                    Acesso concedido pelo administrador
-                  </span>
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
-      );
-    }
-    
     return null;
   }
   
