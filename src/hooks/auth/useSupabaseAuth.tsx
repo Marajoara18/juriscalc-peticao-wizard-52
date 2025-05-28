@@ -2,15 +2,16 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Profile {
   id: string;
-  nome: string;
+  nome_completo: string;
   email: string;
-  tipo_usuario: 'usuario' | 'admin_mestre';
-  tipo_plano: 'padrao' | 'premium';
-  created_at: string;
-  updated_at: string;
+  plano_id: string;
+  oab?: string;
+  data_criacao: string;
+  data_atualizacao: string;
 }
 
 interface User {
@@ -24,111 +25,113 @@ export const useSupabaseAuth = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Função para criar um perfil padrão
-  const createDefaultProfile = useCallback((user: User): Profile => {
-    return {
-      id: user.id,
-      nome: user.email?.split('@')[0] || 'Usuário',
-      email: user.email || '',
-      tipo_usuario: user.email === 'admin@juriscalc.com' || user.email === 'johnnysantos_177@msn.com' ? 'admin_mestre' : 'usuario',
-      tipo_plano: user.email === 'admin@juriscalc.com' || user.email === 'johnnysantos_177@msn.com' ? 'premium' : 'padrao',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
+  const fetchProfile = useCallback(async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('perfis')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching profile:', error);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error in fetchProfile:', error);
+      return null;
+    }
   }, []);
 
-  // Verificar sessão atual usando localStorage
   const checkSession = useCallback(async () => {
     try {
-      console.log('AUTH: Checking localStorage session...');
-      const userId = localStorage.getItem('userId');
-      const userEmail = localStorage.getItem('userEmail');
+      const { data: { session }, error } = await supabase.auth.getSession();
       
-      if (userId && userEmail) {
-        console.log('AUTH: Found localStorage session for user:', userId);
-        const userData: User = { id: userId, email: userEmail };
+      if (error) {
+        console.error('Error getting session:', error);
+        setLoading(false);
+        return;
+      }
+
+      if (session?.user) {
+        const userData: User = {
+          id: session.user.id,
+          email: session.user.email || ''
+        };
         setUser(userData);
-        
-        // Criar perfil baseado nos dados do localStorage
-        const userProfile = createDefaultProfile(userData);
-        setProfile(userProfile);
-        
-        console.log('AUTH: Session restored successfully:', { userId, userEmail });
+
+        // Fetch user profile
+        const profileData = await fetchProfile(session.user.id);
+        setProfile(profileData);
       } else {
-        console.log('AUTH: No localStorage session found');
         setUser(null);
         setProfile(null);
       }
       
       setLoading(false);
     } catch (error) {
-      console.error('AUTH: Error in checkSession:', error);
+      console.error('Error in checkSession:', error);
       setLoading(false);
     }
-  }, [createDefaultProfile]);
+  }, [fetchProfile]);
 
   useEffect(() => {
     checkSession();
-  }, [checkSession]);
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        const userData: User = {
+          id: session.user.id,
+          email: session.user.email || ''
+        };
+        setUser(userData);
+
+        // Fetch user profile
+        const profileData = await fetchProfile(session.user.id);
+        setProfile(profileData);
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null);
+        setProfile(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [checkSession, fetchProfile]);
 
   const signIn = async (email: string, password: string) => {
     try {
-      console.log('AUTH: SignIn attempt for:', email);
       setLoading(true);
       
-      // Simular autenticação com dados mockados
-      const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
-      
-      // Adicionar usuário admin padrão se não existir
-      if (allUsers.length === 0) {
-        const adminUser = {
-          id: 'admin-1',
-          nome: 'Administrador',
-          email: 'admin@juriscalc.com',
-          senha: 'admin123',
-          isAdmin: true,
-          canViewPanels: true,
-          isPremium: true
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        console.error('SignIn error:', error);
+        return { error: { message: error.message } };
+      }
+
+      if (data.user) {
+        const userData: User = {
+          id: data.user.id,
+          email: data.user.email || ''
         };
-        allUsers.push(adminUser);
-        localStorage.setItem('allUsers', JSON.stringify(allUsers));
-      }
+        setUser(userData);
 
-      // Verificar credenciais
-      const user = allUsers.find((u: any) => u.email === email && u.senha === password);
-      
-      if (!user) {
-        console.error('AUTH: Invalid credentials');
-        setLoading(false);
-        return { error: { message: 'E-mail ou senha incorretos' } };
-      }
+        // Fetch user profile
+        const profileData = await fetchProfile(data.user.id);
+        setProfile(profileData);
 
-      // Salvar dados da sessão no localStorage
-      localStorage.setItem('userId', user.id);
-      localStorage.setItem('userEmail', user.email);
-      localStorage.setItem('userName', user.nome);
-      localStorage.setItem('userIsAdmin', String(user.isAdmin || false));
-      localStorage.setItem('canViewPanels', String(user.canViewPanels || false));
-      localStorage.setItem('isPremium', String(user.isPremium || user.isAdmin || false));
-
-      // Criar objetos de usuário e perfil
-      const userData: User = { id: user.id, email: user.email };
-      const userProfile = createDefaultProfile(userData);
-      
-      setUser(userData);
-      setProfile(userProfile);
-      setLoading(false);
-
-      console.log('AUTH: Login successful, redirecting to /home');
-      
-      // Redirecionamento após login bem-sucedido
-      setTimeout(() => {
         navigate('/home', { replace: true });
-      }, 100);
+      }
 
-      return { data: { user: userData, session: { user: userData } } };
-    } catch (error) {
-      console.error('AUTH: Error in signIn:', error);
+      setLoading(false);
+      return { data };
+    } catch (error: any) {
+      console.error('Error in signIn:', error);
       setLoading(false);
       return { error: { message: 'Erro inesperado no login' } };
     }
@@ -136,36 +139,28 @@ export const useSupabaseAuth = () => {
 
   const signUp = async (email: string, password: string, nome: string) => {
     try {
-      console.log('AUTH: SignUp attempt for:', email);
       setLoading(true);
       
-      const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
-      
-      // Verificar se usuário já existe
-      const existingUser = allUsers.find((u: any) => u.email === email);
-      if (existingUser) {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            nome_completo: nome
+          }
+        }
+      });
+
+      if (error) {
+        console.error('SignUp error:', error);
         setLoading(false);
-        return { error: { message: 'Este e-mail já está cadastrado' } };
+        return { error: { message: error.message } };
       }
 
-      // Criar novo usuário
-      const newUser = {
-        id: Date.now().toString(),
-        nome: nome.trim(),
-        email: email.trim().toLowerCase(),
-        senha: password,
-        isAdmin: false,
-        canViewPanels: false,
-        isPremium: false
-      };
-
-      allUsers.push(newUser);
-      localStorage.setItem('allUsers', JSON.stringify(allUsers));
-
       setLoading(false);
-      return { data: { user: { id: newUser.id, email: newUser.email } } };
-    } catch (error) {
-      console.error('AUTH: Error in signUp:', error);
+      return { data };
+    } catch (error: any) {
+      console.error('Error in signUp:', error);
       setLoading(false);
       return { error: { message: 'Erro inesperado no cadastro' } };
     }
@@ -173,33 +168,38 @@ export const useSupabaseAuth = () => {
 
   const signOut = async () => {
     try {
-      console.log('AUTH: Signing out user');
+      const { error } = await supabase.auth.signOut();
       
-      // Limpar localStorage
-      localStorage.removeItem('userId');
-      localStorage.removeItem('userEmail');
-      localStorage.removeItem('userName');
-      localStorage.removeItem('userIsAdmin');
-      localStorage.removeItem('canViewPanels');
-      localStorage.removeItem('isPremium');
-      
+      if (error) {
+        console.error('SignOut error:', error);
+        toast.error('Erro ao fazer logout');
+        return;
+      }
+
       setUser(null);
       setProfile(null);
-      
       toast.success('Logout realizado com sucesso!');
       navigate('/');
     } catch (error) {
-      console.error('AUTH: Erro no logout:', error);
+      console.error('Error in signOut:', error);
       toast.error('Erro inesperado no logout');
     }
   };
 
   const resetPassword = async (email: string) => {
     try {
-      toast.success('Email de recuperação enviado! (simulado)');
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      
+      if (error) {
+        console.error('Reset password error:', error);
+        toast.error('Erro ao enviar email de recuperação');
+        return { error };
+      }
+
+      toast.success('Email de recuperação enviado!');
       return { data: 'success' };
     } catch (error) {
-      console.error('AUTH: Erro na recuperação de senha:', error);
+      console.error('Error in resetPassword:', error);
       toast.error('Erro inesperado na recuperação de senha');
       return { error };
     }
@@ -207,18 +207,28 @@ export const useSupabaseAuth = () => {
 
   const updatePassword = async (newPassword: string) => {
     try {
-      toast.success('Senha atualizada com sucesso! (simulado)');
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) {
+        console.error('Update password error:', error);
+        toast.error('Erro ao atualizar senha');
+        return { error };
+      }
+
+      toast.success('Senha atualizada com sucesso!');
       return { data: 'success' };
     } catch (error) {
-      console.error('AUTH: Erro ao atualizar senha:', error);
+      console.error('Error in updatePassword:', error);
       toast.error('Erro inesperado ao atualizar senha');
       return { error };
     }
   };
 
   // Derived states
-  const isPremium = profile?.tipo_plano === 'premium' || profile?.tipo_usuario === 'admin_mestre';
-  const isAdmin = profile?.tipo_usuario === 'admin_mestre';
+  const isPremium = profile?.plano_id?.includes('premium') || false;
+  const isAdmin = profile?.plano_id === 'admin' || false;
 
   return {
     user,

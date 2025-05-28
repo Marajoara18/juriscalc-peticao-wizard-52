@@ -5,13 +5,12 @@ import { toast } from 'sonner';
 
 interface Profile {
   id: string;
-  nome: string;
+  nome_completo: string;
   email: string;
-  tipo_plano: 'padrao' | 'premium';
-  tipo_usuario: 'usuario' | 'admin_mestre';
-  avatar_url?: string;
-  created_at: string;
-  updated_at: string;
+  plano_id: string;
+  oab?: string;
+  data_criacao: string;
+  data_atualizacao: string;
 }
 
 export const useAdminManagement = () => {
@@ -22,20 +21,13 @@ export const useAdminManagement = () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('profiles')
+        .from('perfis')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('data_criacao', { ascending: false });
 
       if (error) throw error;
       
-      // Type assertion to ensure data matches our interface
-      const typedData = (data || []).map(profile => ({
-        ...profile,
-        tipo_plano: profile.tipo_plano as 'padrao' | 'premium',
-        tipo_usuario: profile.tipo_usuario as 'usuario' | 'admin_mestre'
-      }));
-      
-      setProfiles(typedData);
+      setProfiles(data || []);
     } catch (error: any) {
       toast.error('Erro ao carregar usuários: ' + error.message);
     } finally {
@@ -47,11 +39,11 @@ export const useAdminManagement = () => {
     fetchAllProfiles();
   }, []);
 
-  const updateUserPlan = async (userId: string, newPlan: 'padrao' | 'premium') => {
+  const updateUserPlan = async (userId: string, newPlan: string) => {
     try {
       const { error } = await supabase
-        .from('profiles')
-        .update({ tipo_plano: newPlan })
+        .from('perfis')
+        .update({ plano_id: newPlan })
         .eq('id', userId);
 
       if (error) throw error;
@@ -60,7 +52,7 @@ export const useAdminManagement = () => {
       setProfiles(prev => 
         prev.map(profile => 
           profile.id === userId 
-            ? { ...profile, tipo_plano: newPlan }
+            ? { ...profile, plano_id: newPlan }
             : profile
         )
       );
@@ -68,30 +60,6 @@ export const useAdminManagement = () => {
       toast.success('Plano do usuário atualizado com sucesso!');
     } catch (error: any) {
       toast.error('Erro ao atualizar plano: ' + error.message);
-    }
-  };
-
-  const updateUserType = async (userId: string, newType: 'usuario' | 'admin_mestre') => {
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ tipo_usuario: newType })
-        .eq('id', userId);
-
-      if (error) throw error;
-
-      // Update local state
-      setProfiles(prev => 
-        prev.map(profile => 
-          profile.id === userId 
-            ? { ...profile, tipo_usuario: newType }
-            : profile
-        )
-      );
-
-      toast.success('Tipo de usuário atualizado com sucesso!');
-    } catch (error: any) {
-      toast.error('Erro ao atualizar tipo de usuário: ' + error.message);
     }
   };
 
@@ -115,7 +83,7 @@ export const useAdminManagement = () => {
     try {
       // First check if user already exists
       const { data: existingProfile } = await supabase
-        .from('profiles')
+        .from('perfis')
         .select('*')
         .eq('email', email)
         .single();
@@ -123,16 +91,15 @@ export const useAdminManagement = () => {
       if (existingProfile) {
         // Update existing user to admin
         const { error } = await supabase
-          .from('profiles')
+          .from('perfis')
           .update({ 
-            tipo_usuario: 'admin_mestre',
-            tipo_plano: 'premium'
+            plano_id: 'premium_anual'
           })
           .eq('email', email);
 
         if (error) throw error;
         
-        toast.success('Usuário promovido a administrador mestre!');
+        toast.success('Usuário promovido a premium!');
         fetchAllProfiles();
       } else {
         toast.error('Usuário não encontrado. O usuário deve se cadastrar primeiro.');
@@ -147,7 +114,6 @@ export const useAdminManagement = () => {
     loading,
     fetchAllProfiles,
     updateUserPlan,
-    updateUserType,
     deleteUser,
     createMasterAdmin
   };

@@ -12,10 +12,9 @@ import { UserPlus, Edit, Trash2 } from 'lucide-react';
 
 interface Profile {
   id: string;
-  nome: string;
+  nome_completo: string;
   email: string;
-  tipo_plano: 'padrao' | 'premium';
-  tipo_usuario: 'usuario' | 'admin_mestre';
+  plano_id: string;
   created_at: string;
 }
 
@@ -29,9 +28,8 @@ const UserManagement = () => {
   const [newUser, setNewUser] = useState({
     email: '',
     password: '',
-    nome: '',
-    tipo_plano: 'padrao' as 'padrao' | 'premium',
-    tipo_usuario: 'usuario' as 'usuario' | 'admin_mestre'
+    nome_completo: '',
+    plano_id: 'free'
   });
 
   const fetchProfiles = async () => {
@@ -40,9 +38,9 @@ const UserManagement = () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('profiles')
+        .from('perfis')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('data_criacao', { ascending: false });
 
       if (error) throw error;
       setProfiles(data || []);
@@ -65,7 +63,7 @@ const UserManagement = () => {
         email: newUser.email,
         password: newUser.password,
         user_metadata: {
-          nome: newUser.nome
+          nome_completo: newUser.nome_completo
         }
       });
 
@@ -74,10 +72,9 @@ const UserManagement = () => {
       // Atualizar perfil
       if (authData.user) {
         const { error: profileError } = await supabase
-          .from('profiles')
+          .from('perfis')
           .update({
-            tipo_plano: newUser.tipo_plano,
-            tipo_usuario: newUser.tipo_usuario
+            plano_id: newUser.plano_id
           })
           .eq('id', authData.user.id);
 
@@ -88,9 +85,8 @@ const UserManagement = () => {
       setNewUser({
         email: '',
         password: '',
-        nome: '',
-        tipo_plano: 'padrao',
-        tipo_usuario: 'usuario'
+        nome_completo: '',
+        plano_id: 'free'
       });
       fetchProfiles();
     } catch (error: any) {
@@ -107,11 +103,10 @@ const UserManagement = () => {
     setLoading(true);
     try {
       const { error } = await supabase
-        .from('profiles')
+        .from('perfis')
         .update({
-          nome: user.nome,
-          tipo_plano: user.tipo_plano,
-          tipo_usuario: user.tipo_usuario
+          nome_completo: user.nome_completo,
+          plano_id: user.plano_id
         })
         .eq('id', user.id);
 
@@ -182,8 +177,8 @@ const UserManagement = () => {
                 <label className="block text-sm font-medium mb-1">Nome</label>
                 <Input
                   type="text"
-                  value={newUser.nome}
-                  onChange={(e) => setNewUser({...newUser, nome: e.target.value})}
+                  value={newUser.nome_completo}
+                  onChange={(e) => setNewUser({...newUser, nome_completo: e.target.value})}
                   required
                   disabled={loading}
                 />
@@ -210,11 +205,11 @@ const UserManagement = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Tipo de Plano</label>
+                <label className="block text-sm font-medium mb-1">Plano</label>
                 <Select
-                  value={newUser.tipo_plano}
-                  onValueChange={(value: 'padrao' | 'premium') => 
-                    setNewUser({...newUser, tipo_plano: value})
+                  value={newUser.plano_id}
+                  onValueChange={(value) => 
+                    setNewUser({...newUser, plano_id: value})
                   }
                   disabled={loading}
                 >
@@ -222,26 +217,9 @@ const UserManagement = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="padrao">Padrão</SelectItem>
-                    <SelectItem value="premium">Premium</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Tipo de Usuário</label>
-                <Select
-                  value={newUser.tipo_usuario}
-                  onValueChange={(value: 'usuario' | 'admin_mestre') => 
-                    setNewUser({...newUser, tipo_usuario: value})
-                  }
-                  disabled={loading}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="usuario">Usuário</SelectItem>
-                    <SelectItem value="admin_mestre">Admin Mestre</SelectItem>
+                    <SelectItem value="free">Gratuito</SelectItem>
+                    <SelectItem value="premium_mensal">Premium Mensal</SelectItem>
+                    <SelectItem value="premium_anual">Premium Anual</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -267,38 +245,25 @@ const UserManagement = () => {
               <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
                 <div className="flex-1">
                   {editingUser?.id === user.id ? (
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                       <Input
-                        value={editingUser.nome}
-                        onChange={(e) => setEditingUser({...editingUser, nome: e.target.value})}
+                        value={editingUser.nome_completo}
+                        onChange={(e) => setEditingUser({...editingUser, nome_completo: e.target.value})}
                         placeholder="Nome"
                       />
                       <Select
-                        value={editingUser.tipo_plano}
-                        onValueChange={(value: 'padrao' | 'premium') => 
-                          setEditingUser({...editingUser, tipo_plano: value})
+                        value={editingUser.plano_id}
+                        onValueChange={(value) => 
+                          setEditingUser({...editingUser, plano_id: value})
                         }
                       >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="padrao">Padrão</SelectItem>
-                          <SelectItem value="premium">Premium</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Select
-                        value={editingUser.tipo_usuario}
-                        onValueChange={(value: 'usuario' | 'admin_mestre') => 
-                          setEditingUser({...editingUser, tipo_usuario: value})
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="usuario">Usuário</SelectItem>
-                          <SelectItem value="admin_mestre">Admin Mestre</SelectItem>
+                          <SelectItem value="free">Gratuito</SelectItem>
+                          <SelectItem value="premium_mensal">Premium Mensal</SelectItem>
+                          <SelectItem value="premium_anual">Premium Anual</SelectItem>
                         </SelectContent>
                       </Select>
                       <div className="flex gap-2">
@@ -312,14 +277,12 @@ const UserManagement = () => {
                     </div>
                   ) : (
                     <div>
-                      <h3 className="font-medium">{user.nome}</h3>
+                      <h3 className="font-medium">{user.nome_completo}</h3>
                       <p className="text-sm text-gray-600">{user.email}</p>
                       <div className="flex gap-2 mt-1">
-                        <Badge variant={user.tipo_plano === 'premium' ? 'default' : 'secondary'}>
-                          {user.tipo_plano === 'premium' ? 'Premium' : 'Padrão'}
-                        </Badge>
-                        <Badge variant={user.tipo_usuario === 'admin_mestre' ? 'destructive' : 'outline'}>
-                          {user.tipo_usuario === 'admin_mestre' ? 'Admin' : 'Usuário'}
+                        <Badge variant={user.plano_id.includes('premium') ? 'default' : 'secondary'}>
+                          {user.plano_id === 'premium_mensal' ? 'Premium Mensal' : 
+                           user.plano_id === 'premium_anual' ? 'Premium Anual' : 'Gratuito'}
                         </Badge>
                       </div>
                     </div>

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from './auth/useSupabaseAuth';
@@ -21,7 +22,7 @@ export const useSupabaseCalculos = () => {
       const { data, error } = await supabase
         .from('calculos_salvos')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('data_criacao', { ascending: false });
 
       if (error) {
         console.error('CALCULOS: Supabase fetch error:', {
@@ -38,14 +39,14 @@ export const useSupabaseCalculos = () => {
       // Transform Supabase data to match our CalculoSalvo interface
       const calculosTransformados = data.map(calculo => ({
         id: calculo.id,
-        nome: calculo.nome,
-        timestamp: calculo.timestamp || calculo.created_at || new Date().toISOString(),
-        verbasRescisorias: calculo.verbas_rescisorias,
-        adicionais: calculo.adicionais,
-        totalGeral: Number(calculo.total_geral),
-        userId: calculo.user_id,
-        nomeEscritorio: calculo.nome_escritorio,
-        dadosContrato: calculo.dados_contrato as CalculoSalvo['dadosContrato']
+        nome: calculo.titulo_calculo,
+        timestamp: calculo.data_criacao,
+        verbasRescisorias: calculo.dados_entrada_json?.verbasRescisorias || calculo.resultado_calculo_json?.verbasRescisorias,
+        adicionais: calculo.dados_entrada_json?.adicionais || calculo.resultado_calculo_json?.adicionais,
+        totalGeral: Number(calculo.resultado_calculo_json?.totalGeral || 0),
+        userId: calculo.usuario_id,
+        nomeEscritorio: calculo.dados_entrada_json?.nomeEscritorio || 'Usuário',
+        dadosContrato: calculo.dados_entrada_json?.dadosContrato || {}
       }));
 
       setCalculosSalvos(calculosTransformados);
@@ -70,32 +71,24 @@ export const useSupabaseCalculos = () => {
     }
 
     console.log('CALCULOS: Starting save process for user:', user.id);
-    console.log('CALCULOS: Calculation data to save:', {
-      nome: calculo.nome,
-      totalGeral: calculo.totalGeral,
-      hasVerbas: !!calculo.verbasRescisorias,
-      hasAdicionais: !!calculo.adicionais,
-      hasContrato: !!calculo.dadosContrato
-    });
 
     try {
       const calculoData = {
-        nome: calculo.nome,
-        verbas_rescisorias: calculo.verbasRescisorias,
-        adicionais: calculo.adicionais,
-        total_geral: calculo.totalGeral,
-        user_id: user.id,
-        nome_escritorio: calculo.nomeEscritorio,
-        timestamp: calculo.timestamp,
-        dados_contrato: calculo.dadosContrato
+        titulo_calculo: calculo.nome,
+        dados_entrada_json: {
+          verbasRescisorias: calculo.verbasRescisorias,
+          adicionais: calculo.adicionais,
+          dadosContrato: calculo.dadosContrato,
+          nomeEscritorio: calculo.nomeEscritorio
+        },
+        resultado_calculo_json: {
+          verbasRescisorias: calculo.verbasRescisorias,
+          adicionais: calculo.adicionais,
+          totalGeral: calculo.totalGeral
+        },
+        usuario_id: user.id,
+        tipo_calculo: 'geral' as const
       };
-
-      console.log('CALCULOS: Inserting data into Supabase:', {
-        ...calculoData,
-        verbas_rescisorias: calculoData.verbas_rescisorias ? 'present' : 'missing',
-        adicionais: calculoData.adicionais ? 'present' : 'missing',
-        dados_contrato: calculoData.dados_contrato ? 'present' : 'missing'
-      });
 
       const { data, error } = await supabase
         .from('calculos_salvos')
@@ -104,46 +97,30 @@ export const useSupabaseCalculos = () => {
         .single();
 
       if (error) {
-        console.error('CALCULOS: Supabase insert error:', {
-          message: error.message,
-          code: error.code,
-          details: error.details,
-          hint: error.hint
-        });
+        console.error('CALCULOS: Supabase insert error:', error);
         throw error;
       }
 
-      console.log('CALCULOS: Successfully saved calculation:', {
-        id: data.id,
-        nome: data.nome,
-        created_at: data.created_at
-      });
+      console.log('CALCULOS: Successfully saved calculation:', data);
 
       const novoCalculo: CalculoSalvo = {
         id: data.id,
-        nome: data.nome,
-        timestamp: data.timestamp || data.created_at || new Date().toISOString(),
-        verbasRescisorias: data.verbas_rescisorias,
-        adicionais: data.adicionais,
-        totalGeral: Number(data.total_geral),
-        userId: data.user_id,
-        nomeEscritorio: data.nome_escritorio,
-        dadosContrato: data.dados_contrato as CalculoSalvo['dadosContrato']
+        nome: data.titulo_calculo,
+        timestamp: data.data_criacao,
+        verbasRescisorias: calculo.verbasRescisorias,
+        adicionais: calculo.adicionais,
+        totalGeral: calculo.totalGeral,
+        userId: data.usuario_id,
+        nomeEscritorio: calculo.nomeEscritorio,
+        dadosContrato: calculo.dadosContrato
       };
 
       setCalculosSalvos(prev => [novoCalculo, ...prev]);
       toast.success('Cálculo salvo com sucesso!');
       return novoCalculo;
     } catch (error: any) {
-      console.error('CALCULOS: Error saving calculation:', {
-        message: error?.message,
-        code: error?.code,
-        details: error?.details,
-        hint: error?.hint,
-        stack: error?.stack
-      });
+      console.error('CALCULOS: Error saving calculation:', error);
       
-      // Mensagens de erro mais específicas
       if (error.code === 'PGRST301') {
         toast.error('Erro de permissão. Verifique se você está logado corretamente.');
       } else if (error.code === '23505') {
@@ -166,20 +143,24 @@ export const useSupabaseCalculos = () => {
       return null;
     }
 
-    console.log('CALCULOS: Starting update for calculation:', id);
-
     try {
       const updateData: any = {};
       
-      if (updates.nome !== undefined) updateData.nome = updates.nome;
-      if (updates.verbasRescisorias !== undefined) updateData.verbas_rescisorias = updates.verbasRescisorias;
-      if (updates.adicionais !== undefined) updateData.adicionais = updates.adicionais;
-      if (updates.totalGeral !== undefined) updateData.total_geral = updates.totalGeral;
-      if (updates.nomeEscritorio !== undefined) updateData.nome_escritorio = updates.nomeEscritorio;
-      if (updates.timestamp !== undefined) updateData.timestamp = updates.timestamp;
-      if (updates.dadosContrato !== undefined) updateData.dados_contrato = updates.dadosContrato;
-
-      console.log('CALCULOS: Update data:', updateData);
+      if (updates.nome !== undefined) updateData.titulo_calculo = updates.nome;
+      
+      if (updates.verbasRescisorias !== undefined || updates.adicionais !== undefined || updates.dadosContrato !== undefined) {
+        updateData.dados_entrada_json = {
+          verbasRescisorias: updates.verbasRescisorias,
+          adicionais: updates.adicionais,
+          dadosContrato: updates.dadosContrato,
+          nomeEscritorio: updates.nomeEscritorio
+        };
+        updateData.resultado_calculo_json = {
+          verbasRescisorias: updates.verbasRescisorias,
+          adicionais: updates.adicionais,
+          totalGeral: updates.totalGeral
+        };
+      }
 
       const { data, error } = await supabase
         .from('calculos_salvos')
@@ -188,23 +169,18 @@ export const useSupabaseCalculos = () => {
         .select()
         .single();
 
-      if (error) {
-        console.error('CALCULOS: Supabase update error:', error);
-        throw error;
-      }
-
-      console.log('CALCULOS: Successfully updated calculation:', data);
+      if (error) throw error;
 
       const calculoAtualizado: CalculoSalvo = {
         id: data.id,
-        nome: data.nome,
-        timestamp: data.timestamp || data.created_at || new Date().toISOString(),
-        verbasRescisorias: data.verbas_rescisorias,
-        adicionais: data.adicionais,
-        totalGeral: Number(data.total_geral),
-        userId: data.user_id,
-        nomeEscritorio: data.nome_escritorio,
-        dadosContrato: data.dados_contrato as CalculoSalvo['dadosContrato']
+        nome: data.titulo_calculo,
+        timestamp: data.data_criacao,
+        verbasRescisorias: updates.verbasRescisorias || {},
+        adicionais: updates.adicionais || {},
+        totalGeral: updates.totalGeral || 0,
+        userId: data.usuario_id,
+        nomeEscritorio: updates.nomeEscritorio || 'Usuário',
+        dadosContrato: updates.dadosContrato || {}
       };
 
       setCalculosSalvos(prev => 
@@ -227,20 +203,13 @@ export const useSupabaseCalculos = () => {
       return false;
     }
 
-    console.log('CALCULOS: Starting delete for calculation:', id);
-
     try {
       const { error } = await supabase
         .from('calculos_salvos')
         .delete()
         .eq('id', id);
 
-      if (error) {
-        console.error('CALCULOS: Supabase delete error:', error);
-        throw error;
-      }
-
-      console.log('CALCULOS: Successfully deleted calculation:', id);
+      if (error) throw error;
 
       setCalculosSalvos(prev => prev.filter(calc => calc.id !== id));
       toast.success('Cálculo excluído com sucesso!');
@@ -254,10 +223,8 @@ export const useSupabaseCalculos = () => {
 
   useEffect(() => {
     if (user) {
-      console.log('CALCULOS: User authenticated, fetching calculations for:', user.id);
       fetchCalculos();
     } else {
-      console.log('CALCULOS: User not authenticated, clearing calculations');
       setCalculosSalvos([]);
     }
   }, [user]);
