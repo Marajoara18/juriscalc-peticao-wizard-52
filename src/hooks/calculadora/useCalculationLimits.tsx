@@ -41,12 +41,23 @@ export const useCalculationLimits = () => {
       ? parseInt(localStorage.getItem(calculosKey) || '0', 10) 
       : 0;
     
-    // Verificar se o usuário é premium
-    const isPremium = profile?.tipo_plano === 'premium' || profile?.tipo_usuario === 'admin_mestre';
+    // Verificar se o usuário é premium (via Supabase profile ou localStorage)
+    const isPremiumProfile = profile?.tipo_plano === 'premium' || profile?.tipo_usuario === 'admin_mestre';
+    
+    // Verificar acesso premium via localStorage (definido pelo admin)
+    const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+    const currentUser = allUsers.find((u: any) => u.email === user.email);
+    const isPremiumLocalStorage = currentUser?.isPremium || currentUser?.isAdmin;
+    
+    // Usuário tem premium se tiver via profile OU via localStorage
+    const isPremium = isPremiumProfile || isPremiumLocalStorage;
     
     console.log('LIMITS: Calculation limits check:', {
       userId,
+      userEmail: user.email,
       calculosRealizados,
+      isPremiumProfile,
+      isPremiumLocalStorage,
       isPremium,
       isTestMode,
       limite: LIMITE_CALCULOS_GRATUITOS,
@@ -87,10 +98,23 @@ export const useCalculationLimits = () => {
     }
 
     const userId = user.id;
-    const isPremium = profile?.tipo_plano === 'premium' || profile?.tipo_usuario === 'admin_mestre';
+    
+    // Verificar se o usuário é premium (via Supabase profile ou localStorage)
+    const isPremiumProfile = profile?.tipo_plano === 'premium' || profile?.tipo_usuario === 'admin_mestre';
+    
+    // Verificar acesso premium via localStorage (definido pelo admin)
+    const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+    const currentUser = allUsers.find((u: any) => u.email === user.email);
+    const isPremiumLocalStorage = currentUser?.isPremium || currentUser?.isAdmin;
+    
+    // Usuário tem premium se tiver via profile OU via localStorage
+    const isPremium = isPremiumProfile || isPremiumLocalStorage;
     
     console.log('LIMITS: Checking calculation limits before execution:', { 
       userId, 
+      userEmail: user.email,
+      isPremiumProfile,
+      isPremiumLocalStorage,
       isPremium,
       isTestMode,
       userType: profile?.tipo_usuario,
