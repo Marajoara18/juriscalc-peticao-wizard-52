@@ -17,7 +17,8 @@ const ProtectedRoute = ({
   const { user, profile, loading } = useSupabaseAuth();
   const location = useLocation();
 
-  console.log('PROTECTED_ROUTE: Verificação de autenticação:', {
+  console.log('PROTECTED_ROUTE: Verificação de acesso:', {
+    path: location.pathname,
     user: !!user,
     userId: user?.id,
     userEmail: user?.email,
@@ -26,13 +27,12 @@ const ProtectedRoute = ({
     loading,
     requireAuth,
     requireAdmin,
-    currentPath: location.pathname,
     timestamp: new Date().toISOString()
   });
 
   // Show loading spinner while checking authentication
   if (loading) {
-    console.log('PROTECTED_ROUTE: Ainda carregando, mostrando spinner');
+    console.log('PROTECTED_ROUTE: Ainda carregando autenticação...');
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-juriscalc-blue via-juriscalc-navy to-juriscalc-gold">
         <div className="text-center text-white">
@@ -46,19 +46,17 @@ const ProtectedRoute = ({
 
   // Redirect to login if authentication is required but user is not authenticated
   if (requireAuth && !user) {
-    console.log('PROTECTED_ROUTE: Usuário não autenticado, redirecionando para login');
+    console.log('PROTECTED_ROUTE: Usuário não autenticado, redirecionando para /');
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 
   // Redirect to home if admin access is required but user is not admin
   if (requireAdmin && profile?.plano_id !== 'admin') {
-    console.log('PROTECTED_ROUTE: Usuário não é admin, redirecionando para home');
+    console.log('PROTECTED_ROUTE: Usuário não é admin, redirecionando para /home');
     return <Navigate to="/home" replace />;
   }
 
   console.log('PROTECTED_ROUTE: Acesso permitido, renderizando conteúdo');
-
-  // If all checks pass, render the children
   return <>{children}</>;
 };
 

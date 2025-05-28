@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import PremiumSubscriptionButton from './PremiumSubscriptionButton';
+import AuthDebugPanel from './auth/AuthDebugPanel';
 import { useSupabaseAuth } from '@/hooks/auth/useSupabaseAuth';
 
 interface LayoutProps {
@@ -43,6 +44,9 @@ const Layout = ({ children }: LayoutProps) => {
       
       {/* Only show the premium button for non-premium users */}
       {showPremiumButton && <PremiumSubscriptionButton />}
+      
+      {/* Debug panel - só aparece em desenvolvimento */}
+      <AuthDebugPanel />
     </div>
   );
 };

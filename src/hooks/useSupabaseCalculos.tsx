@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from './auth/useSupabaseAuth';
@@ -12,11 +11,12 @@ export const useSupabaseCalculos = () => {
 
   const fetchCalculos = async () => {
     if (!user) {
-      console.log('CALCULOS: No user authenticated for fetch');
+      console.log('CALCULOS: Usuário não autenticado, não é possível buscar cálculos');
+      setCalculosSalvos([]);
       return;
     }
     
-    console.log('CALCULOS: Starting fetch for user:', user.id);
+    console.log('CALCULOS: Iniciando busca de cálculos para usuário:', user.id);
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -25,7 +25,7 @@ export const useSupabaseCalculos = () => {
         .order('data_criacao', { ascending: false });
 
       if (error) {
-        console.error('CALCULOS: Supabase fetch error:', {
+        console.error('CALCULOS: Erro na busca do Supabase:', {
           message: error.message,
           code: error.code,
           details: error.details,
@@ -34,29 +34,36 @@ export const useSupabaseCalculos = () => {
         throw error;
       }
 
-      console.log('CALCULOS: Successfully fetched', data?.length || 0, 'calculations');
+      console.log('CALCULOS: Dados brutos recebidos do Supabase:', data);
+      console.log('CALCULOS: Quantidade de cálculos encontrados:', data?.length || 0);
 
       // Transform Supabase data to match our CalculoSalvo interface
-      const calculosTransformados = data.map(calculo => {
+      const calculosTransformados = (data || []).map(calculo => {
+        console.log('CALCULOS: Transformando cálculo:', calculo.id);
+        
         const dadosEntrada = calculo.dados_entrada_json as any;
         const resultadoCalculo = calculo.resultado_calculo_json as any;
         
-        return {
+        const calculoTransformado = {
           id: calculo.id,
           nome: calculo.titulo_calculo,
           timestamp: calculo.data_criacao,
-          verbasRescisorias: dadosEntrada?.verbasRescisorias || resultadoCalculo?.verbasRescisorias || {},
-          adicionais: dadosEntrada?.adicionais || resultadoCalculo?.adicionais || {},
+          verbasRescisorias: (dadosEntrada?.verbasRescisorias || resultadoCalculo?.verbasRescisorias || {}) as any,
+          adicionais: (dadosEntrada?.adicionais || resultadoCalculo?.adicionais || {}) as any,
           totalGeral: Number(resultadoCalculo?.totalGeral || 0),
           userId: calculo.usuario_id,
-          nomeEscritorio: dadosEntrada?.nomeEscritorio || 'Usuário',
-          dadosContrato: dadosEntrada?.dadosContrato || {}
+          nomeEscritorio: (dadosEntrada?.nomeEscritorio || 'Usuário') as string,
+          dadosContrato: (dadosEntrada?.dadosContrato || {}) as any
         };
+        
+        console.log('CALCULOS: Cálculo transformado:', calculoTransformado);
+        return calculoTransformado;
       });
 
+      console.log('CALCULOS: Total de cálculos transformados:', calculosTransformados.length);
       setCalculosSalvos(calculosTransformados);
     } catch (error: any) {
-      console.error('CALCULOS: Error loading calculations:', {
+      console.error('CALCULOS: Erro ao carregar cálculos:', {
         message: error?.message,
         code: error?.code,
         stack: error?.stack,
@@ -70,12 +77,16 @@ export const useSupabaseCalculos = () => {
 
   const salvarCalculo = async (calculo: Omit<CalculoSalvo, 'id'>) => {
     if (!user) {
-      console.error('CALCULOS: User not authenticated for save');
+      console.error('CALCULOS: Tentativa de salvar sem usuário autenticado');
       toast.error('Usuário não autenticado. Faça login novamente.');
       return null;
     }
 
-    console.log('CALCULOS: Starting save process for user:', user.id);
+    console.log('CALCULOS: Iniciando salvamento de cálculo:', {
+      userId: user.id,
+      nome: calculo.nome,
+      totalGeral: calculo.totalGeral
+    });
 
     try {
       const calculoData = {
@@ -95,6 +106,8 @@ export const useSupabaseCalculos = () => {
         tipo_calculo: 'geral' as const
       };
 
+      console.log('CALCULOS: Dados preparados para inserção:', calculoData);
+
       const { data, error } = await supabase
         .from('calculos_salvos')
         .insert(calculoData)
@@ -102,11 +115,11 @@ export const useSupabaseCalculos = () => {
         .single();
 
       if (error) {
-        console.error('CALCULOS: Supabase insert error:', error);
+        console.error('CALCULOS: Erro na inserção do Supabase:', error);
         throw error;
       }
 
-      console.log('CALCULOS: Successfully saved calculation:', data);
+      console.log('CALCULOS: Cálculo salvo com sucesso no Supabase:', data);
 
       const novoCalculo: CalculoSalvo = {
         id: data.id,
@@ -120,11 +133,15 @@ export const useSupabaseCalculos = () => {
         dadosContrato: calculo.dadosContrato
       };
 
-      setCalculosSalvos(prev => [novoCalculo, ...prev]);
+      setCalculosSalvos(prev => {
+        console.log('CALCULOS: Adicionando cálculo à lista local');
+        return [novoCalculo, ...prev];
+      });
+      
       toast.success('Cálculo salvo com sucesso!');
       return novoCalculo;
     } catch (error: any) {
-      console.error('CALCULOS: Error saving calculation:', error);
+      console.error('CALCULOS: Erro detalhado no salvamento:', error);
       
       if (error.code === 'PGRST301') {
         toast.error('Erro de permissão. Verifique se você está logado corretamente.');
@@ -227,9 +244,12 @@ export const useSupabaseCalculos = () => {
   };
 
   useEffect(() => {
+    console.log('CALCULOS: useEffect executado, user:', !!user);
     if (user) {
+      console.log('CALCULOS: Usuário encontrado, buscando cálculos');
       fetchCalculos();
     } else {
+      console.log('CALCULOS: Nenhum usuário, limpando lista de cálculos');
       setCalculosSalvos([]);
     }
   }, [user]);
