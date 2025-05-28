@@ -13,9 +13,15 @@ const adicionaisTeste: Adicionais = {
   calcularInsalubridade: true,
   grauInsalubridade: "medio",
   baseCalculoInsalubridade: "salario_minimo",
+  insalubridadePeriodoEspecifico: false,
+  dataInicioInsalubridade: '',
+  dataFimInsalubridade: '',
   calcularPericulosidade: false,
   percentualPericulosidade: "30",
   baseCalculoPericulosidade: "salario_base",
+  periculosidadePeriodoEspecifico: false,
+  dataInicioPericulosidade: '',
+  dataFimPericulosidade: '',
   calcularMulta467: true,
   calcularMulta477: true,
   calcularAdicionalNoturno: false,
@@ -24,7 +30,7 @@ const adicionaisTeste: Adicionais = {
   calcularHorasExtras: false,
   quantidadeHorasExtras: "",
   percentualHorasExtras: "50",
-  horasExtrasCalculos: [], // Added missing property
+  horasExtrasCalculos: [],
   calcularFeriasVencidas: false,
   periodosFeriasVencidas: "1",
   calcularIndenizacaoDemissao: false,
@@ -53,7 +59,7 @@ const adicionaisTeste: Adicionais = {
   quantidadeFilhos: "",
   calcularHonorariosAdvocaticios: false,
   percentualHonorariosAdvocaticios: "20",
-  valorHonorariosAdvocaticios: "", // Adicionado campo faltante
+  valorHonorariosAdvocaticios: "",
   incluirTotalGeralHonorarios: false,
 };
 

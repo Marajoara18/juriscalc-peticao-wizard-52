@@ -1,3 +1,4 @@
+
 import { DadosContrato, Adicionais, Resultados } from '@/types/calculadora';
 import { resultadosIniciais } from '@/utils/calculadoraConstants';
 
@@ -27,9 +28,15 @@ const useCalculadoraState = {
       calcularInsalubridade: false,
       grauInsalubridade: 'minimo',
       baseCalculoInsalubridade: 'salario_minimo',
+      insalubridadePeriodoEspecifico: false,
+      dataInicioInsalubridade: '',
+      dataFimInsalubridade: '',
       calcularPericulosidade: false,
       percentualPericulosidade: '30',
       baseCalculoPericulosidade: 'salario_base',
+      periculosidadePeriodoEspecifico: false,
+      dataInicioPericulosidade: '',
+      dataFimPericulosidade: '',
       calcularMulta467: false,
       calcularMulta477: false,
       calcularAdicionalNoturno: false,
@@ -38,7 +45,7 @@ const useCalculadoraState = {
       calcularHorasExtras: false,
       quantidadeHorasExtras: '',
       percentualHorasExtras: '50',
-      horasExtrasCalculos: [], // Added missing property
+      horasExtrasCalculos: [],
       calcularFeriasVencidas: false,
       periodosFeriasVencidas: '1',
       calcularIndenizacaoDemissao: false,
@@ -67,7 +74,7 @@ const useCalculadoraState = {
       quantidadeFilhos: '',
       calcularHonorariosAdvocaticios: false,
       percentualHonorariosAdvocaticios: '20',
-      valorHonorariosAdvocaticios: '', // Adicionado campo faltante
+      valorHonorariosAdvocaticios: '',
       incluirTotalGeralHonorarios: false,
     });
     
