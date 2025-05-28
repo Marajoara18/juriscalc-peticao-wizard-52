@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import SubscriptionManager from './SubscriptionManager';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, TestTube } from 'lucide-react';
+import { isUnlimitedTestMode } from '@/utils/testModeUtils';
 
 const LIMITE_CALCULOS_GRATUITOS = 3;
 const KEY_CONTADOR_CALCULOS = 'calculosRealizados';
@@ -11,8 +12,18 @@ const PremiumAlert = () => {
   const [showSubscription, setShowSubscription] = useState(false);
   const [calculosRestantes, setCalculosRestantes] = useState<number>(LIMITE_CALCULOS_GRATUITOS);
   const [isPremium, setIsPremium] = useState<boolean>(false);
+  const [isTestMode, setIsTestMode] = useState<boolean>(false);
   
   useEffect(() => {
+    // Verificar primeiro se está em modo de teste
+    const testModeActive = isUnlimitedTestMode();
+    setIsTestMode(testModeActive);
+    
+    if (testModeActive) {
+      console.log('PREMIUM_ALERT: Test mode active - unlimited calculations');
+      return;
+    }
+
     const userId = localStorage.getItem('userId');
     
     // Verificar acesso premium diretamente do localStorage
@@ -38,8 +49,27 @@ const PremiumAlert = () => {
     localStorage.setItem('isPremium', 'false');
   }, []);
   
-  // Se for premium, não exibir alerta
-  if (isPremium) return null;
+  // Se for premium ou modo de teste, não exibir alerta
+  if (isPremium || isTestMode) {
+    // Se for modo de teste, mostrar indicador especial
+    if (isTestMode) {
+      return (
+        <div className="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <TestTube className="h-5 w-5 text-green-400" />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-green-700">
+                🧪 <strong>Modo de Teste Ativo:</strong> Você tem acesso ilimitado a cálculos para teste.
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  }
   
   return (
     <>

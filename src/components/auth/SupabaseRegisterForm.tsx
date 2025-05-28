@@ -25,9 +25,7 @@ const SupabaseRegisterForm = () => {
     setIsLoading(true);
     
     try {
-      const { error } = await signUp(email, password, {
-        full_name: fullName,
-      });
+      const { error } = await signUp(email, password, fullName);
 
       if (error) {
         toast.error(error.message);

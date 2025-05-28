@@ -3,7 +3,9 @@ import React from 'react';
 import Layout from '@/components/Layout';
 import { useSupabaseAuth } from '@/hooks/auth/useSupabaseAuth';
 import UserManagement from '@/components/admin/UserManagement';
+import TestModeManager from '@/components/admin/TestModeManager';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Shield } from 'lucide-react';
 
 const AdminPanel = () => {
@@ -47,11 +49,26 @@ const AdminPanel = () => {
             Painel Administrativo
           </h1>
           <p className="text-gray-600">
-            Gerencie usuários e configurações do sistema
+            Gerencie usuários, configurações e modo de teste do sistema
           </p>
         </div>
         
-        <UserManagement />
+        <Tabs defaultValue="users" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="users">Usuários</TabsTrigger>
+            <TabsTrigger value="test-mode">Modo de Teste</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="users">
+            <UserManagement />
+          </TabsContent>
+          
+          <TabsContent value="test-mode">
+            <div className="flex justify-center">
+              <TestModeManager />
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </Layout>
   );

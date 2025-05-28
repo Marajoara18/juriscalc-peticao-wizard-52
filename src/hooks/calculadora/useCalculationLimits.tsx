@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from "sonner";
 import { useSupabaseAuth } from '@/hooks/auth/useSupabaseAuth';
+import { isUnlimitedTestMode } from '@/utils/testModeUtils';
 
 const LIMITE_CALCULOS_GRATUITOS = 3; // Limite correto de 3 cálculos
 const KEY_CONTADOR_CALCULOS = 'calculosRealizados';
@@ -17,6 +18,15 @@ export const useCalculationLimits = () => {
   
   // Verificar número de cálculos realizados pelo usuário
   useEffect(() => {
+    // Verificar primeiro se está em modo de teste ilimitado
+    const isTestMode = isUnlimitedTestMode();
+    
+    if (isTestMode) {
+      console.log('LIMITS: Unlimited test mode active - no calculation limits');
+      setPodeCalcular(true);
+      return;
+    }
+
     if (!user) {
       console.log('LIMITS: No user authenticated');
       setPodeCalcular(false);
@@ -38,6 +48,7 @@ export const useCalculationLimits = () => {
       userId,
       calculosRealizados,
       isPremium,
+      isTestMode,
       limite: LIMITE_CALCULOS_GRATUITOS,
       userType: profile?.tipo_usuario,
       planType: profile?.tipo_plano,
@@ -60,6 +71,15 @@ export const useCalculationLimits = () => {
 
   // Função para verificar e incrementar contador de cálculos
   const verificarLimiteCalculos = (originalCalc: () => void) => {
+    // Verificar primeiro se está em modo de teste ilimitado
+    const isTestMode = isUnlimitedTestMode();
+    
+    if (isTestMode) {
+      console.log('LIMITS: Test mode active - bypassing all limits');
+      toast.success('🧪 Modo de teste ativo - Cálculo ilimitado');
+      return originalCalc();
+    }
+
     if (!user) {
       console.error('LIMITS: No user authenticated');
       toast.error('Você precisa estar logado para realizar cálculos');
@@ -72,6 +92,7 @@ export const useCalculationLimits = () => {
     console.log('LIMITS: Checking calculation limits before execution:', { 
       userId, 
       isPremium,
+      isTestMode,
       userType: profile?.tipo_usuario,
       planType: profile?.tipo_plano
     });

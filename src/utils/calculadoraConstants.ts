@@ -1,19 +1,5 @@
 
-import { Resultados } from '@/types/calculadora';
-
-// Valores monetários atualizados para 2025
-export const SALARIO_MINIMO = 1518.00; // Salário mínimo 2025
-export const VALOR_SALARIO_MINIMO_2025 = 1518.00;
-
-// Constantes para Seguro Desemprego
-export const VALOR_MAXIMO_SEGURO_DESEMPREGO = 2373.28;
-export const FAIXA_1_SEGURO_DESEMPREGO = 2138.76;
-export const FAIXA_2_SEGURO_DESEMPREGO = 3564.96;
-export const VALOR_ADICIONAL_FAIXA_2 = 1711.01;
-
-// Constantes para Salário Família
-export const VALOR_SALARIO_FAMILIA = 70.32;
-export const LIMITE_SALARIO_FAMILIA = 1819.26;
+import { Resultados, Adicionais } from '@/types/calculadora';
 
 export const resultadosIniciais: Resultados = {
   verbasRescisorias: {
@@ -28,7 +14,7 @@ export const resultadosIniciais: Resultados = {
     fgts: 0,
     multaFgts: 0,
     indenizacaoQuebraContrato: 0,
-    total: 0
+    total: 0,
   },
   adicionais: {
     adicionalInsalubridade: 0,
@@ -47,6 +33,66 @@ export const resultadosIniciais: Resultados = {
     customCalculo: 0,
     seguroDesemprego: 0,
     salarioFamilia: 0,
-    honorariosAdvocaticios: 0
+    honorariosAdvocaticios: 0,
   }
+};
+
+export const adicionaisIniciais: Adicionais = {
+  calcularInsalubridade: false,
+  grauInsalubridade: 'minimo',
+  baseCalculoInsalubridade: 'salario_minimo',
+  insalubridadePeriodoEspecifico: false,
+  dataInicioInsalubridade: '',
+  dataFimInsalubridade: '',
+  
+  calcularPericulosidade: false,
+  percentualPericulosidade: '30',
+  baseCalculoPericulosidade: 'salario_base',
+  periculosidadePeriodoEspecifico: false,
+  dataInicioPericulosidade: '',
+  dataFimPericulosidade: '',
+  
+  calcularMulta467: false,
+  calcularMulta477: false,
+  calcularAdicionalNoturno: false,
+  percentualAdicionalNoturno: '20',
+  horasNoturnas: '',
+  calcularHorasExtras: false,
+  quantidadeHorasExtras: '',
+  percentualHorasExtras: '50',
+  horasExtrasCalculos: [],
+  calcularFeriasVencidas: false,
+  periodosFeriasVencidas: '1',
+  calcularIndenizacaoDemissao: false,
+  valorIndenizacaoDemissao: '',
+  calcularValeTransporte: false,
+  valorDiarioVT: '',
+  diasValeTransporte: '',
+  calcularValeAlimentacao: false,
+  valorDiarioVA: '',
+  diasValeAlimentacao: '',
+  calcularAdicionalTransferencia: false,
+  percentualAdicionalTransferencia: '25',
+  calcularDescontosIndevidos: false,
+  valorDescontosIndevidos: '',
+  calcularDiferencasSalariais: false,
+  valorDiferencasSalariais: '',
+  calcularCustom: false,
+  calculosCustom: [],
+  descricaoCustom: '',
+  valorCustom: '',
+  calcularSeguroDesemprego: false,
+  tipoTrabalhador: 'padrao',
+  salarioUltimos3Meses: 'sim',
+  ultimoSalario: '',
+  salarioMes1: '',
+  salarioMes2: '',
+  mesesTrabalhadosUltimoEmprego: '',
+  tempoContribuicaoINSS: '',
+  calcularSalarioFamilia: false,
+  quantidadeFilhos: '',
+  calcularHonorariosAdvocaticios: false,
+  percentualHonorariosAdvocaticios: '20',
+  valorHonorariosAdvocaticios: '',
+  incluirTotalGeralHonorarios: false,
 };
