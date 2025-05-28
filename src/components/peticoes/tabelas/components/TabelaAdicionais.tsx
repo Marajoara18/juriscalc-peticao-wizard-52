@@ -14,40 +14,7 @@ const TabelaAdicionais: React.FC<TabelaAdicionaisProps> = ({
   calculosCustom, 
   descricaoCustom 
 }) => {
-  // Get custom calculation description
-  const getCustomCalculoDescription = () => {
-    if (calculosCustom && calculosCustom.length > 0) {
-      // If multiple custom calculations, join their names
-      if (calculosCustom.length > 1) {
-        return "Cálculos Personalizados";
-      } else {
-        // Return the description of the single custom calculation
-        return calculosCustom[0].descricao || "Cálculo Personalizado";
-      }
-    }
-    // Fallback to old system or if no description is available
-    return descricaoCustom || "Cálculo Personalizado";
-  };
-
-  // Calcular o total adicionais (sem honorários advocatícios)
-  const totalAdicionais = 
-    adicionais.adicionalInsalubridade +
-    adicionais.adicionalPericulosidade +
-    adicionais.multa467 +
-    adicionais.multa477 +
-    adicionais.adicionalNoturno +
-    adicionais.horasExtras +
-    adicionais.feriasVencidas +
-    adicionais.indenizacaoDemissao +
-    adicionais.valeTransporte +
-    adicionais.valeAlimentacao +
-    adicionais.adicionalTransferencia +
-    adicionais.descontosIndevidos +
-    adicionais.diferencasSalariais +
-    adicionais.customCalculo +
-    adicionais.seguroDesemprego +
-    adicionais.salarioFamilia;
-
+  // Preparar lista de itens adicionais (excluindo cálculos personalizados)
   const itensAdicionais = [
     { descricao: 'Adicional de Insalubridade', valor: adicionais.adicionalInsalubridade },
     { descricao: 'Adicional de Periculosidade', valor: adicionais.adicionalPericulosidade },
@@ -66,17 +33,34 @@ const TabelaAdicionais: React.FC<TabelaAdicionaisProps> = ({
     { descricao: 'Salário Família', valor: adicionais.salarioFamilia || 0 },
   ].filter(item => item.valor > 0);
 
-  // Add custom calculation with proper description
-  if (adicionais.customCalculo > 0) {
-    itensAdicionais.push({
-      descricao: getCustomCalculoDescription(),
+  // Adicionar cálculos personalizados com suas descrições específicas
+  const calculosCustomAMostrar = [];
+  if (calculosCustom && calculosCustom.length > 0) {
+    calculosCustom.forEach((calculo) => {
+      if (calculo.valor && parseFloat(calculo.valor) > 0) {
+        calculosCustomAMostrar.push({
+          descricao: calculo.descricao || 'Cálculo Personalizado',
+          valor: parseFloat(calculo.valor)
+        });
+      }
+    });
+  } else if (adicionais.customCalculo > 0) {
+    // Fallback para o sistema antigo
+    calculosCustomAMostrar.push({
+      descricao: descricaoCustom || 'Cálculo Personalizado',
       valor: adicionais.customCalculo
     });
   }
 
-  if (itensAdicionais.length === 0) {
+  // Combinar todos os itens
+  const todosItens = [...itensAdicionais, ...calculosCustomAMostrar];
+
+  if (todosItens.length === 0) {
     return null;
   }
+
+  // Calcular total
+  const totalAdicionais = todosItens.reduce((acc, item) => acc + item.valor, 0);
 
   return (
     <div>
@@ -89,7 +73,7 @@ const TabelaAdicionais: React.FC<TabelaAdicionaisProps> = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {itensAdicionais.map((item, index) => (
+          {todosItens.map((item, index) => (
             <TableRow key={`adicionais-${index}`}>
               <TableCell>{item.descricao}</TableCell>
               <TableCell className="text-right">{formatarMoeda(item.valor)}</TableCell>

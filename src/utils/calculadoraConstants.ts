@@ -96,3 +96,13 @@ export const adicionaisIniciais: Adicionais = {
   valorHonorariosAdvocaticios: '',
   incluirTotalGeralHonorarios: false,
 };
+
+// Constantes para cálculos
+export const SALARIO_MINIMO = 1412.00; // Valor para 2024/2025
+export const VALOR_MAXIMO_SEGURO_DESEMPREGO = 2259.72;
+export const FAIXA_1_SEGURO_DESEMPREGO = 1968.36;
+export const FAIXA_2_SEGURO_DESEMPREGO = 3279.96;
+export const VALOR_SALARIO_MINIMO_2025 = 1412.00;
+export const VALOR_ADICIONAL_FAIXA_2 = 58.57;
+export const VALOR_SALARIO_FAMILIA = 59.82;
+export const LIMITE_SALARIO_FAMILIA = 1819.26;

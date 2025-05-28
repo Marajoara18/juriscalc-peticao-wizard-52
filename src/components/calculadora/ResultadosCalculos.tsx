@@ -82,12 +82,35 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
     { chave: 'multaFgts', nome: 'Multa FGTS (40%)', valor: verbas.multaFgts },
   ].filter(item => item.valor > 0);
   
-  const adicionaisAMostrar = Object.entries(adicionaisResultado).filter(([key, value]) => 
-    typeof value === 'number' && value > 0 && key !== 'total' && key !== 'honorariosAdvocaticios'
-  );
+  // Preparar adicionais separando cálculos personalizados
+  const adicionaisAMostrar = [];
+  const calculosCustomAMostrar = [];
   
-  // Calcular total dos adicionais (excluindo honorários advocatícios)
-  const totalAdicionais = adicionaisAMostrar.reduce((acc, [_, value]) => acc + parseFloat(value as string), 0);
+  Object.entries(adicionaisResultado).forEach(([key, value]) => {
+    if (typeof value === 'number' && value > 0 && key !== 'total' && key !== 'honorariosAdvocaticios') {
+      if (key === 'customCalculo') {
+        // Para cálculos personalizados, buscar as descrições
+        if (adicionais.calculosCustom && adicionais.calculosCustom.length > 0) {
+          adicionais.calculosCustom.forEach((calculo) => {
+            if (calculo.valor && parseFloat(calculo.valor) > 0) {
+              calculosCustomAMostrar.push({
+                chave: `custom-${calculo.id}`,
+                nome: calculo.descricao || 'Cálculo Personalizado',
+                valor: parseFloat(calculo.valor)
+              });
+            }
+          });
+        }
+      } else {
+        adicionaisAMostrar.push([key, value]);
+      }
+    }
+  });
+  
+  // Calcular total dos adicionais (incluindo personalizados)
+  const totalAdicionaisNormais = adicionaisAMostrar.reduce((acc, [_, value]) => acc + parseFloat(value as string), 0);
+  const totalCalculosCustom = calculosCustomAMostrar.reduce((acc, item) => acc + item.valor, 0);
+  const totalAdicionais = totalAdicionaisNormais + totalCalculosCustom;
   
   // Verificar se há desconto de aviso prévio a mostrar
   const temDescontoAvisoPrevio = typeof verbas.descontoAvisoPrevio === 'number' && verbas.descontoAvisoPrevio > 0;
@@ -136,7 +159,6 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
                 </div>
               ))}
               
-              {/* Valores proporcionais ao aviso prévio */}
               {valoresAvisoPrevia.map((item) => (
                 <div key={item.chave} className="flex justify-between">
                   <span className="font-medium">{item.nome}</span>
@@ -144,7 +166,6 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
                 </div>
               ))}
               
-              {/* Valores proporcionais gerais */}
               {valoresGerais.map((item) => (
                 <div key={item.chave} className="flex justify-between">
                   <span className="font-medium">{item.nome}</span>
@@ -152,7 +173,6 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
                 </div>
               ))}
               
-              {/* Outros valores */}
               {outrosValores.map((item) => (
                 <div key={item.chave} className="flex justify-between">
                   <span className="font-medium">{item.nome}</span>
@@ -160,7 +180,6 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
                 </div>
               ))}
               
-              {/* Mostrar desconto do aviso prévio se for aplicável */}
               {temDescontoAvisoPrevio && (
                 <div className="flex justify-between text-red-600">
                   <span className="font-medium">Desconto Aviso Prévio não cumprido</span>
@@ -178,7 +197,7 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
       </Accordion>
       
       {/* Adicionais - mostrar apenas se tiver algum */}
-      {adicionaisAMostrar.length > 0 && (
+      {(adicionaisAMostrar.length > 0 || calculosCustomAMostrar.length > 0) && (
         <Accordion type="single" collapsible className="mb-4" defaultValue="adicionais">
           <AccordionItem value="adicionais">
             <AccordionTrigger className="text-lg font-medium">
@@ -202,13 +221,21 @@ const ResultadosCalculos: React.FC<ResultadosCalculosProps> = ({
                       {chave === 'adicionalTransferencia' && 'Adicional de Transferência'}
                       {chave === 'descontosIndevidos' && 'Descontos Indevidos'}
                       {chave === 'diferencasSalariais' && 'Diferenças Salariais'}
-                      {chave === 'customCalculo' && 'Cálculo Personalizado'}
                       {chave === 'seguroDesemprego' && 'Seguro Desemprego'}
                       {chave === 'salarioFamilia' && 'Salário Família'}
                     </span>
                     <span className="font-medium">{formatarMoeda(valor as number)}</span>
                   </div>
                 ))}
+                
+                {/* Exibir cálculos personalizados com suas descrições */}
+                {calculosCustomAMostrar.map((item) => (
+                  <div key={item.chave} className="flex justify-between">
+                    <span className="font-medium">{item.nome}</span>
+                    <span className="font-medium">{formatarMoeda(item.valor)}</span>
+                  </div>
+                ))}
+                
                 <div className="flex justify-between pt-2 border-t">
                   <span className="font-bold">Total Adicionais</span>
                   <span className="font-bold">{formatarMoeda(totalAdicionais)}</span>
