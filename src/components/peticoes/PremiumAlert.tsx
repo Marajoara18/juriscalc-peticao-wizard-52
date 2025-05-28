@@ -2,8 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import SubscriptionManager from './SubscriptionManager';
-import { AlertCircle, TestTube, Crown } from 'lucide-react';
-import { isUnlimitedTestMode } from '@/utils/testModeUtils';
+import { AlertCircle } from 'lucide-react';
 import { useSupabaseAuth } from '@/hooks/auth/useSupabaseAuth';
 
 const LIMITE_CALCULOS_GRATUITOS = 3;
@@ -14,19 +13,8 @@ const PremiumAlert = () => {
   const [showSubscription, setShowSubscription] = useState(false);
   const [calculosRestantes, setCalculosRestantes] = useState<number>(LIMITE_CALCULOS_GRATUITOS);
   const [isPremium, setIsPremium] = useState<boolean>(false);
-  const [isTestMode, setIsTestMode] = useState<boolean>(false);
-  const [premiumSource, setPremiumSource] = useState<'profile' | 'admin' | null>(null);
   
   useEffect(() => {
-    // Verificar primeiro se está em modo de teste
-    const testModeActive = isUnlimitedTestMode();
-    setIsTestMode(testModeActive);
-    
-    if (testModeActive) {
-      console.log('PREMIUM_ALERT: Test mode active - unlimited calculations');
-      return;
-    }
-
     if (!user) {
       console.log('PREMIUM_ALERT: No user authenticated');
       return;
@@ -56,7 +44,6 @@ const PremiumAlert = () => {
     
     if (hasAnyPremium) {
       setIsPremium(true);
-      setPremiumSource(isPremiumProfile ? 'profile' : 'admin');
       localStorage.setItem('isPremium', 'true');
       return;
     }
@@ -70,12 +57,11 @@ const PremiumAlert = () => {
     const restantes = Math.max(0, LIMITE_CALCULOS_GRATUITOS - calculosRealizados);
     setCalculosRestantes(restantes);
     setIsPremium(false);
-    setPremiumSource(null);
     localStorage.setItem('isPremium', 'false');
   }, [user, profile]);
   
-  // Se for premium ou modo de teste, não mostrar nenhum alerta
-  if (isPremium || isTestMode) {
+  // Se for premium, não mostrar nenhum alerta
+  if (isPremium) {
     return null;
   }
   
