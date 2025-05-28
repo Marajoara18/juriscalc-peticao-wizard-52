@@ -25,7 +25,7 @@ const UserProfile = ({ userData, isMasterAdmin, onLogout, updateUserData }: User
   };
 
   // Verificar se o usuário tem acesso premium
-  const isPremiumProfile = profile?.tipo_plano === 'premium' || profile?.tipo_usuario === 'admin_mestre';
+  const isPremiumProfile = profile?.plano_id === 'premium_mensal' || profile?.plano_id === 'premium_anual' || profile?.plano_id === 'admin';
   const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
   const currentUser = allUsers.find((u: any) => u.email === user?.email);
   const isPremiumLocalStorage = currentUser?.isPremium || currentUser?.isAdmin;

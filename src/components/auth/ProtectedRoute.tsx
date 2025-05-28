@@ -22,7 +22,7 @@ const ProtectedRoute = ({
     userId: user?.id,
     userEmail: user?.email,
     profile: !!profile,
-    profileType: profile?.tipo_usuario,
+    planId: profile?.plano_id,
     loading,
     requireAuth,
     requireAdmin,
@@ -51,7 +51,7 @@ const ProtectedRoute = ({
   }
 
   // Redirect to home if admin access is required but user is not admin
-  if (requireAdmin && profile?.tipo_usuario !== 'admin_mestre') {
+  if (requireAdmin && profile?.plano_id !== 'admin') {
     console.log('PROTECTED_ROUTE: Usuário não é admin, redirecionando para home');
     return <Navigate to="/home" replace />;
   }

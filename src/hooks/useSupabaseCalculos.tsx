@@ -37,17 +37,22 @@ export const useSupabaseCalculos = () => {
       console.log('CALCULOS: Successfully fetched', data?.length || 0, 'calculations');
 
       // Transform Supabase data to match our CalculoSalvo interface
-      const calculosTransformados = data.map(calculo => ({
-        id: calculo.id,
-        nome: calculo.titulo_calculo,
-        timestamp: calculo.data_criacao,
-        verbasRescisorias: calculo.dados_entrada_json?.verbasRescisorias || calculo.resultado_calculo_json?.verbasRescisorias,
-        adicionais: calculo.dados_entrada_json?.adicionais || calculo.resultado_calculo_json?.adicionais,
-        totalGeral: Number(calculo.resultado_calculo_json?.totalGeral || 0),
-        userId: calculo.usuario_id,
-        nomeEscritorio: calculo.dados_entrada_json?.nomeEscritorio || 'Usuário',
-        dadosContrato: calculo.dados_entrada_json?.dadosContrato || {}
-      }));
+      const calculosTransformados = data.map(calculo => {
+        const dadosEntrada = calculo.dados_entrada_json as any;
+        const resultadoCalculo = calculo.resultado_calculo_json as any;
+        
+        return {
+          id: calculo.id,
+          nome: calculo.titulo_calculo,
+          timestamp: calculo.data_criacao,
+          verbasRescisorias: dadosEntrada?.verbasRescisorias || resultadoCalculo?.verbasRescisorias || {},
+          adicionais: dadosEntrada?.adicionais || resultadoCalculo?.adicionais || {},
+          totalGeral: Number(resultadoCalculo?.totalGeral || 0),
+          userId: calculo.usuario_id,
+          nomeEscritorio: dadosEntrada?.nomeEscritorio || 'Usuário',
+          dadosContrato: dadosEntrada?.dadosContrato || {}
+        };
+      });
 
       setCalculosSalvos(calculosTransformados);
     } catch (error: any) {

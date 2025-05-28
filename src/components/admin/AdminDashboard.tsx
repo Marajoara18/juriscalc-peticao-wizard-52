@@ -44,7 +44,7 @@ const AdminDashboard = () => {
   };
 
   const toggleUserPlan = async (userId: string, currentPlan: string) => {
-    const newPlan = currentPlan === 'premium' ? 'padrao' : 'premium';
+    const newPlan = currentPlan === 'premium_anual' ? 'free' : 'premium_anual';
     await updateUserPlan(userId, newPlan);
   };
 
@@ -98,13 +98,13 @@ const AdminDashboard = () => {
               <div className="bg-green-50 p-4 rounded-lg">
                 <p className="text-sm text-gray-600">Usuários Premium</p>
                 <p className="text-2xl font-bold text-green-600">
-                  {profiles.filter(p => p.tipo_plano === 'premium').length}
+                  {profiles.filter(p => p.plano_id?.includes('premium')).length}
                 </p>
               </div>
               <div className="bg-yellow-50 p-4 rounded-lg">
                 <p className="text-sm text-gray-600">Administradores</p>
                 <p className="text-2xl font-bold text-yellow-600">
-                  {profiles.filter(p => p.tipo_usuario === 'admin_mestre').length}
+                  {profiles.filter(p => p.plano_id === 'admin').length}
                 </p>
               </div>
             </div>
@@ -137,8 +137,8 @@ const AdminDashboard = () => {
                   <TableRow key={profile.id}>
                     <TableCell className="font-medium">
                       <div className="flex items-center">
-                        {profile.nome}
-                        {profile.tipo_usuario === 'admin_mestre' && (
+                        {profile.nome_completo}
+                        {profile.plano_id === 'admin' && (
                           <Crown className="ml-2 h-4 w-4 text-yellow-500" />
                         )}
                       </div>
@@ -146,29 +146,29 @@ const AdminDashboard = () => {
                     <TableCell>{profile.email}</TableCell>
                     <TableCell>
                       <span className={`px-2 py-1 rounded-full text-xs ${
-                        profile.tipo_usuario === 'admin_mestre' 
+                        profile.plano_id === 'admin' 
                           ? 'bg-yellow-100 text-yellow-800' 
                           : 'bg-gray-100 text-gray-800'
                       }`}>
-                        {profile.tipo_usuario === 'admin_mestre' ? 'Admin' : 'Usuário'}
+                        {profile.plano_id === 'admin' ? 'Admin' : 'Usuário'}
                       </span>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
                         <span className="text-sm">Padrão</span>
                         <Switch
-                          checked={profile.tipo_plano === 'premium'}
-                          onCheckedChange={() => toggleUserPlan(profile.id, profile.tipo_plano)}
-                          disabled={profile.tipo_usuario === 'admin_mestre'}
+                          checked={profile.plano_id?.includes('premium') || false}
+                          onCheckedChange={() => toggleUserPlan(profile.id, profile.plano_id)}
+                          disabled={profile.plano_id === 'admin'}
                         />
                         <span className="text-sm">Premium</span>
                       </div>
                     </TableCell>
                     <TableCell>
-                      {new Date(profile.created_at).toLocaleDateString('pt-BR')}
+                      {new Date(profile.data_criacao).toLocaleDateString('pt-BR')}
                     </TableCell>
                     <TableCell className="text-right">
-                      {profile.id !== currentProfile?.id && profile.tipo_usuario !== 'admin_mestre' && (
+                      {profile.id !== currentProfile?.id && profile.plano_id !== 'admin' && (
                         <Button
                           variant="destructive"
                           size="sm"

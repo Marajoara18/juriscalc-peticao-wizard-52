@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +11,8 @@ interface Profile {
   oab?: string;
   data_criacao: string;
   data_atualizacao: string;
+  limite_calculos_salvos?: number;
+  limite_peticoes_salvas?: number;
 }
 
 interface User {

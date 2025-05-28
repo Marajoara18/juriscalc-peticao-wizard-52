@@ -23,7 +23,7 @@ const PremiumAlert = () => {
     const userId = user.id;
     
     // Verificar acesso premium via Supabase profile
-    const isPremiumProfile = profile?.tipo_plano === 'premium' || profile?.tipo_usuario === 'admin_mestre';
+    const isPremiumProfile = profile?.plano_id === 'premium_mensal' || profile?.plano_id === 'premium_anual' || profile?.plano_id === 'admin';
     
     // Verificar acesso premium via localStorage (definido pelo admin)
     const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');

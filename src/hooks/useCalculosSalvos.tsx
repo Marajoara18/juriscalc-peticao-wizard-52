@@ -48,7 +48,7 @@ export const useCalculosSalvos = (
     }
     
     // Verificar se o usuário atingiu o limite de cálculos salvos (apenas para usuários não premium)
-    const isPremium = profile?.tipo_plano === 'premium' || profile?.tipo_usuario === 'admin_mestre';
+    const isPremium = profile?.plano_id === 'premium_mensal' || profile?.plano_id === 'premium_anual' || profile?.plano_id === 'admin';
     
     if (!isPremium && calculosSalvos.length >= LIMITE_CALCULOS_SALVOS && !editandoId) {
       toast.error(`Você atingiu o limite de ${LIMITE_CALCULOS_SALVOS} cálculos salvos. Apague algum cálculo para adicionar um novo ou faça upgrade para o plano premium.`);
@@ -72,7 +72,7 @@ export const useCalculosSalvos = (
     }
 
     // Verificar novamente o limite (para caso de edições concorrentes) - apenas para usuários não premium
-    const isPremium = profile?.tipo_plano === 'premium' || profile?.tipo_usuario === 'admin_mestre';
+    const isPremium = profile?.plano_id === 'premium_mensal' || profile?.plano_id === 'premium_anual' || profile?.plano_id === 'admin';
     
     if (!isPremium && calculosSalvos.length >= LIMITE_CALCULOS_SALVOS && !editandoId) {
       toast.error(`Você atingiu o limite de ${LIMITE_CALCULOS_SALVOS} cálculos salvos. Apague algum cálculo para adicionar um novo ou faça upgrade para o plano premium.`);
@@ -80,7 +80,7 @@ export const useCalculosSalvos = (
       return;
     }
     
-    const nomeEscritorio = profile?.nome || 'Usuário';
+    const nomeEscritorio = profile?.nome_completo || 'Usuário';
     
     if (editandoId) {
       // Atualizar cálculo existente
@@ -166,7 +166,7 @@ export const useCalculosSalvos = (
         totalGeral: selectedCalculoForPeticao.totalGeral,
         timestamp: selectedCalculoForPeticao.timestamp,
         nome: selectedCalculoForPeticao.nome,
-        nomeEscritorio: selectedCalculoForPeticao.nomeEscritorio || profile?.nome || 'Usuário'
+        nomeEscritorio: selectedCalculoForPeticao.nomeEscritorio || profile?.nome_completo || 'Usuário'
       }));
       
       setConfirmDialogOpen(false);
