@@ -10,6 +10,14 @@ import { useSupabaseAuth } from '@/hooks/auth/useSupabaseAuth';
 import { toast } from 'sonner';
 import { UserPlus, Edit, Trash2 } from 'lucide-react';
 
+interface DatabaseProfile {
+  id: string;
+  nome_completo: string;
+  email: string;
+  plano_id: string;
+  data_criacao: string;
+}
+
 interface Profile {
   id: string;
   nome_completo: string;
@@ -43,7 +51,17 @@ const UserManagement = () => {
         .order('data_criacao', { ascending: false });
 
       if (error) throw error;
-      setProfiles(data || []);
+      
+      // Map database fields to component expected fields
+      const mappedProfiles: Profile[] = (data || []).map((dbProfile: DatabaseProfile) => ({
+        id: dbProfile.id,
+        nome_completo: dbProfile.nome_completo,
+        email: dbProfile.email,
+        plano_id: dbProfile.plano_id,
+        created_at: dbProfile.data_criacao
+      }));
+      
+      setProfiles(mappedProfiles);
     } catch (error: any) {
       console.error('Erro ao carregar usuários:', error);
       toast.error('Erro ao carregar usuários');

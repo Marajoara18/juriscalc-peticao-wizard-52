@@ -31,7 +31,7 @@ const CalculosList: React.FC<CalculosListProps> = ({
   
   // Constante para o limite máximo de cálculos para usuários não premium - corrigido para 3
   const LIMITE_CALCULOS = 3;
-  const isPremium = profile?.tipo_plano === 'premium' || profile?.tipo_usuario === 'admin_mestre';
+  const isPremium = profile?.plano_id?.includes('premium') || profile?.plano_id === 'admin';
   const calculosRestantes = isPremium ? 'Ilimitado' : Math.max(0, LIMITE_CALCULOS - calculosFiltrados.length);
 
   return (
