@@ -1,6 +1,7 @@
 
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSupabaseAuthOnly } from '@/hooks/auth/useSupabaseAuthOnly';
 
 interface UsePeticoesDataProps {
   setPeticoesRecentes: (peticoes: any[]) => void;
@@ -18,16 +19,30 @@ export const usePeticoesData = ({
   setViewingBanner
 }: UsePeticoesDataProps) => {
   const navigate = useNavigate();
+  const { user, profile, loading } = useSupabaseAuthOnly();
 
   useEffect(() => {
+    // Se ainda está carregando, não fazer nada
+    if (loading) {
+      console.log('PETICOES_DATA: Ainda carregando autenticação...');
+      return;
+    }
+
     // Verificar se existe usuário logado
-    const userId = localStorage.getItem('userId');
-    if (!userId) {
+    if (!user) {
+      console.log('PETICOES_DATA: Usuário não autenticado, redirecionando para /');
       navigate('/');
       return;
     }
+
+    console.log('PETICOES_DATA: Usuário autenticado:', {
+      userId: user.id,
+      userEmail: user.email,
+      profile: !!profile,
+      planId: profile?.plano_id
+    });
     
-    // Verificar se admin está visualizando como outro usuário
+    // Verificar se admin está visualizando como outro usuário (manter funcionalidade existente)
     const viewingAsUserId = localStorage.getItem('viewingAsUserId');
     const viewingAsUserName = localStorage.getItem('viewingAsUserName');
     
@@ -39,10 +54,11 @@ export const usePeticoesData = ({
       setViewingBanner(null);
     }
     
-    // Verificar se usuário é admin
-    const userIsAdmin = localStorage.getItem('userIsAdmin') === 'true';
+    // Verificar se usuário é admin via Supabase profile
+    const userIsAdmin = profile?.plano_id === 'admin';
     setIsAdmin(userIsAdmin);
     
+    // Carregar petições do localStorage
     const storedPeticoes = localStorage.getItem('peticoesRecentes');
     if (storedPeticoes) {
       try {
@@ -57,15 +73,24 @@ export const usePeticoesData = ({
           setPeticoesRecentes(allPeticoes);
         } else {
           // Se for usuário comum, filtrar apenas as próprias petições
-          const filteredPeticoes = allPeticoes.filter((p: any) => !p.userId || p.userId === userId);
+          const filteredPeticoes = allPeticoes.filter((p: any) => !p.userId || p.userId === user.id);
           setPeticoesRecentes(filteredPeticoes);
         }
       } catch (error) {
-        console.error('Erro ao carregar petições:', error);
+        console.error('PETICOES_DATA: Erro ao carregar petições:', error);
       }
     }
     
-    const userPremium = localStorage.getItem('userPremium') === 'true';
+    // Verificar se usuário é premium via Supabase profile
+    const userPremium = profile?.plano_id === 'premium_mensal' || 
+                       profile?.plano_id === 'premium_anual' || 
+                       profile?.plano_id === 'admin';
     setIsPremium(userPremium);
-  }, [navigate, setPeticoesRecentes, setIsPremium, setIsAdmin, setIsViewingAsUser, setViewingBanner]);
+
+    console.log('PETICOES_DATA: Estado definido:', {
+      isPremium: userPremium,
+      isAdmin: userIsAdmin,
+      isViewingAsUser: !!viewingAsUserId
+    });
+  }, [user, profile, loading, navigate, setPeticoesRecentes, setIsPremium, setIsAdmin, setIsViewingAsUser, setViewingBanner]);
 };

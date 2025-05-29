@@ -1,5 +1,6 @@
 
 import { toast } from 'sonner';
+import { useSupabaseAuthOnly } from '@/hooks/auth/useSupabaseAuthOnly';
 
 interface UsePeticoesActionsProps {
   isPremium: boolean;
@@ -20,6 +21,7 @@ export const usePeticoesActions = ({
   setIsViewingAsUser,
   setViewingBanner
 }: UsePeticoesActionsProps) => {
+  const { user, profile } = useSupabaseAuthOnly();
   
   const handleNovaPeticao = () => {
     // Verificar limite de petições para usuários gratuitos
@@ -83,11 +85,15 @@ export const usePeticoesActions = ({
   };
 
   const handleSavePeticao = (data: any) => {
+    if (!user) {
+      toast.error('Usuário não autenticado');
+      return;
+    }
+
     // Adicionar ID do usuário atual à petição
-    const currentUserId = localStorage.getItem('userId');
     const updatedData = {
       ...data,
-      userId: currentUserId
+      userId: user.id
     };
   
     // Carregar todas as petições armazenadas
@@ -113,12 +119,12 @@ export const usePeticoesActions = ({
     // Atualizar no localStorage todas as petições
     localStorage.setItem('peticoesRecentes', JSON.stringify(updatedPeticoes));
     
-    // Filtrar petições com base no tipo de usuário
-    const currentUserIsAdmin = localStorage.getItem('userIsAdmin') === 'true';
+    // Filtrar petições com base no tipo de usuário via Supabase
+    const currentUserIsAdmin = profile?.plano_id === 'admin';
     
     const filteredPeticoes = currentUserIsAdmin
       ? updatedPeticoes
-      : updatedPeticoes.filter(p => !p.userId || p.userId === currentUserId);
+      : updatedPeticoes.filter(p => !p.userId || p.userId === user.id);
     
     setPeticoesRecentes(filteredPeticoes);
     
@@ -127,6 +133,11 @@ export const usePeticoesActions = ({
   };
 
   const handleDeletePeticao = (id: number) => {
+    if (!user) {
+      toast.error('Usuário não autenticado');
+      return;
+    }
+
     const storedPeticoes = localStorage.getItem('peticoesRecentes');
     if (storedPeticoes) {
       try {
@@ -138,13 +149,12 @@ export const usePeticoesActions = ({
         // Atualizar localStorage
         localStorage.setItem('peticoesRecentes', JSON.stringify(updatedPeticoes));
         
-        // Filtrar petições com base no tipo de usuário
-        const currentUserId = localStorage.getItem('userId');
-        const currentUserIsAdmin = localStorage.getItem('userIsAdmin') === 'true';
+        // Filtrar petições com base no tipo de usuário via Supabase
+        const currentUserIsAdmin = profile?.plano_id === 'admin';
         
         const filteredPeticoes = currentUserIsAdmin
           ? updatedPeticoes
-          : updatedPeticoes.filter(p => !p.userId || p.userId === currentUserId);
+          : updatedPeticoes.filter(p => !p.userId || p.userId === user.id);
         
         setPeticoesRecentes(filteredPeticoes);
         

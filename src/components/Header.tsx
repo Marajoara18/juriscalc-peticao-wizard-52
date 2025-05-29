@@ -7,32 +7,32 @@ import { useState, useEffect } from 'react';
 import SubscriptionManager from '@/components/peticoes/SubscriptionManager';
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import ManualRapido from '@/components/calculadora/ManualRapido';
-import { useSupabaseAuth } from '@/hooks/auth/useSupabaseAuth';
+import { useSupabaseAuthOnly } from '@/hooks/auth/useSupabaseAuthOnly';
 
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, isPremium, signOut } = useSupabaseAuth();
+  const { user, profile, isPremium, signOut } = useSupabaseAuthOnly();
   const [showSubscription, setShowSubscription] = useState(false);
   
   const handleNewPeticao = () => {
-    console.log('Navigating to petições');
+    console.log('HEADER: Navigating to petições');
     navigate('/peticoes');
   };
   
   const handleCalculadora = () => {
-    console.log('Navigating to calculadora');
+    console.log('HEADER: Navigating to calculadora');
     navigate('/calculadora');
   };
   
   const handleUserClick = () => {
-    console.log('Navigating to user account');
-    // Navigate to the user account view in peticoes with the correct state parameter
-    navigate('/peticoes', { state: { initialView: 'user' } });
+    console.log('HEADER: Navigating to minha-conta');
+    // Navigate diretamente para a rota /minha-conta
+    navigate('/minha-conta');
   };
 
   const handleLogout = async () => {
-    console.log('Attempting logout');
+    console.log('HEADER: Attempting logout');
     await signOut();
   };
   
@@ -88,7 +88,7 @@ const Header = () => {
           {!isPremium && (
             <Button
               onClick={() => {
-                console.log('Opening subscription modal');
+                console.log('HEADER: Opening subscription modal');
                 setShowSubscription(true);
               }}
               className="bg-juriscalc-gold text-juriscalc-navy hover:bg-opacity-90 flex items-center gap-1"
@@ -104,7 +104,7 @@ const Header = () => {
             <DialogTrigger asChild>
               <Button 
                 className="bg-white text-juriscalc-navy hover:bg-gray-100"
-                onClick={() => console.log('Opening manual')}
+                onClick={() => console.log('HEADER: Opening manual')}
               >
                 <BookOpen className="mr-2 h-4 w-4" />
                 Manual Rápido IusCalc
