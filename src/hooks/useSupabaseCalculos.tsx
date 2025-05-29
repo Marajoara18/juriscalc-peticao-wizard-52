@@ -19,10 +19,10 @@ export const useSupabaseCalculos = () => {
     console.log('CALCULOS: Iniciando busca de cálculos para usuário:', user.id);
     setLoading(true);
     try {
+      // Remover a ordenação que estava causando erro - usar apenas select básico
       const { data, error } = await supabase
         .from('calculos_salvos')
-        .select('*')
-        .order('data_criacao', { ascending: false });
+        .select('*');
 
       if (error) {
         console.error('CALCULOS: Erro na busca do Supabase:', {
@@ -58,9 +58,11 @@ export const useSupabaseCalculos = () => {
         
         console.log('CALCULOS: Cálculo transformado:', calculoTransformado);
         return calculoTransformado;
-      });
+      })
+      // Ordenar no JavaScript após transformar os dados
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
-      console.log('CALCULOS: Total de cálculos transformados:', calculosTransformados.length);
+      console.log('CALCULOS: Total de cálculos transformados e ordenados:', calculosTransformados.length);
       setCalculosSalvos(calculosTransformados);
     } catch (error: any) {
       console.error('CALCULOS: Erro ao carregar cálculos:', {
@@ -89,10 +91,6 @@ export const useSupabaseCalculos = () => {
     });
 
     try {
-      // Primeiro, vamos tentar verificar se a tabela existe e suas colunas
-      console.log('CALCULOS: Verificando estrutura da tabela...');
-      
-      // Dados simplificados para testar primeiro
       const dadosEntrada = {
         verbasRescisorias: calculo.verbasRescisorias || {},
         adicionais: calculo.adicionais || {},
@@ -106,10 +104,11 @@ export const useSupabaseCalculos = () => {
         totalGeral: calculo.totalGeral || 0
       };
 
-      console.log('CALCULOS: Dados de entrada preparados:', dadosEntrada);
-      console.log('CALCULOS: Resultado preparado:', resultadoCalculo);
+      console.log('CALCULOS: Dados preparados para inserção:', {
+        dadosEntrada,
+        resultadoCalculo
+      });
 
-      // Primeiro vamos tentar um insert mais simples
       const calculoData = {
         titulo_calculo: calculo.nome,
         usuario_id: user.id,
@@ -120,7 +119,6 @@ export const useSupabaseCalculos = () => {
 
       console.log('CALCULOS: Dados finais para inserção:', calculoData);
 
-      // Tentar inserir com tratamento de erro específico para cache
       const { data, error } = await supabase
         .from('calculos_salvos')
         .insert(calculoData)
@@ -137,14 +135,8 @@ export const useSupabaseCalculos = () => {
 
         // Verificar se é erro de cache do schema
         if (error.message.includes('could not find') && error.message.includes('in the schema cache')) {
-          console.error('CALCULOS: Erro de cache do schema detectado - tentando recarregar...');
-          toast.error('Erro de cache do banco de dados. Aguarde alguns segundos e tente novamente.');
-          
-          // Aguardar um pouco e tentar novamente
-          setTimeout(() => {
-            toast.info('Tente salvar o cálculo novamente em alguns segundos.');
-          }, 2000);
-          
+          console.error('CALCULOS: Erro de cache do schema detectado');
+          toast.error('Erro temporário do sistema. Aguarde alguns segundos e tente novamente.');
           return null;
         }
 
