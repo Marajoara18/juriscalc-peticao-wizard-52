@@ -1,8 +1,6 @@
-
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { initializeLocalStorage } from '@/utils/localStorage';
 
 interface PeticoesContextType {
   peticoesRecentes: any[];
@@ -70,7 +68,6 @@ export const PeticoesProvider: React.FC<{ children: ReactNode }> = ({ children }
     const userIsAdmin = localStorage.getItem('userIsAdmin') === 'true';
     setIsAdmin(userIsAdmin);
     
-    initializeLocalStorage();
     const storedPeticoes = localStorage.getItem('peticoesRecentes');
     if (storedPeticoes) {
       try {
