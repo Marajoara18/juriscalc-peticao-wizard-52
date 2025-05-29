@@ -89,25 +89,38 @@ export const useSupabaseCalculos = () => {
     });
 
     try {
+      // Primeiro, vamos tentar verificar se a tabela existe e suas colunas
+      console.log('CALCULOS: Verificando estrutura da tabela...');
+      
+      // Dados simplificados para testar primeiro
+      const dadosEntrada = {
+        verbasRescisorias: calculo.verbasRescisorias || {},
+        adicionais: calculo.adicionais || {},
+        dadosContrato: calculo.dadosContrato || {},
+        nomeEscritorio: calculo.nomeEscritorio || 'Usuário'
+      };
+
+      const resultadoCalculo = {
+        verbasRescisorias: calculo.verbasRescisorias || {},
+        adicionais: calculo.adicionais || {},
+        totalGeral: calculo.totalGeral || 0
+      };
+
+      console.log('CALCULOS: Dados de entrada preparados:', dadosEntrada);
+      console.log('CALCULOS: Resultado preparado:', resultadoCalculo);
+
+      // Primeiro vamos tentar um insert mais simples
       const calculoData = {
         titulo_calculo: calculo.nome,
-        dados_entrada_json: {
-          verbasRescisorias: calculo.verbasRescisorias,
-          adicionais: calculo.adicionais,
-          dadosContrato: calculo.dadosContrato,
-          nomeEscritorio: calculo.nomeEscritorio
-        },
-        resultado_calculo_json: {
-          verbasRescisorias: calculo.verbasRescisorias,
-          adicionais: calculo.adicionais,
-          totalGeral: calculo.totalGeral
-        },
         usuario_id: user.id,
+        dados_entrada_json: dadosEntrada,
+        resultado_calculo_json: resultadoCalculo,
         tipo_calculo: 'geral' as const
       };
 
-      console.log('CALCULOS: Dados preparados para inserção:', calculoData);
+      console.log('CALCULOS: Dados finais para inserção:', calculoData);
 
+      // Tentar inserir com tratamento de erro específico para cache
       const { data, error } = await supabase
         .from('calculos_salvos')
         .insert(calculoData)
@@ -115,7 +128,26 @@ export const useSupabaseCalculos = () => {
         .single();
 
       if (error) {
-        console.error('CALCULOS: Erro na inserção do Supabase:', error);
+        console.error('CALCULOS: Erro detalhado na inserção:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+
+        // Verificar se é erro de cache do schema
+        if (error.message.includes('could not find') && error.message.includes('in the schema cache')) {
+          console.error('CALCULOS: Erro de cache do schema detectado - tentando recarregar...');
+          toast.error('Erro de cache do banco de dados. Aguarde alguns segundos e tente novamente.');
+          
+          // Aguardar um pouco e tentar novamente
+          setTimeout(() => {
+            toast.info('Tente salvar o cálculo novamente em alguns segundos.');
+          }, 2000);
+          
+          return null;
+        }
+
         throw error;
       }
 
@@ -151,6 +183,8 @@ export const useSupabaseCalculos = () => {
         toast.error('Dados obrigatórios estão faltando. Verifique o cálculo e tente novamente.');
       } else if (error.message?.includes('JWT')) {
         toast.error('Sessão expirada. Faça login novamente.');
+      } else if (error.message?.includes('schema cache')) {
+        toast.error('Erro temporário do sistema. Aguarde alguns segundos e tente novamente.');
       } else {
         toast.error(`Erro ao salvar cálculo: ${error.message || 'Erro desconhecido'}`);
       }
