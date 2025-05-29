@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Printer, AlertCircle, RefreshCw } from "lucide-react";
 import { handlePrint } from '@/utils/peticaoUtils';
 import { toast } from "sonner";
+import { useSupabaseAuthOnly } from '@/hooks/auth/useSupabaseAuthOnly';
 
 interface SaveCalculoDialogProps {
   open: boolean;
@@ -24,6 +25,9 @@ const SaveCalculoDialog: React.FC<SaveCalculoDialogProps> = ({
   isEditing,
   onSave
 }) => {
+  const { profile } = useSupabaseAuthOnly();
+  const isPremium = profile?.plano_id?.includes('premium') || profile?.plano_id === 'admin';
+
   const handlePrintCalculo = () => {
     handlePrint();
     toast.success('Demonstrativo de cálculos enviado para impressão!');
@@ -44,7 +48,7 @@ const SaveCalculoDialog: React.FC<SaveCalculoDialogProps> = ({
           <DialogDescription>Dê um nome descritivo para identificar este cálculo posteriormente.</DialogDescription>
         </DialogHeader>
 
-        {!isEditing && (
+        {!isEditing && !isPremium && (
           <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 text-sm mb-4">
             <div className="flex">
               <div className="flex-shrink-0">

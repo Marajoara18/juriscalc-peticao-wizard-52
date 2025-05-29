@@ -4,7 +4,8 @@ import { toast } from "sonner";
 import { useNavigate } from 'react-router-dom';
 import { CalculoSalvo } from '@/types/calculoSalvo';
 import { useSupabaseCalculos } from './useSupabaseCalculos';
-import { useSupabaseAuth } from './auth/useSupabaseAuth';
+import { useSupabaseAuthOnly } from './auth/useSupabaseAuthOnly';
+import { useSupabaseCalculationLimits } from './calculadora/useSupabaseCalculationLimits';
 
 export const useCalculosSalvos = (
   resultados: any, 
@@ -13,7 +14,8 @@ export const useCalculosSalvos = (
   onLoadCalculo: (calculo: CalculoSalvo) => void
 ) => {
   const navigate = useNavigate();
-  const { user, profile } = useSupabaseAuth();
+  const { user, profile } = useSupabaseAuthOnly();
+  const { verificarLimiteSalvamento } = useSupabaseCalculationLimits();
   const { 
     calculosSalvos, 
     loading, 
@@ -33,9 +35,6 @@ export const useCalculosSalvos = (
   const [verifyDialogOpen, setVerifyDialogOpen] = useState(false);
   const [selectedCalculoForVerify, setSelectedCalculoForVerify] = useState<CalculoSalvo | null>(null);
 
-  // Constante para limitar o número de cálculos salvos (apenas para usuários não premium)
-  const LIMITE_CALCULOS_SALVOS = 3;
-
   const salvarCalculos = () => {
     if (!user) {
       toast.error('Você precisa estar logado para salvar cálculos.');
@@ -47,11 +46,8 @@ export const useCalculosSalvos = (
       return;
     }
     
-    // Verificar se o usuário atingiu o limite de cálculos salvos (apenas para usuários não premium)
-    const isPremium = profile?.plano_id === 'premium_mensal' || profile?.plano_id === 'premium_anual' || profile?.plano_id === 'admin';
-    
-    if (!isPremium && calculosSalvos.length >= LIMITE_CALCULOS_SALVOS && !editandoId) {
-      toast.error(`Você atingiu o limite de ${LIMITE_CALCULOS_SALVOS} cálculos salvos. Apague algum cálculo para adicionar um novo ou faça upgrade para o plano premium.`);
+    // Verificar limite apenas se não estiver editando
+    if (!editandoId && !verificarLimiteSalvamento()) {
       return;
     }
     
@@ -71,11 +67,8 @@ export const useCalculosSalvos = (
       return;
     }
 
-    // Verificar novamente o limite (para caso de edições concorrentes) - apenas para usuários não premium
-    const isPremium = profile?.plano_id === 'premium_mensal' || profile?.plano_id === 'premium_anual' || profile?.plano_id === 'admin';
-    
-    if (!isPremium && calculosSalvos.length >= LIMITE_CALCULOS_SALVOS && !editandoId) {
-      toast.error(`Você atingiu o limite de ${LIMITE_CALCULOS_SALVOS} cálculos salvos. Apague algum cálculo para adicionar um novo ou faça upgrade para o plano premium.`);
+    // Verificar limite novamente antes de salvar (apenas se não estiver editando)
+    if (!editandoId && !verificarLimiteSalvamento()) {
       setDialogOpen(false);
       return;
     }
@@ -172,7 +165,6 @@ export const useCalculosSalvos = (
       setConfirmDialogOpen(false);
       toast.success('Cálculo preparado para ser inserido na petição!');
       
-      // Perguntar se deseja ir para a página de petições
       const confirmRedirect = window.confirm('Deseja ir para a página de petições agora?');
       if (confirmRedirect) {
         navigate('/peticoes');
@@ -184,7 +176,6 @@ export const useCalculosSalvos = (
     recarregarCalculos();
   };
 
-  // Filtrar cálculos já é feito pelo Supabase com RLS
   const calculosFiltrados = calculosSalvos;
 
   return {

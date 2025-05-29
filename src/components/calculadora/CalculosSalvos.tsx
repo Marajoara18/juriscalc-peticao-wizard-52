@@ -48,7 +48,6 @@ const CalculosSalvos: React.FC<CalculosSalvosProps> = ({ resultados, totalGeral,
     recarregarCalculosSalvos
   } = useCalculosSalvos(resultados, totalGeral, dadosContrato, onLoadCalculo);
 
-  // Forçar a recarga de cálculos salvos quando o componente montar
   useEffect(() => {
     console.log('CalculosSalvos montado - carregando cálculos salvos');
     recarregarCalculosSalvos();

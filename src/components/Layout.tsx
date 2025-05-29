@@ -4,14 +4,14 @@ import Header from './Header';
 import Footer from './Footer';
 import PremiumSubscriptionButton from './PremiumSubscriptionButton';
 import AuthDebugPanel from './auth/AuthDebugPanel';
-import { useSupabaseAuth } from '@/hooks/auth/useSupabaseAuth';
+import { useSupabaseAuthOnly } from '@/hooks/auth/useSupabaseAuthOnly';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout = ({ children }: LayoutProps) => {
-  const { user, profile } = useSupabaseAuth();
+  const { user, profile } = useSupabaseAuthOnly();
   const [showPremiumButton, setShowPremiumButton] = useState(true);
   
   useEffect(() => {
@@ -20,18 +20,19 @@ const Layout = ({ children }: LayoutProps) => {
       return;
     }
 
-    // Verificar acesso premium via Supabase profile
-    const isPremiumProfile = profile?.plano_id === 'premium_mensal' || profile?.plano_id === 'premium_anual' || profile?.plano_id === 'admin';
+    // Verificar acesso premium via Supabase profile apenas
+    const isPremiumProfile = profile?.plano_id === 'premium_mensal' || 
+                            profile?.plano_id === 'premium_anual' || 
+                            profile?.plano_id === 'admin';
     
-    // Verificar acesso premium via localStorage (definido pelo admin)
-    const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
-    const currentUser = allUsers.find((u: any) => u.email === user.email);
-    const isPremiumLocalStorage = currentUser?.isPremium || currentUser?.isAdmin;
+    console.log('LAYOUT: Premium check:', {
+      userId: user.id,
+      userEmail: user.email,
+      isPremiumProfile,
+      planId: profile?.plano_id
+    });
     
-    // Usuário tem premium se tiver via profile OU via localStorage
-    const hasAnyPremium = isPremiumProfile || isPremiumLocalStorage;
-    
-    setShowPremiumButton(!hasAnyPremium);
+    setShowPremiumButton(!isPremiumProfile);
   }, [user, profile]);
   
   return (

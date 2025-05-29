@@ -4,7 +4,8 @@ import { CalculoSalvo } from '@/types/calculoSalvo';
 import CalculoItem from './CalculoItem';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Crown } from "lucide-react";
-import { useSupabaseAuth } from '@/hooks/auth/useSupabaseAuth';
+import { useSupabaseAuthOnly } from '@/hooks/auth/useSupabaseAuthOnly';
+import { useSupabaseCalculationLimits } from '@/hooks/calculadora/useSupabaseCalculationLimits';
 
 interface CalculosListProps {
   calculosFiltrados: CalculoSalvo[];
@@ -27,12 +28,10 @@ const CalculosList: React.FC<CalculosListProps> = ({
   onVerify,
   onUsePeticao
 }) => {
-  const { profile } = useSupabaseAuth();
+  const { profile } = useSupabaseAuthOnly();
+  const { calculosRealizados, calculosRestantes, limiteMaximo } = useSupabaseCalculationLimits();
   
-  // Constante para o limite máximo de cálculos para usuários não premium - corrigido para 3
-  const LIMITE_CALCULOS = 3;
   const isPremium = profile?.plano_id?.includes('premium') || profile?.plano_id === 'admin';
-  const calculosRestantes = isPremium ? 'Ilimitado' : Math.max(0, LIMITE_CALCULOS - calculosFiltrados.length);
 
   return (
     <div>
@@ -49,7 +48,7 @@ const CalculosList: React.FC<CalculosListProps> = ({
             </>
           ) : (
             <>
-              Você está utilizando {calculosFiltrados.length} de {LIMITE_CALCULOS} cálculos disponíveis. 
+              Você está utilizando {calculosFiltrados.length} de {limiteMaximo} cálculos disponíveis. 
               {typeof calculosRestantes === 'number' && calculosRestantes > 0 
                 ? ` Você ainda pode salvar ${calculosRestantes} cálculo${calculosRestantes !== 1 ? 's' : ''}.` 
                 : ' Você atingiu o limite de cálculos salvos. Para adicionar novos, apague algum existente ou faça upgrade para o plano premium.'}
