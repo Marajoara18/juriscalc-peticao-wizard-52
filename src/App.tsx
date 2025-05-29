@@ -12,7 +12,7 @@ import AdminPanel from "./pages/AdminPanel";
 import Calculadora from "./pages/Calculadora";
 import Peticoes from "./pages/Peticoes";
 import NotFound from "./pages/NotFound";
-import ProtectedRoute from "./components/auth/ProtectedRoute";
+import SupabaseProtectedRoute from "./components/auth/SupabaseProtectedRoute";
 import MasterPasswordReset from "./components/auth/MasterPasswordReset";
 import PasswordResetRequest from "./components/auth/PasswordResetRequest";
 import PasswordReset from "./components/auth/PasswordReset";
@@ -40,25 +40,25 @@ const App = () => {
               <Route 
                 path="/home" 
                 element={
-                  <ProtectedRoute requireAuth={true}>
+                  <SupabaseProtectedRoute requireAuth={true}>
                     <Index />
-                  </ProtectedRoute>
+                  </SupabaseProtectedRoute>
                 } 
               />
               <Route 
                 path="/calculadora" 
                 element={
-                  <ProtectedRoute requireAuth={true}>
+                  <SupabaseProtectedRoute requireAuth={true}>
                     <Calculadora />
-                  </ProtectedRoute>
+                  </SupabaseProtectedRoute>
                 } 
               />
               <Route 
                 path="/peticoes" 
                 element={
-                  <ProtectedRoute requireAuth={true}>
+                  <SupabaseProtectedRoute requireAuth={true}>
                     <Peticoes />
-                  </ProtectedRoute>
+                  </SupabaseProtectedRoute>
                 } 
               />
               
@@ -66,9 +66,9 @@ const App = () => {
               <Route 
                 path="/minha-conta" 
                 element={
-                  <ProtectedRoute requireAuth={true}>
+                  <SupabaseProtectedRoute requireAuth={true}>
                     <Peticoes />
-                  </ProtectedRoute>
+                  </SupabaseProtectedRoute>
                 } 
               />
               
@@ -76,9 +76,9 @@ const App = () => {
               <Route 
                 path="/admin" 
                 element={
-                  <ProtectedRoute requireAuth={true} requireAdmin={true}>
+                  <SupabaseProtectedRoute requireAuth={true} requireAdmin={true}>
                     <AdminPanel />
-                  </ProtectedRoute>
+                  </SupabaseProtectedRoute>
                 } 
               />
               

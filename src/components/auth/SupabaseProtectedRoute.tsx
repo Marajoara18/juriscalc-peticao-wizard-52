@@ -44,14 +44,14 @@ const SupabaseProtectedRoute = ({
     );
   }
 
-  // Redirect to login if authentication is required but user is not authenticated
+  // Only redirect to login if authentication is required and user is not authenticated
   if (requireAuth && !user) {
     console.log('SUPABASE_PROTECTED_ROUTE: Usuário não autenticado, redirecionando para /');
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 
-  // Redirect to home if admin access is required but user is not admin
-  if (requireAdmin && profile?.plano_id !== 'admin') {
+  // Only redirect to home if admin access is required but user is not admin
+  if (requireAdmin && user && profile?.plano_id !== 'admin') {
     console.log('SUPABASE_PROTECTED_ROUTE: Usuário não é admin, redirecionando para /home');
     return <Navigate to="/home" replace />;
   }

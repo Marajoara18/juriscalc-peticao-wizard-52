@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -56,6 +55,8 @@ export const useSupabaseAuthOnly = () => {
       
       if (error) {
         console.error('SUPABASE_AUTH_ONLY: Erro ao obter sessão:', error);
+        setUser(null);
+        setProfile(null);
         setLoading(false);
         return;
       }
@@ -84,14 +85,16 @@ export const useSupabaseAuthOnly = () => {
       setLoading(false);
     } catch (error) {
       console.error('SUPABASE_AUTH_ONLY: Erro inesperado na verificação de sessão:', error);
+      setUser(null);
+      setProfile(null);
       setLoading(false);
     }
   }, [fetchProfile]);
 
   useEffect(() => {
     console.log('SUPABASE_AUTH_ONLY: Inicializando hook de autenticação');
-    checkSession();
-
+    
+    // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('SUPABASE_AUTH_ONLY: Mudança de estado de autenticação:', event);
       
@@ -103,20 +106,30 @@ export const useSupabaseAuthOnly = () => {
         };
         setUser(userData);
 
+        // Fetch profile after login with a small delay to avoid race conditions
         setTimeout(async () => {
           const profileData = await fetchProfile(session.user.id);
           if (profileData) {
             console.log('SUPABASE_AUTH_ONLY: Perfil carregado após login');
             setProfile(profileData);
           }
+          setLoading(false);
         }, 100);
         
       } else if (event === 'SIGNED_OUT') {
         console.log('SUPABASE_AUTH_ONLY: Usuário deslogado');
         setUser(null);
         setProfile(null);
+        setLoading(false);
+      } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+        console.log('SUPABASE_AUTH_ONLY: Token refreshed, mantendo usuário');
+        // Keep user and profile as they are, just ensure loading is false
+        setLoading(false);
       }
     });
+
+    // THEN check for existing session
+    checkSession();
 
     return () => {
       console.log('SUPABASE_AUTH_ONLY: Limpando subscription');
@@ -202,22 +215,26 @@ export const useSupabaseAuthOnly = () => {
   const signOut = async () => {
     console.log('SUPABASE_AUTH_ONLY: Tentativa de logout');
     try {
+      setLoading(true);
       const { error } = await supabase.auth.signOut();
       
       if (error) {
         console.error('SUPABASE_AUTH_ONLY: Erro no logout:', error);
         toast.error('Erro ao fazer logout');
+        setLoading(false);
         return;
       }
 
       setUser(null);
       setProfile(null);
+      setLoading(false);
       console.log('SUPABASE_AUTH_ONLY: Logout realizado, redirecionando para /');
       toast.success('Logout realizado com sucesso!');
       navigate('/');
     } catch (error) {
       console.error('SUPABASE_AUTH_ONLY: Erro inesperado no logout:', error);
       toast.error('Erro inesperado no logout');
+      setLoading(false);
     }
   };
 
